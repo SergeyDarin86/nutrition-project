@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: nutrition-recommendation
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/nutrition_db
+    username: postgres
+    password: 16s11w86d
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
