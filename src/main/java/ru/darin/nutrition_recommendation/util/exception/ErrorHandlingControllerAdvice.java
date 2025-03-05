@@ -17,4 +17,13 @@ public class ErrorHandlingControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({NutritionExceptionNotFound.class})
+    public ResponseEntity<NutritionErrorResponse> handlerExceptionNotFound(NutritionExceptionNotFound e) {
+        NutritionErrorResponse response = new NutritionErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
 }
