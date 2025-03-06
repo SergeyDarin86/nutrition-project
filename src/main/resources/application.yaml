@@ -1,11 +1,18 @@
 spring:
   application:
     name: nutrition-recommendation
+
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/nutrition_db
     username: postgres
     password: 16s11w86d
+
+  liquibase:
+    enabled: true
+    drop-first: ${DROP_FIRST:false}
+    change-log: classpath:db/database-nutrition-changelog.xml
+    default-schema: public
 
   mvc:
     pathmatch:

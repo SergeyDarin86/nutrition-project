@@ -22,8 +22,8 @@ public class NutritionService {
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
-    public List<Person> getAllPeople() {
-        return personRepository.findAll();
+    public List<PersonDTO> getAllPeople() {
+        return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
     }
 
     public PersonDTO addPerson(PersonDTO personDTO) {
