@@ -4,19 +4,15 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
-    <changeSet id="createPersonTable" author="Sergey">
+    <changeSet author="Sergey D" id="change-fullName-min-length-in-person-table">
         <preConditions onFail="MARK_RAN">
-            <not>
+            <and>
                 <tableExists tableName="person"/>
-            </not>
+                <columnExists tableName="person" columnName="full_name"/>
+            </and>
         </preConditions>
-        <createTable tableName="person">
-            <column name="person_id" type="uuid">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="full_name" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+        <sql>
+            ALTER TABLE person ADD CONSTRAINT min_length_check check (char_length((full_name)::text) >= 9)
+        </sql>
     </changeSet>
 </databaseChangeLog>
