@@ -20,4 +20,10 @@ public class Illness {
     @Column(name = "illness_title")
     private String illnessTitle;
 
+    @Override
+    public String toString() {
+        return "Illness{" +
+                "illnessTitle='" + illnessTitle + '\'' +
+                '}';
+    }
 }

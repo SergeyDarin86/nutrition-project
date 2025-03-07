@@ -12,9 +12,11 @@ import ru.darin.nutrition_recommendation.model.Person;
 public interface PersonMapper {
 
     @Mapping(source = "fullName", target = "fullName")
+    @Mapping(target = "illnesses", source = "illnesses")
     Person toPerson(PersonDTO dto);
 
     @Mapping(source = "fullName", target = "fullName")
+    @Mapping(target = "illnesses", source = "illnesses")
     PersonDTO toPersonDto(Person person);
 
 }

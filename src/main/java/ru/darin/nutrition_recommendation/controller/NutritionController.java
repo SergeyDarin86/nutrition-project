@@ -35,6 +35,20 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ofNullable(nutritionService.getPersonById(id));
     }
 
+    @PatchMapping("addIllnessToPerson/{id}")
+    public ResponseEntity addIllnessToPersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult,
+                                           @PathVariable("id") UUID id) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ofNullable(nutritionService.addIllnessToPerson(id,personDTO));
+    }
+
+    @PatchMapping("updatePersonById/{id}")
+    public ResponseEntity updatePersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult,
+                                                 @PathVariable("id") UUID id) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ofNullable(nutritionService.updatePersonById(id,personDTO));
+    }
+
     @GetMapping("/getAllIllnesses")
     public ResponseEntity getAllIllnesses() {
         return ResponseEntity.ok(nutritionService.getAllIllnesses());
