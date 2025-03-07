@@ -1,0 +1,34 @@
+package ru.darin.nutrition_recommendation.util.validation;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import ru.darin.nutrition_recommendation.dto.IllnessDTO;
+
+public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionValidation, IllnessDTO> {
+
+    private static final String MSG_NOT_EMPTY = "Поле не может быть пустым";
+
+    private static final String MSG_WRONG_LENGTH = "Название заболевания должно содержать от 9 до 50 символов";
+
+    @Override
+    public boolean isValid(IllnessDTO dto, ConstraintValidatorContext context) {
+        boolean isValid = true;
+        if (dto.getIllnessTitle() == null || dto.getIllnessTitle().isEmpty()) {
+            context.disableDefaultConstraintViolation();
+            context
+                    .buildConstraintViolationWithTemplate(MSG_NOT_EMPTY)
+                    .addPropertyNode("illnessTitle")
+                    .addConstraintViolation();
+            isValid = false;
+        } else if (dto.getIllnessTitle().length() < 9 || dto.getIllnessTitle().length() > 50) {
+            context.disableDefaultConstraintViolation();
+            context
+                    .buildConstraintViolationWithTemplate(MSG_WRONG_LENGTH)
+                    .addPropertyNode("illnessTitle")
+                    .addConstraintViolation();
+            isValid = false;
+        }
+        return isValid;
+    }
+
+}

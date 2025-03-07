@@ -2,9 +2,13 @@ package ru.darin.nutrition_recommendation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.darin.nutrition_recommendation.dto.IllnessDTO;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.mapper.IllnessMapper;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
+import ru.darin.nutrition_recommendation.model.Illness;
 import ru.darin.nutrition_recommendation.model.Person;
+import ru.darin.nutrition_recommendation.repository.IllnessRepository;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
@@ -18,7 +22,11 @@ public class NutritionService {
 
     private final PersonRepository personRepository;
 
+    private final IllnessRepository illnessRepository;
+
     private final PersonMapper personMapper;
+
+    private final IllnessMapper illnessMapper;
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
@@ -35,6 +43,16 @@ public class NutritionService {
     public PersonDTO getPersonById(UUID uuid) {
         return personMapper.toPersonDto(personRepository.findById(uuid)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG)));
+    }
+
+    public IllnessDTO addIllness(IllnessDTO illnessDTO) {
+        Illness illness = illnessMapper.toIllness(illnessDTO);
+        illnessRepository.save(illness);
+        return illnessMapper.toIllnessDTO(illness);
+    }
+
+    public List<IllnessDTO> getAllIllnesses() {
+        return illnessRepository.findAll().stream().map(illnessMapper::toIllnessDTO).toList();
     }
 
 }

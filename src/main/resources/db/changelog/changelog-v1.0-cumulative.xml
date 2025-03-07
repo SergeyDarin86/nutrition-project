@@ -7,4 +7,5 @@
 
     <include file="initial_person.xml" relativeToChangelogFile="true"/>
     <include file="change_fullName_min_length.xml" relativeToChangelogFile="true"/>
+    <include file="initial_illness.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

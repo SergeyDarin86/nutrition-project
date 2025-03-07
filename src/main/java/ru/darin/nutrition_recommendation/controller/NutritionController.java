@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.darin.nutrition_recommendation.dto.IllnessDTO;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
 import ru.darin.nutrition_recommendation.resource.NutritionResource;
 import ru.darin.nutrition_recommendation.service.NutritionService;
@@ -32,6 +33,17 @@ public class NutritionController implements NutritionResource {
     @GetMapping("getById/{id}")
     public ResponseEntity getPersonById(@PathVariable("id") UUID id) {
         return ResponseEntity.ofNullable(nutritionService.getPersonById(id));
+    }
+
+    @GetMapping("/getAllIllnesses")
+    public ResponseEntity getAllIllnesses() {
+        return ResponseEntity.ok(nutritionService.getAllIllnesses());
+    }
+
+    @PostMapping("/addIllness")
+    public ResponseEntity addIllness(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ok(nutritionService.addIllness(illnessDTO));
     }
 
 }

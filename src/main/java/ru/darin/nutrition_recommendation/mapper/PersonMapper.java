@@ -11,9 +11,10 @@ import ru.darin.nutrition_recommendation.model.Person;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface PersonMapper {
 
-    @Mapping(source = "fullName",target = "fullName")
+    @Mapping(source = "fullName", target = "fullName")
     Person toPerson(PersonDTO dto);
 
+    @Mapping(source = "fullName", target = "fullName")
     PersonDTO toPersonDto(Person person);
 
 }
