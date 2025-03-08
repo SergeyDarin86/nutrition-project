@@ -30,6 +30,8 @@ public class NutritionService {
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
+    private final String ILLNESS_NOT_FOUND_MSG = "Такого заболевания не найдено";
+
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
     }
@@ -60,7 +62,7 @@ public class NutritionService {
     public Illness getIllnessFromRepoByTitle(PersonDTO personDTO){
         return illnessRepository
                 .findByIllnessTitle(personDTO.getIllnesses().stream().findFirst().get().getIllnessTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound("нет такого заболевания"));
+                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_NOT_FOUND_MSG));
     }
     @Transactional
     public PersonDTO addIllnessToPerson(UUID id, PersonDTO personDTO) {
