@@ -11,6 +11,7 @@ import ru.darin.nutrition_recommendation.model.Illness;
 import ru.darin.nutrition_recommendation.model.Person;
 import ru.darin.nutrition_recommendation.repository.IllnessRepository;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
+import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.*;
@@ -30,7 +31,11 @@ public class NutritionService {
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
-    private final String ILLNESS_NOT_FOUND_MSG = "Такого заболевания не найдено";
+    private final String ILLNESS_WITH_TITLE_NOT_FOUND_MSG = "Заболевания с таким названием не найдено";
+
+    private final String ILLNESS_WITH_ID_NOT_FOUND_MSG = "Заболевания с таким идентификационным номером не найдено";
+
+    private final String ILLNESS_IS_ALREADY_EXIST_MSG = "Такое заболевание уже есть в БД";
 
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
@@ -59,11 +64,12 @@ public class NutritionService {
         return personMapper.toPersonDto(updatedPerson);
     }
 
-    public Illness getIllnessFromRepoByTitle(PersonDTO personDTO){
+    public Illness getIllnessFromRepoByTitle(PersonDTO personDTO) {
         return illnessRepository
                 .findByIllnessTitle(personDTO.getIllnesses().stream().findFirst().get().getIllnessTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_NOT_FOUND_MSG));
+                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
     }
+
     @Transactional
     public PersonDTO addIllnessToPerson(UUID id, PersonDTO personDTO) {
         Person person = personRepository.findById(id)
@@ -91,9 +97,28 @@ public class NutritionService {
     }
 
     public IllnessDTO addIllness(IllnessDTO illnessDTO) {
+        throwExceptionIfIllnessAlreadyExist(illnessDTO);
         Illness illness = illnessMapper.toIllness(illnessDTO);
         illnessRepository.save(illness);
         return illnessMapper.toIllnessDTO(illness);
+    }
+
+    @Transactional
+    public IllnessDTO updateIllnessById(UUID id, IllnessDTO illnessDTO) {
+        illnessRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
+        throwExceptionIfIllnessAlreadyExist(illnessDTO);
+
+        Illness updatedIllness = illnessMapper.toIllness(illnessDTO);
+        updatedIllness.setIllness_id(id);
+
+        illnessRepository.save(updatedIllness);
+        return illnessMapper.toIllnessDTO(updatedIllness);
+    }
+
+    public void throwExceptionIfIllnessAlreadyExist(IllnessDTO illnessDTO) {
+        if (illnessRepository.findByIllnessTitle(illnessDTO.getIllnessTitle()).isPresent()) {
+            throw new NutritionException(ILLNESS_IS_ALREADY_EXIST_MSG);
+        }
     }
 
     public List<IllnessDTO> getAllIllnesses() {

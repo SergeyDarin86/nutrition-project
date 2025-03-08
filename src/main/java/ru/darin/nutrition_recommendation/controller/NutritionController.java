@@ -37,16 +37,16 @@ public class NutritionController implements NutritionResource {
 
     @PatchMapping("addIllnessToPerson/{id}")
     public ResponseEntity addIllnessToPersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult,
-                                           @PathVariable("id") UUID id) {
+                                                 @PathVariable("id") UUID id) {
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
-        return ResponseEntity.ofNullable(nutritionService.addIllnessToPerson(id,personDTO));
+        return ResponseEntity.ofNullable(nutritionService.addIllnessToPerson(id, personDTO));
     }
 
     @PatchMapping("updatePersonById/{id}")
     public ResponseEntity updatePersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult,
-                                                 @PathVariable("id") UUID id) {
+                                           @PathVariable("id") UUID id) {
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
-        return ResponseEntity.ofNullable(nutritionService.updatePersonById(id,personDTO));
+        return ResponseEntity.ofNullable(nutritionService.updatePersonById(id, personDTO));
     }
 
     @GetMapping("/getAllIllnesses")
@@ -58,6 +58,13 @@ public class NutritionController implements NutritionResource {
     public ResponseEntity addIllness(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult) {
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         return ResponseEntity.ok(nutritionService.addIllness(illnessDTO));
+    }
+
+    @PatchMapping("/updateIllnessById/{id}")
+    public ResponseEntity updateIllnessById(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult,
+                                           @PathVariable("id") UUID id) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ofNullable(nutritionService.updateIllnessById(id, illnessDTO));
     }
 
 }
