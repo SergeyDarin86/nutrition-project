@@ -49,6 +49,12 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ofNullable(nutritionService.updatePersonById(id, personDTO));
     }
 
+    @DeleteMapping("/deletePersonById/{id}")
+    public ResponseEntity deletePersonById(@PathVariable("id") UUID id){
+        nutritionService.deletePersonById(id);
+        return ResponseEntity.ok().body("Пользователь удален успешно");
+    }
+
     @GetMapping("/getAllIllnesses")
     public ResponseEntity getAllIllnesses() {
         return ResponseEntity.ok(nutritionService.getAllIllnesses());
@@ -65,6 +71,12 @@ public class NutritionController implements NutritionResource {
                                            @PathVariable("id") UUID id) {
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         return ResponseEntity.ofNullable(nutritionService.updateIllnessById(id, illnessDTO));
+    }
+
+    @DeleteMapping("/deleteIllnessById/{id}")
+    public ResponseEntity deleteIllnessById(@PathVariable("id") UUID id){
+        nutritionService.deleteIllnessById(id);
+        return ResponseEntity.ok().body("Заболевание удалено из списка успешно");
     }
 
 }

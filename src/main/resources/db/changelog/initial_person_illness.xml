@@ -13,10 +13,14 @@
         <createTable tableName="person_illness">
 
             <column name="person_id" type="uuid">
-                <constraints nullable="false" />
+                <constraints nullable="false"
+                             foreignKeyName="person_id"
+                             references="person(person_id)" />
             </column>
             <column name="illness_id" type="uuid">
-                <constraints nullable="false" />
+                <constraints nullable="false"
+                             foreignKeyName="illness_id"
+                             references="illness(illness_id)"/>
             </column>
         </createTable>
         <addUniqueConstraint

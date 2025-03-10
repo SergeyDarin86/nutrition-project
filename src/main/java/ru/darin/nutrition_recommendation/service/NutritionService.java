@@ -64,6 +64,12 @@ public class NutritionService {
         return personMapper.toPersonDto(updatedPerson);
     }
 
+    public void deletePersonById(UUID id){
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
+        personRepository.delete(person);
+    }
+
     public Illness getIllnessFromRepoByTitle(PersonDTO personDTO) {
         return illnessRepository
                 .findByIllnessTitle(personDTO.getIllnesses().stream().findFirst().get().getIllnessTitle())
@@ -112,6 +118,14 @@ public class NutritionService {
 
         illnessRepository.save(updatedIllness);
         return illnessMapper.toIllnessDTO(updatedIllness);
+    }
+
+    //не удаляет данные по заболеванию, если в связанной таблице "person_illness" есть записи
+    public void deleteIllnessById(UUID id){
+        Illness illness = illnessRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
+
+        illnessRepository.delete(illness);
     }
 
     public void throwExceptionIfIllnessAlreadyExist(IllnessDTO illnessDTO) {

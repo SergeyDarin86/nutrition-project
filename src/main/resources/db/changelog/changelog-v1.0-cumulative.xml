@@ -9,4 +9,6 @@
     <include file="change_fullName_min_length.xml" relativeToChangelogFile="true"/>
     <include file="initial_illness.xml" relativeToChangelogFile="true"/>
     <include file="initial_person_illness.xml" relativeToChangelogFile="true"/>
+<!--    <include file="initial_product_type.xml" relativeToChangelogFile="true"/>-->
+<!--    <include file="initial_product.xml" relativeToChangelogFile="true"/>-->
 </databaseChangeLog>
