@@ -83,8 +83,7 @@ public class NutritionService {
                 .stream().filter(s -> s.getIllnessTitle().equals(illness.getIllnessTitle())).findFirst();
 
         if (optional.isEmpty()) {
-            List<Illness> illnessList = new ArrayList<>();
-            illnessList.addAll(person.getIllnesses());
+            List<Illness> illnessList = new ArrayList<>(person.getIllnesses());
             illnessList.add(illness);
             updatedPerson.setIllnesses(illnessList);
         } else {
