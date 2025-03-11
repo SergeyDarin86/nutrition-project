@@ -17,6 +17,9 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFou
 import java.util.*;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
+// - описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
+// - какая ошибка (метод не возвращает результата), если убрать @Modifying над запросом
+// - Вам нужно добавить @Modifying, чтобы указать, что это запрос на обновление и вы не ожидаете получить результат от базы данных
 @Service
 @RequiredArgsConstructor
 public class NutritionService {
@@ -64,7 +67,7 @@ public class NutritionService {
         return personMapper.toPersonDto(updatedPerson);
     }
 
-    public void deletePersonById(UUID id){
+    public void deletePersonById(UUID id) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
         personRepository.delete(person);
@@ -120,12 +123,12 @@ public class NutritionService {
         return illnessMapper.toIllnessDTO(updatedIllness);
     }
 
-    //не удаляет данные по заболеванию, если в связанной таблице "person_illness" есть записи
-    public void deleteIllnessById(UUID id){
-        Illness illness = illnessRepository.findById(id)
+    @Transactional
+    public void deleteIllnessById(UUID id) {
+        illnessRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
 
-        illnessRepository.delete(illness);
+        illnessRepository.deleteFromPersonIllnessTableAndIllnessTableByIllnessId(id);
     }
 
     public void throwExceptionIfIllnessAlreadyExist(IllnessDTO illnessDTO) {

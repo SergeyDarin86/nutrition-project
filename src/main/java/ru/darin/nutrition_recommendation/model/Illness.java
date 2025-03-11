@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -20,10 +21,14 @@ public class Illness {
     @Column(name = "illness_title")
     private String illnessTitle;
 
+    @ManyToMany(mappedBy = "illnesses")
+    private List<Person> people;
+
     @Override
     public String toString() {
         return "Illness{" +
                 "illnessTitle='" + illnessTitle + '\'' +
                 '}';
     }
+
 }

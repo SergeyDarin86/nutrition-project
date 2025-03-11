@@ -8,6 +8,9 @@ spring:
     username: postgres
     password: 16s11w86d
 
+  jpa:
+    show-sql: true
+
   liquibase:
     enabled: true
     drop-first: ${DROP_FIRST:false}
