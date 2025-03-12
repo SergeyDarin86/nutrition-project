@@ -33,6 +33,8 @@ public class NutritionService {
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
+    private final String PERSON_DOES_NOT_HAVE_THIS_ILLNESS_MSG = "У человека нет такого заболевания";
+
     private final String ILLNESS_WITH_TITLE_NOT_FOUND_MSG = "Заболевания с таким названием не найдено";
 
     private final String ILLNESS_WITH_ID_NOT_FOUND_MSG = "Заболевания с таким идентификационным номером не найдено";
@@ -80,8 +82,7 @@ public class NutritionService {
 
     @Transactional
     public PersonDTO addIllnessToPerson(UUID id, PersonDTO personDTO) {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
+        Person person = findPersonByIdFromRepo(id);
 
         Person updatedPerson = personMapper.toPerson(personDTO);
         updatedPerson.setPersonId(id);
@@ -99,6 +100,33 @@ public class NutritionService {
         }
 
         personRepository.saveAndFlush(updatedPerson);
+
+        return personMapper.toPersonDto(updatedPerson);
+    }
+
+    public Person findPersonByIdFromRepo(UUID id){
+        return personRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
+    }
+
+    @Transactional
+    public PersonDTO curePerson(UUID id, PersonDTO personDTO) {
+        Person person = findPersonByIdFromRepo(id);
+
+        Person updatedPerson = personMapper.toPerson(personDTO);
+        updatedPerson.setPersonId(id);
+
+        Illness illness = getIllnessFromRepoByTitle(personDTO);
+        Optional<Illness> optional = person.getIllnesses()
+                .stream().filter(s -> s.getIllnessTitle().equals(illness.getIllnessTitle())).findFirst();
+
+        if (optional.isEmpty()) {
+            throw new NutritionExceptionNotFound(PERSON_DOES_NOT_HAVE_THIS_ILLNESS_MSG);
+        } else {
+            person.getIllnesses().remove(illness);
+            updatedPerson.setIllnesses(person.getIllnesses());
+            personRepository.saveAndFlush(updatedPerson);
+        }
 
         return personMapper.toPersonDto(updatedPerson);
     }
