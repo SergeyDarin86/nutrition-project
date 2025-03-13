@@ -7,6 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.darin.nutrition_recommendation.dto.IllnessDTO;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.dto.ProductDTO;
+import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
 import ru.darin.nutrition_recommendation.resource.NutritionResource;
 import ru.darin.nutrition_recommendation.service.NutritionService;
 import ru.darin.nutrition_recommendation.util.exception.ExceptionBuilder;
@@ -84,6 +86,16 @@ public class NutritionController implements NutritionResource {
     public ResponseEntity deleteIllnessById(@PathVariable("id") UUID id){
         nutritionService.deleteIllnessById(id);
         return ResponseEntity.ok().body("Заболевание удалено из списка успешно");
+    }
+
+    @PostMapping("/addProductType")
+    public ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO){
+        return ResponseEntity.ok(nutritionService.addProductType(productTypeDTO));
+    }
+
+    @PostMapping("/addProduct")
+    public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO){
+        return ResponseEntity.ok(nutritionService.addProduct(productDTO));
     }
 
 }

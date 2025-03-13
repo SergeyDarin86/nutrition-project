@@ -5,12 +5,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darin.nutrition_recommendation.dto.IllnessDTO;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.dto.ProductDTO;
+import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
 import ru.darin.nutrition_recommendation.mapper.IllnessMapper;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
+import ru.darin.nutrition_recommendation.mapper.ProductMapper;
+import ru.darin.nutrition_recommendation.mapper.ProductTypeMapper;
 import ru.darin.nutrition_recommendation.model.Illness;
 import ru.darin.nutrition_recommendation.model.Person;
+import ru.darin.nutrition_recommendation.model.Product;
+import ru.darin.nutrition_recommendation.model.ProductType;
 import ru.darin.nutrition_recommendation.repository.IllnessRepository;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
+import ru.darin.nutrition_recommendation.repository.ProductRepository;
+import ru.darin.nutrition_recommendation.repository.ProductTypeRepository;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
@@ -27,9 +35,17 @@ public class NutritionService {
 
     private final IllnessRepository illnessRepository;
 
+    private final ProductTypeRepository productTypeRepository;
+
+    private final ProductRepository productRepository;
+
     private final PersonMapper personMapper;
 
     private final IllnessMapper illnessMapper;
+
+    private final ProductTypeMapper productTypeMapper;
+
+    private final ProductMapper productMapper;
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
@@ -166,6 +182,21 @@ public class NutritionService {
 
     public List<IllnessDTO> getAllIllnesses() {
         return illnessRepository.findAll().stream().map(illnessMapper::toIllnessDTO).toList();
+    }
+
+    public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO){
+        ProductType productType = productTypeMapper.toProductType(productTypeDTO);
+        productTypeRepository.save(productType);
+        return productTypeMapper.toProductTypeDTO(productType);
+    }
+
+    public ProductDTO addProduct(ProductDTO productDTO){
+        Product product = productMapper.toProduct(productDTO);
+        ProductType productType = productTypeRepository.findByProductType(productDTO.getProductTypeDTO().getProductType())
+                .orElseThrow(() -> new NutritionExceptionNotFound("Не найден такой тип продуктов питания"));
+        product.setProductType(productType);
+        productRepository.save(product);
+        return productMapper.toProductDTO(product);
     }
 
 }
