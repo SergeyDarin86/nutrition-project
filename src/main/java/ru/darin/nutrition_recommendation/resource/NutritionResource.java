@@ -22,10 +22,16 @@ public interface NutritionResource {
 
     ResponseEntity addIllnessToPersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult, @PathVariable("id") UUID id);
 
+    ResponseEntity curePersonById(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult, @PathVariable("id") UUID id);
+
+    ResponseEntity deletePersonById(@PathVariable("id") UUID id);
+
     ResponseEntity getAllIllnesses();
 
     ResponseEntity addIllness(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult);
 
     ResponseEntity updateIllnessById(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult, @PathVariable("id") UUID id);
+
+    ResponseEntity deleteIllnessById(@PathVariable("id") UUID id);
 
 }
