@@ -57,6 +57,8 @@ public class NutritionService {
 
     private final String ILLNESS_IS_ALREADY_EXIST_MSG = "Такое заболевание уже есть в БД";
 
+    private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
+
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
     }
@@ -114,9 +116,7 @@ public class NutritionService {
         } else {
             updatedPerson.setIllnesses(person.getIllnesses());
         }
-
         personRepository.saveAndFlush(updatedPerson);
-
         return personMapper.toPersonDto(updatedPerson);
     }
 
@@ -143,7 +143,6 @@ public class NutritionService {
             updatedPerson.setIllnesses(person.getIllnesses());
             personRepository.saveAndFlush(updatedPerson);
         }
-
         return personMapper.toPersonDto(updatedPerson);
     }
 
@@ -193,7 +192,7 @@ public class NutritionService {
     public ProductDTO addProduct(ProductDTO productDTO){
         Product product = productMapper.toProduct(productDTO);
         ProductType productType = productTypeRepository.findByProductType(productDTO.getProductTypeDTO().getProductType())
-                .orElseThrow(() -> new NutritionExceptionNotFound("Не найден такой тип продуктов питания"));
+                .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_NOT_FOUND_MSG));
         product.setProductType(productType);
         productRepository.save(product);
         return productMapper.toProductDTO(product);

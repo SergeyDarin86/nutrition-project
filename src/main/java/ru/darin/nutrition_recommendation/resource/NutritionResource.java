@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.darin.nutrition_recommendation.dto.IllnessDTO;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.dto.ProductDTO;
+import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
 
 import java.util.UUID;
 
@@ -33,5 +35,9 @@ public interface NutritionResource {
     ResponseEntity updateIllnessById(@RequestBody @Valid IllnessDTO illnessDTO, BindingResult bindingResult, @PathVariable("id") UUID id);
 
     ResponseEntity deleteIllnessById(@PathVariable("id") UUID id);
+
+    ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO);
+
+    ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO);
 
 }
