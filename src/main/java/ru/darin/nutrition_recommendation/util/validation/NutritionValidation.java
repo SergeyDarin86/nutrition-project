@@ -9,7 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ValidatorForPersonDTO.class, ValidatorForIllnessDTO.class})
+@Constraint(validatedBy = {
+        ValidatorForPersonDTO.class,
+        ValidatorForIllnessDTO.class,
+        ValidatorForProductDTO.class,
+        ValidatorForProductTypeDTO.class
+})
 @Target({ElementType.TYPE})
 public @interface NutritionValidation{
 

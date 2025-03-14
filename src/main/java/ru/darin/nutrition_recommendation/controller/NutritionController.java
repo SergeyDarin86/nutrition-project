@@ -89,12 +89,14 @@ public class NutritionController implements NutritionResource {
     }
 
     @PostMapping("/addProductType")
-    public ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO){
+    public ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult){
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         return ResponseEntity.ok(nutritionService.addProductType(productTypeDTO));
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO){
+    public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult){
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         return ResponseEntity.ok(nutritionService.addProduct(productDTO));
     }
 

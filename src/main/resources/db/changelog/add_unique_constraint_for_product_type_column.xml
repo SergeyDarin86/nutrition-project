@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet author="Sergey D" id="add-unique-constraint-for-product-type-column-in-product-type-table">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="product_type"/>
+                <columnExists tableName="product_type" columnName="product_type"/>
+            </and>
+        </preConditions>
+        <addUniqueConstraint constraintName="unique_product_type" tableName="product_type" columnNames="product_type">
+        </addUniqueConstraint>
+    </changeSet>
+</databaseChangeLog>

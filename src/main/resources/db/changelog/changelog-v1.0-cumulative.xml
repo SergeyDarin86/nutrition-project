@@ -14,4 +14,5 @@
     <include file="add_unique_constraint_for_product_column.xml" relativeToChangelogFile="true"/>
     <include file="change_product_min_length.xml" relativeToChangelogFile="true"/>
     <include file="change_product_type_min_length.xml" relativeToChangelogFile="true"/>
+    <include file="add_unique_constraint_for_product_type_column.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

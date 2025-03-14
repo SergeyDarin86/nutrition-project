@@ -36,8 +36,8 @@ public interface NutritionResource {
 
     ResponseEntity deleteIllnessById(@PathVariable("id") UUID id);
 
-    ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO);
+    ResponseEntity addProductType(@RequestBody @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult);
 
-    ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO);
+    ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult);
 
 }

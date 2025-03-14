@@ -57,6 +57,10 @@ public class NutritionService {
 
     private final String ILLNESS_IS_ALREADY_EXIST_MSG = "Такое заболевание уже есть в БД";
 
+    private final String PRODUCT_IS_ALREADY_EXIST_MSG = "Такой продукт уже есть в БД";
+
+    private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукт уже есть в БД";
+
     private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
 
     public List<PersonDTO> getAllPeople() {
@@ -184,18 +188,32 @@ public class NutritionService {
     }
 
     public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO){
+        throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
         ProductType productType = productTypeMapper.toProductType(productTypeDTO);
         productTypeRepository.save(productType);
         return productTypeMapper.toProductTypeDTO(productType);
     }
 
+    public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
+        if (productTypeRepository.findByProductType(productTypeDTO.getProductType()).isPresent()) {
+            throw new NutritionException(PRODUCT_TYPE_IS_ALREADY_EXIST_MSG);
+        }
+    }
+
     public ProductDTO addProduct(ProductDTO productDTO){
+        throwExceptionIfProductAlreadyExist(productDTO);
         Product product = productMapper.toProduct(productDTO);
         ProductType productType = productTypeRepository.findByProductType(productDTO.getProductTypeDTO().getProductType())
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_NOT_FOUND_MSG));
         product.setProductType(productType);
         productRepository.save(product);
         return productMapper.toProductDTO(product);
+    }
+
+    public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {
+        if (productRepository.findByProduct(productDTO.getProduct()).isPresent()) {
+            throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);
+        }
     }
 
 }
