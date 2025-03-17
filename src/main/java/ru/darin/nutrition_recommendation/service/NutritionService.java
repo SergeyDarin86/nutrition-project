@@ -25,7 +25,8 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFou
 import java.util.*;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
-// - описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
+// + описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
+// - возможно вынести сообщения об ошибках и валидацию в валидаторы. Но тогда прийдется инжектить репо в двух местах ...
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,8 @@ public class NutritionService {
     private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукт уже есть в БД";
 
     private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
+
+    private final String PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип продуктов питания с таким идентификационным номером не найден";
 
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
@@ -124,7 +127,7 @@ public class NutritionService {
         return personMapper.toPersonDto(updatedPerson);
     }
 
-    public Person findPersonByIdFromRepo(UUID id){
+    public Person findPersonByIdFromRepo(UUID id) {
         return personRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
     }
@@ -187,11 +190,16 @@ public class NutritionService {
         return illnessRepository.findAll().stream().map(illnessMapper::toIllnessDTO).toList();
     }
 
-    public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO){
+    public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO) {
         throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
         ProductType productType = productTypeMapper.toProductType(productTypeDTO);
         productTypeRepository.save(productType);
         return productTypeMapper.toProductTypeDTO(productType);
+    }
+
+    public void deleteProductTypeById(UUID id) {
+        productTypeRepository.delete(productTypeRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG)));
     }
 
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
@@ -200,7 +208,7 @@ public class NutritionService {
         }
     }
 
-    public ProductDTO addProduct(ProductDTO productDTO){
+    public ProductDTO addProduct(ProductDTO productDTO) {
         throwExceptionIfProductAlreadyExist(productDTO);
         Product product = productMapper.toProduct(productDTO);
         ProductType productType = productTypeRepository.findByProductType(productDTO.getProductTypeDTO().getProductType())

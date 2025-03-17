@@ -26,7 +26,8 @@ public class ProductType {
     @Cascade(value = {
             org.hibernate.annotations.CascadeType.PERSIST,
             org.hibernate.annotations.CascadeType.MERGE,
-            org.hibernate.annotations.CascadeType.REFRESH})
+            org.hibernate.annotations.CascadeType.REFRESH,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<Product>products;
 
 }

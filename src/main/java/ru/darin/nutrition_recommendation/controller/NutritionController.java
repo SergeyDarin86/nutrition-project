@@ -94,6 +94,12 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ok(nutritionService.addProductType(productTypeDTO));
     }
 
+    @DeleteMapping("/deleteProductTypeById/{id}")
+    public ResponseEntity deleteProductTypeById(@PathVariable("id") UUID id){
+        nutritionService.deleteProductTypeById(id);
+        return ResponseEntity.ok().body("Тип продукта удален из списка успешно");
+    }
+
     @PostMapping("/addProduct")
     public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
