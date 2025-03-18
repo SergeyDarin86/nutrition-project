@@ -66,6 +66,8 @@ public class NutritionService {
 
     private final String PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип продуктов питания с таким идентификационным номером не найден";
 
+    private final String PRODUCT_WITH_ID_NOT_FOUND_MSG = "Продукт питания с таким идентификационным номером не найден";
+
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
     }
@@ -218,6 +220,10 @@ public class NutritionService {
         return productMapper.toProductDTO(product);
     }
 
+    public void deleteProductById(UUID id) {
+        productRepository.delete(productRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
+    }
     public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {
         if (productRepository.findByProduct(productDTO.getProduct()).isPresent()) {
             throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);

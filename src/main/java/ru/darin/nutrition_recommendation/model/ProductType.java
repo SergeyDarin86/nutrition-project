@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,10 +25,10 @@ public class ProductType {
 
     @OneToMany(mappedBy = "productType")
     @Cascade(value = {
-            org.hibernate.annotations.CascadeType.PERSIST,
-            org.hibernate.annotations.CascadeType.MERGE,
-            org.hibernate.annotations.CascadeType.REFRESH,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DELETE_ORPHAN})
     private List<Product>products;
 
 }

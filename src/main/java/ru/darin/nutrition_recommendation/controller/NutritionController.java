@@ -106,4 +106,10 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ok(nutritionService.addProduct(productDTO));
     }
 
+    @DeleteMapping("/deleteProductById/{id}")
+    public ResponseEntity deleteProductById(@PathVariable("id") UUID id){
+        nutritionService.deleteProductById(id);
+        return ResponseEntity.ok().body("Продукт удален из списка успешно");
+    }
+
 }
