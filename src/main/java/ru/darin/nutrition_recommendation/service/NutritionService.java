@@ -204,6 +204,18 @@ public class NutritionService {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG)));
     }
 
+    @Transactional
+    public ProductTypeDTO updateProductTypeById(UUID id, ProductTypeDTO productTypeDTO) {
+        productTypeRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG));
+        throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
+
+        ProductType updatedProductType = productTypeMapper.toProductType(productTypeDTO);
+        updatedProductType.setProductTypeId(id);
+
+        productTypeRepository.saveAndFlush(updatedProductType);
+        return productTypeMapper.toProductTypeDTO(updatedProductType);
+    }
+
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
         if (productTypeRepository.findByProductType(productTypeDTO.getProductType()).isPresent()) {
             throw new NutritionException(PRODUCT_TYPE_IS_ALREADY_EXIST_MSG);
@@ -224,6 +236,15 @@ public class NutritionService {
         productRepository.delete(productRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
+
+    @Transactional
+    public ProductDTO updateProductById(UUID id, ProductDTO productDTO) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
+        throwExceptionIfProductAlreadyExist(productDTO);
+        product.setProduct(productDTO.getProduct());
+        return productMapper.toProductDTO(product);
+    }
+
     public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {
         if (productRepository.findByProduct(productDTO.getProduct()).isPresent()) {
             throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);

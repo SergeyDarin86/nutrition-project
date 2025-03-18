@@ -100,6 +100,13 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ok().body("Тип продукта удален из списка успешно");
     }
 
+    @PatchMapping("/updateProductTypeById/{id}")
+    public ResponseEntity updateProductTypeById(@RequestBody @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult,
+                                            @PathVariable("id") UUID id) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ofNullable(nutritionService.updateProductTypeById(id, productTypeDTO));
+    }
+
     @PostMapping("/addProduct")
     public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
@@ -110,6 +117,13 @@ public class NutritionController implements NutritionResource {
     public ResponseEntity deleteProductById(@PathVariable("id") UUID id){
         nutritionService.deleteProductById(id);
         return ResponseEntity.ok().body("Продукт удален из списка успешно");
+    }
+
+    @PatchMapping("/updateProductById/{id}")
+    public ResponseEntity updateProductById(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult,
+                                                @PathVariable("id") UUID id) {
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        return ResponseEntity.ofNullable(nutritionService.updateProductById(id, productDTO));
     }
 
 }

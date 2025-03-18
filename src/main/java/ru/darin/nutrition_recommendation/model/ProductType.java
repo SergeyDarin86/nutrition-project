@@ -27,8 +27,8 @@ public class ProductType {
     @Cascade(value = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.DELETE_ORPHAN})
+            CascadeType.REMOVE,
+            CascadeType.REFRESH})
     private List<Product>products;
 
 }

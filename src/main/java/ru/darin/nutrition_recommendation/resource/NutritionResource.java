@@ -44,4 +44,10 @@ public interface NutritionResource {
 
     ResponseEntity deleteProductById(@PathVariable("id") UUID id);
 
+    ResponseEntity updateProductTypeById(@RequestBody @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult,
+                                         @PathVariable("id") UUID id);
+
+    ResponseEntity updateProductById(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult,
+                                     @PathVariable("id") UUID id);
+
 }
