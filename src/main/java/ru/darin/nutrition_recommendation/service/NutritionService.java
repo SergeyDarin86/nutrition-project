@@ -23,6 +23,7 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
 // + описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
@@ -206,14 +207,14 @@ public class NutritionService {
 
     @Transactional
     public ProductTypeDTO updateProductTypeById(UUID id, ProductTypeDTO productTypeDTO) {
-        productTypeRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG));
+        ProductType productType = productTypeRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG));
         throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
+        productType.setProductType(productTypeDTO.getProductType());
+        return productTypeMapper.toProductTypeDTO(productType);
+    }
 
-        ProductType updatedProductType = productTypeMapper.toProductType(productTypeDTO);
-        updatedProductType.setProductTypeId(id);
-
-        productTypeRepository.saveAndFlush(updatedProductType);
-        return productTypeMapper.toProductTypeDTO(updatedProductType);
+    public List<ProductTypeDTO>getAllProductTypes(){
+        return productTypeRepository.findAll().stream().map(productTypeMapper::toProductTypeDTO).toList();
     }
 
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
@@ -243,6 +244,10 @@ public class NutritionService {
         throwExceptionIfProductAlreadyExist(productDTO);
         product.setProduct(productDTO.getProduct());
         return productMapper.toProductDTO(product);
+    }
+
+    public List<ProductDTO>getAllProducts(){
+        return productRepository.findAll().stream().map(productMapper::toProductDTO).toList();
     }
 
     public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {

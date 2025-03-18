@@ -107,6 +107,11 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ofNullable(nutritionService.updateProductTypeById(id, productTypeDTO));
     }
 
+    @GetMapping("/getAllProductTypes")
+    public ResponseEntity getAllProductTypes(){
+        return ResponseEntity.ok(nutritionService.getAllProductTypes());
+    }
+
     @PostMapping("/addProduct")
     public ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
@@ -124,6 +129,11 @@ public class NutritionController implements NutritionResource {
                                                 @PathVariable("id") UUID id) {
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         return ResponseEntity.ofNullable(nutritionService.updateProductById(id, productDTO));
+    }
+
+    @GetMapping("/getAllProducts")
+    public ResponseEntity getAllProducts(){
+        return ResponseEntity.ok(nutritionService.getAllProducts());
     }
 
 }

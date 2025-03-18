@@ -40,6 +40,8 @@ public interface NutritionResource {
 
     ResponseEntity deleteProductTypeById(@PathVariable("id") UUID id);
 
+    ResponseEntity getAllProductTypes();
+
     ResponseEntity addProduct(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult);
 
     ResponseEntity deleteProductById(@PathVariable("id") UUID id);
@@ -49,5 +51,7 @@ public interface NutritionResource {
 
     ResponseEntity updateProductById(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult,
                                      @PathVariable("id") UUID id);
+
+    ResponseEntity getAllProducts();
 
 }
