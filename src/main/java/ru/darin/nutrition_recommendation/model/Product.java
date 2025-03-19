@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -23,5 +24,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
+
+    @OneToMany(mappedBy = "product")
+    private List<Mix>mixes;
 
 }

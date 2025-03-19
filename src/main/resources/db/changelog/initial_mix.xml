@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="createMixTable" author="Sergey D">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="mix"/>
+            </not>
+        </preConditions>
+        <sql>CREATE TYPE resolution_type AS ENUM ('РАЗРЕШЕНО','ЗАПРЕЩЕНО')</sql>
+        <createTable tableName="mix">
+            <column name="product_id" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="product_id"
+                             deleteCascade="true"
+                             references="product(product_id)"/>
+            </column>
+            <column name="illness_id" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="illness_id"
+                             deleteCascade="true"
+                             references="illness(illness_id)"/>
+            </column>
+            <column name="resolution" type="resolution_type">
+                <constraints nullable="false"
+                />
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                columnNames="product_id,illness_id"
+                constraintName="complex_key"
+                tableName="mix"
+        />
+    </changeSet>
+</databaseChangeLog>
