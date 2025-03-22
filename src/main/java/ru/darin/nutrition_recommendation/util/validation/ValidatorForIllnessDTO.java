@@ -8,7 +8,7 @@ public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionVali
 
     private static final String MSG_NOT_EMPTY = "Поле не может быть пустым";
 
-    private static final String MSG_WRONG_LENGTH = "Название заболевания должно содержать от 9 до 50 символов";
+    private static final String MSG_WRONG_LENGTH = "Название заболевания должно содержать от 3 до 50 символов";
 
     @Override
     public boolean isValid(IllnessDTO dto, ConstraintValidatorContext context) {
@@ -20,7 +20,7 @@ public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionVali
                     .addPropertyNode("illnessTitle")
                     .addConstraintViolation();
             isValid = false;
-        } else if (dto.getIllnessTitle().length() < 9 || dto.getIllnessTitle().length() > 50) {
+        } else if (dto.getIllnessTitle().length() < 3 || dto.getIllnessTitle().length() > 50) {
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_LENGTH)
