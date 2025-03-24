@@ -10,7 +10,6 @@
                 <tableExists tableName="mix"/>
             </not>
         </preConditions>
-        <sql>CREATE TYPE resolution_type AS ENUM ('РАЗРЕШЕНО','ЗАПРЕЩЕНО')</sql>
         <createTable tableName="mix">
             <column name="product_id" type="uuid">
                 <constraints nullable="false"
@@ -24,7 +23,7 @@
                              deleteCascade="true"
                              references="illness(illness_id)"/>
             </column>
-            <column name="resolution" type="resolution_type">
+            <column name="resolution" type="varchar(255)" value="('РАЗРЕШЕНО','ЗАПРЕЩЕНО')">
                 <constraints nullable="false"
                 />
             </column>

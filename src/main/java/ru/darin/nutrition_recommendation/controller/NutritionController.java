@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.darin.nutrition_recommendation.dto.IllnessDTO;
-import ru.darin.nutrition_recommendation.dto.PersonDTO;
-import ru.darin.nutrition_recommendation.dto.ProductDTO;
-import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
+import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.resource.NutritionResource;
 import ru.darin.nutrition_recommendation.service.NutritionService;
 import ru.darin.nutrition_recommendation.util.exception.ExceptionBuilder;
@@ -134,6 +131,20 @@ public class NutritionController implements NutritionResource {
     @GetMapping("/getAllProducts")
     public ResponseEntity getAllProducts(){
         return ResponseEntity.ok(nutritionService.getAllProducts());
+    }
+
+    @GetMapping("/getIllnessWithProducts")
+    public ResponseEntity getAllIllnessWithProductsGroupedByType(
+            @RequestParam(value = "illness") String illness,
+            @RequestParam(value = "resolution") String resolution){
+        return ResponseEntity.ok(nutritionService.getIllnessWithProductsGroupedByType(illness, resolution));
+    }
+
+    @PostMapping("/addMix")
+    public ResponseEntity addMix(@RequestBody @Valid MixDTO mixDTO, BindingResult bindingResult){
+        ExceptionBuilder.buildErrorMessageForClient(bindingResult);
+        nutritionService.addMix(mixDTO);
+        return ResponseEntity.ok().build();
     }
 
 }

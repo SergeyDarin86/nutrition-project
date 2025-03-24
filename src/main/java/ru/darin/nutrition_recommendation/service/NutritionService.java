@@ -3,31 +3,25 @@ package ru.darin.nutrition_recommendation.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.darin.nutrition_recommendation.dto.IllnessDTO;
-import ru.darin.nutrition_recommendation.dto.PersonDTO;
-import ru.darin.nutrition_recommendation.dto.ProductDTO;
-import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
-import ru.darin.nutrition_recommendation.mapper.IllnessMapper;
-import ru.darin.nutrition_recommendation.mapper.PersonMapper;
-import ru.darin.nutrition_recommendation.mapper.ProductMapper;
-import ru.darin.nutrition_recommendation.mapper.ProductTypeMapper;
-import ru.darin.nutrition_recommendation.model.Illness;
-import ru.darin.nutrition_recommendation.model.Person;
-import ru.darin.nutrition_recommendation.model.Product;
-import ru.darin.nutrition_recommendation.model.ProductType;
-import ru.darin.nutrition_recommendation.repository.IllnessRepository;
-import ru.darin.nutrition_recommendation.repository.PersonRepository;
-import ru.darin.nutrition_recommendation.repository.ProductRepository;
-import ru.darin.nutrition_recommendation.repository.ProductTypeRepository;
+import ru.darin.nutrition_recommendation.dto.*;
+import ru.darin.nutrition_recommendation.mapper.*;
+import ru.darin.nutrition_recommendation.model.*;
+import ru.darin.nutrition_recommendation.repository.*;
+import ru.darin.nutrition_recommendation.util.RecommendationResponse;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
 // + описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
 // - возможно вынести сообщения об ошибках и валидацию в валидаторы. Но тогда прийдется инжектить репо в двух местах ...
+// -
+// добавить проверку по названию с IGNORECASE (можно ввести один и тот же продукт в разных регистрах)
+// или ввести ограничение на ввод только с заглавных букв
+// -
+// Описать ошибку при сохранении Mix через сеттеры - не сохраняет в БД
+// сохранение идет через Конструктор
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +35,8 @@ public class NutritionService {
 
     private final ProductRepository productRepository;
 
+    private final MixRepository mixRepository;
+
     private final PersonMapper personMapper;
 
     private final IllnessMapper illnessMapper;
@@ -48,6 +44,8 @@ public class NutritionService {
     private final ProductTypeMapper productTypeMapper;
 
     private final ProductMapper productMapper;
+
+    private final MIxMapper mIxMapper;
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
@@ -213,7 +211,7 @@ public class NutritionService {
         return productTypeMapper.toProductTypeDTO(productType);
     }
 
-    public List<ProductTypeDTO>getAllProductTypes(){
+    public List<ProductTypeDTO> getAllProductTypes() {
         return productTypeRepository.findAll().stream().map(productTypeMapper::toProductTypeDTO).toList();
     }
 
@@ -246,7 +244,7 @@ public class NutritionService {
         return productMapper.toProductDTO(product);
     }
 
-    public List<ProductDTO>getAllProducts(){
+    public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream().map(productMapper::toProductDTO).toList();
     }
 
@@ -254,6 +252,48 @@ public class NutritionService {
         if (productRepository.findByProduct(productDTO.getProduct()).isPresent()) {
             throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);
         }
+    }
+
+    public RecommendationResponse getIllnessWithProductsGroupedByType(String illness, String resolution) {
+
+        RecommendationResponse response = new RecommendationResponse();
+        Map<String, List<String>> productsGroupedByType = new HashMap<>();
+
+        response.setIllness(illness);
+        response.setResolution(resolution);
+
+        List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
+
+        mixRepository.findAll().stream()
+                .filter(mix -> illness.equals(mix.getIllness().getIllnessTitle()) && mix.getResolution().toString().equals(resolution))
+                .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
+
+        for (Mix mix : mixRepository.findAll()) {
+            if (!(illness.equals(mix.getIllness().getIllnessTitle()) && mix.getResolution().toString().equals(resolution)))
+                continue;
+            for (Map.Entry<String, List<String>> listEntry : productsGroupedByType.entrySet()) {
+                if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
+                listEntry.getValue().add(mix.getProduct().getProduct());
+            }
+        }
+
+        productsForIllness.add(productsGroupedByType);
+        response.setProducts(productsForIllness);
+        return response;
+    }
+
+    public void addMix(MixDTO mixDTO) {
+        ProductIllness complexKey = new ProductIllness(
+                productRepository.findByProduct(mixDTO.getProduct()).get().getProduct_id(),
+                illnessRepository.findByIllnessTitle(mixDTO.getIllness()).get().getIllness_id());
+
+        Illness illness = illnessRepository.findByIllnessTitle(mixDTO.getIllness()).get();
+        Product product = productRepository.findByProduct(mixDTO.getProduct()).get();
+
+        Resolution resolution = mIxMapper.toResolution(mixDTO.getResolution());
+        Mix mix = new Mix(complexKey, product, illness, resolution);
+
+        mixRepository.save(mix);
     }
 
 }
