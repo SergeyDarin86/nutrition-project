@@ -67,6 +67,8 @@ public class NutritionService {
 
     private final String PRODUCT_WITH_ID_NOT_FOUND_MSG = "Продукт питания с таким идентификационным номером не найден";
 
+    private final String PRODUCT_WITH_TITLE_NOT_FOUND_MSG = "Продукт питания с таким названием не найден";
+
     public List<PersonDTO> getAllPeople() {
         return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
     }
@@ -282,13 +284,11 @@ public class NutritionService {
         return response;
     }
 
-    public void addMix(MixDTO mixDTO) {
-        ProductIllness complexKey = new ProductIllness(
-                productRepository.findByProduct(mixDTO.getProduct()).get().getProduct_id(),
-                illnessRepository.findByIllnessTitle(mixDTO.getIllness()).get().getIllness_id());
+    public void addMixOfProductsAndIllnesses(MixDTO mixDTO) {
+        Illness illness = illnessRepository.findByIllnessTitle(mixDTO.getIllness()).orElseThrow(()->new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+        Product product = productRepository.findByProduct(mixDTO.getProduct()).orElseThrow(()->new NutritionExceptionNotFound(PRODUCT_WITH_TITLE_NOT_FOUND_MSG));
 
-        Illness illness = illnessRepository.findByIllnessTitle(mixDTO.getIllness()).get();
-        Product product = productRepository.findByProduct(mixDTO.getProduct()).get();
+        ProductIllness complexKey = new ProductIllness(product.getProduct_id(), illness.getIllness_id());
 
         Resolution resolution = mIxMapper.toResolution(mixDTO.getResolution());
         Mix mix = new Mix(complexKey, product, illness, resolution);

@@ -141,9 +141,9 @@ public class NutritionController implements NutritionResource {
     }
 
     @PostMapping("/addMix")
-    public ResponseEntity addMix(@RequestBody @Valid MixDTO mixDTO, BindingResult bindingResult){
+    public ResponseEntity addMixOfProductsAndIllnesses(@RequestBody @Valid MixDTO mixDTO, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
-        nutritionService.addMix(mixDTO);
+        nutritionService.addMixOfProductsAndIllnesses(mixDTO);
         return ResponseEntity.ok().build();
     }
 
