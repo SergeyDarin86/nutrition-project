@@ -6,7 +6,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.stereotype.Component;
 import ru.darin.nutrition_recommendation.model.Resolution;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
-import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 @Component
 @Mapper(componentModel = "spring",
