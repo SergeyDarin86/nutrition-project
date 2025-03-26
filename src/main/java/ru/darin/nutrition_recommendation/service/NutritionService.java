@@ -290,6 +290,9 @@ public class NutritionService {
 
     // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний
     public RecommendationResponse getMixOfProductsForTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
+//        illnessRepository.findByIllnessTitle(illnessOne).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+//        illnessRepository.findByIllnessTitle(illnessTwo).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+
         RecommendationResponse response = new RecommendationResponse();
         Map<String, List<String>> productsGroupedByType = new HashMap<>();
         List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
@@ -297,7 +300,12 @@ public class NutritionService {
         Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
         Set<Mix> mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
         Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
-        mixForIllnesses.retainAll(mixIllnessTwo);
+
+        if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)){
+            mixForIllnesses.retainAll(mixIllnessTwo);
+        }else {
+            mixForIllnesses.addAll(mixIllnessTwo);
+        }
 
         mixForIllnesses.stream()
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
@@ -329,7 +337,7 @@ public class NutritionService {
 
         ProductIllness complexKey = new ProductIllness(product.getProduct_id(), illness.getIllness_id());
 
-        Resolution resolution = mIxMapper.toResolution(mixDTO.getResolution());
+        Resolution resolution = mIxMapper.toResolutionEnum(mixDTO.getResolution());
         Mix mix = new Mix(complexKey, product, illness, resolution);
 
         mixRepository.save(mix);

@@ -14,7 +14,7 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 public interface MIxMapper {
 
     String RESOLUTION_IS_NOT_CORRECT_MSG = "Недопустимый тип рекомендаций. Введите: 'РАЗРЕШЕНО' или 'ЗАПРЕЩЕНО'";
-    default Resolution toResolution(String resolution) {
+    default Resolution toResolutionEnum(String resolution) {
         if ( resolution == null ) {
             return null;
         }
