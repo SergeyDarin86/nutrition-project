@@ -140,6 +140,14 @@ public class NutritionController implements NutritionResource {
         return ResponseEntity.ok(nutritionService.getIllnessWithProductsGroupedByType(illness, resolution));
     }
 
+    @GetMapping("/getMixOfProducts")
+    public ResponseEntity getMixOfProductsForTwoIllnesses(
+            @RequestParam(value = "illnessOne") String illnessOne,
+            @RequestParam(value = "illnessTwo", required = false) String illnessTwo,
+            @RequestParam(value = "resolution") String resolution){
+        return ResponseEntity.ok(nutritionService.getMixOfProductsForTwoIllnesses(illnessOne, illnessTwo, resolution));
+    }
+
     @PostMapping("/addMix")
     public ResponseEntity addMixOfProductsAndIllnesses(@RequestBody @Valid MixDTO mixDTO, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);

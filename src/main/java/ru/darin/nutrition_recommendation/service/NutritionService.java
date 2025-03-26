@@ -12,6 +12,7 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
 // + описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
@@ -22,6 +23,8 @@ import java.util.*;
 // -
 // Описать ошибку при сохранении Mix через сеттеры - не сохраняет в БД
 // сохранение идет через Конструктор
+// -
+// Описать как Equals and HashCode в классе Mix использовал в поиске микса продуктов для двух заболеваний
 
 @Service
 @RequiredArgsConstructor
@@ -256,6 +259,7 @@ public class NutritionService {
         }
     }
 
+    // метод нахождения микса продуктов для одного заболевания (РАЗРЕШЕНО/ЗАПРЕЩЕНО)
     public RecommendationResponse getIllnessWithProductsGroupedByType(String illness, String resolution) {
 
         RecommendationResponse response = new RecommendationResponse();
@@ -284,9 +288,44 @@ public class NutritionService {
         return response;
     }
 
+    // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний
+    public RecommendationResponse getMixOfProductsForTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
+        RecommendationResponse response = new RecommendationResponse();
+        Map<String, List<String>> productsGroupedByType = new HashMap<>();
+        List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
+
+        Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
+        Set<Mix> mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
+        Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
+        mixForIllnesses.retainAll(mixIllnessTwo);
+
+        mixForIllnesses.stream()
+                .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
+
+        for (Mix mix : mixForIllnesses) {
+            for (Map.Entry<String, List<String>> listEntry : productsGroupedByType.entrySet()) {
+                if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
+                listEntry.getValue().add(mix.getProduct().getProduct());
+            }
+        }
+
+        productsForIllness.add(productsGroupedByType);
+        response.setIllness("'" + illnessOne + "' и '" + illnessTwo + "'");
+        response.setResolution(resolution);
+        response.setProducts(productsForIllness);
+
+        return response;
+    }
+
+    public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
+        return mixRepository.findAll()
+                .stream().filter(mix -> mix.getIllness().getIllnessTitle().equals(illness)
+                        && mix.getResolution().toString().equals(resolution)).collect(Collectors.toSet());
+    }
+
     public void addMixOfProductsAndIllnesses(MixDTO mixDTO) {
-        Illness illness = illnessRepository.findByIllnessTitle(mixDTO.getIllness()).orElseThrow(()->new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
-        Product product = productRepository.findByProduct(mixDTO.getProduct()).orElseThrow(()->new NutritionExceptionNotFound(PRODUCT_WITH_TITLE_NOT_FOUND_MSG));
+        Illness illness = illnessRepository.findByIllnessTitle(mixDTO.getIllness()).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+        Product product = productRepository.findByProduct(mixDTO.getProduct()).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_TITLE_NOT_FOUND_MSG));
 
         ProductIllness complexKey = new ProductIllness(product.getProduct_id(), illness.getIllness_id());
 

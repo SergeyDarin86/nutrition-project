@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -40,4 +42,16 @@ public class Mix {
     @Enumerated(EnumType.STRING)
     private Resolution resolution;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mix mix = (Mix) o;
+        return Objects.equals(product, mix.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product);
+    }
 }
