@@ -288,11 +288,8 @@ public class NutritionService {
         return response;
     }
 
-    // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний
+    // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний (а также для одного заболевания)
     public RecommendationResponse getMixOfProductsForTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
-//        illnessRepository.findByIllnessTitle(illnessOne).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
-//        illnessRepository.findByIllnessTitle(illnessTwo).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
-
         RecommendationResponse response = new RecommendationResponse();
         Map<String, List<String>> productsGroupedByType = new HashMap<>();
         List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
@@ -301,12 +298,25 @@ public class NutritionService {
         Set<Mix> mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
         Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
 
-        if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)){
-            mixForIllnesses.retainAll(mixIllnessTwo);
-        }else {
-            mixForIllnesses.addAll(mixIllnessTwo);
+        if (!illnessTwo.isEmpty()) {
+            if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
+                mixForIllnesses.retainAll(mixIllnessTwo);
+            } else {
+                mixForIllnesses.addAll(mixIllnessTwo);
+            }
         }
 
+        fillingMapOfProductsGroupedByType(productsGroupedByType, mixForIllnesses);
+
+        productsForIllness.add(productsGroupedByType);
+        response.setIllness("'" + illnessOne + "' и '" + illnessTwo + "'");
+        response.setResolution(resolution);
+        response.setProducts(productsForIllness);
+
+        return response;
+    }
+
+    public void fillingMapOfProductsGroupedByType(Map<String, List<String>> productsGroupedByType, Set<Mix> mixForIllnesses) {
         mixForIllnesses.stream()
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
 
@@ -316,13 +326,6 @@ public class NutritionService {
                 listEntry.getValue().add(mix.getProduct().getProduct());
             }
         }
-
-        productsForIllness.add(productsGroupedByType);
-        response.setIllness("'" + illnessOne + "' и '" + illnessTwo + "'");
-        response.setResolution(resolution);
-        response.setProducts(productsForIllness);
-
-        return response;
     }
 
     public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
