@@ -1,6 +1,7 @@
 package ru.darin.nutrition_recommendation.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.darin.nutrition_recommendation.dto.*;
@@ -289,16 +290,18 @@ public class NutritionService {
     }
 
     // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний (а также для одного заболевания)
-    public RecommendationResponse getMixOfProductsForTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
+    @Cacheable("myCash")
+    public RecommendationResponse getMixOfProductsForOneOrTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
         RecommendationResponse response = new RecommendationResponse();
         Map<String, List<String>> productsGroupedByType = new HashMap<>();
         List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
 
         Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
-        Set<Mix> mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
+        Set<Mix> mixIllnessTwo;
         Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
 
         if (!illnessTwo.isEmpty()) {
+            mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
             if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
                 mixForIllnesses.retainAll(mixIllnessTwo);
             } else {
@@ -329,6 +332,7 @@ public class NutritionService {
     }
 
     public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
+        illnessRepository.findByIllnessTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
         return mixRepository.findAll()
                 .stream().filter(mix -> mix.getIllness().getIllnessTitle().equals(illness)
                         && mix.getResolution().toString().equals(resolution)).collect(Collectors.toSet());

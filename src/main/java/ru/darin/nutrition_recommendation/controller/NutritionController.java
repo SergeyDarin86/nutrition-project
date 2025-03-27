@@ -145,7 +145,7 @@ public class NutritionController implements NutritionResource {
             @RequestParam(value = "illnessOne") String illnessOne,
             @RequestParam(value = "illnessTwo", required = false) String illnessTwo,
             @RequestParam(value = "resolution") String resolution){
-        return ResponseEntity.ok(nutritionService.getMixOfProductsForTwoIllnesses(illnessOne, illnessTwo, resolution));
+        return ResponseEntity.ok(nutritionService.getMixOfProductsForOneOrTwoIllnesses(illnessOne, illnessTwo, resolution));
     }
 
     @PostMapping("/addMix")
