@@ -2,15 +2,16 @@ package ru.darin.nutrition_recommendation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "mix")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Mix {
 
     public Mix() {
@@ -30,6 +31,7 @@ public class Mix {
     @MapsId("productId")
     @JoinColumn(name = "product_id")
     @JsonIgnore
+    @EqualsAndHashCode.Include
     private Product product;
 
     @ManyToOne
@@ -42,16 +44,4 @@ public class Mix {
     @Enumerated(EnumType.STRING)
     private Resolution resolution;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Mix mix = (Mix) o;
-        return Objects.equals(product, mix.product);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(product);
-    }
 }
