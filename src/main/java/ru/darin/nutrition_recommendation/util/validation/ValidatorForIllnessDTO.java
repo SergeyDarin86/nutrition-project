@@ -10,6 +10,10 @@ public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionVali
 
     private static final String MSG_WRONG_LENGTH = "Название заболевания должно содержать от 3 до 50 символов";
 
+    private static final String MSG_WRONG_FORMAT = "Название заболевания должно начинаться с заглавной буквы";
+
+    private static final String REGEX_VALUE = "[А-Я]{1,3}[\s\\-а-я,ё]*";
+
     @Override
     public boolean isValid(IllnessDTO dto, ConstraintValidatorContext context) {
         boolean isValid = true;
@@ -24,6 +28,13 @@ public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionVali
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_LENGTH)
+                    .addPropertyNode("illnessTitle")
+                    .addConstraintViolation();
+            isValid = false;
+        } else if (!dto.getIllnessTitle().matches(REGEX_VALUE)) {
+            context.disableDefaultConstraintViolation();
+            context
+                    .buildConstraintViolationWithTemplate(MSG_WRONG_FORMAT)
                     .addPropertyNode("illnessTitle")
                     .addConstraintViolation();
             isValid = false;

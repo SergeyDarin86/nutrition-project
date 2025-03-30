@@ -16,16 +16,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 //TODO: описать проблему с Lombok (какую зависимость нужно поставить в pom.xml)
-// + описать ошибку, которая возникает, если убрать @Transactional при удалении заболевания
 // - возможно вынести сообщения об ошибках и валидацию в валидаторы. Но тогда прийдется инжектить репо в двух местах ...
 // -
-// добавить проверку по названию с IGNORECASE (можно ввести один и тот же продукт в разных регистрах)
-// или ввести ограничение на ввод только с заглавных букв
+//  + Ввел ограничение на ввод только с заглавных букв для заболеваний
+//  + Изменил логику на вывод названия заболевания в response (в зависимости от выбора количества 1 или 2)
 // -
+// возможно нужно будет добавить поле 'заметки' для продуктов либо в таблицу MIX ()
 // Описать ошибку при сохранении Mix через сеттеры - не сохраняет в БД
 // сохранение идет через Конструктор
-// -
-// Описать как Equals and HashCode в классе Mix использовал в поиске микса продуктов для двух заболеваний
 
 @Service
 @RequiredArgsConstructor
@@ -300,7 +298,9 @@ public class NutritionService {
         Set<Mix> mixIllnessTwo;
         Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
 
+        response.setIllness(illnessOne);
         if (!illnessTwo.isEmpty()) {
+            response.setIllness(response.getIllness().concat(" и " + illnessTwo));
             mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
             if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
                 mixForIllnesses.retainAll(mixIllnessTwo);
@@ -310,9 +310,7 @@ public class NutritionService {
         }
 
         fillingMapOfProductsGroupedByType(productsGroupedByType, mixForIllnesses);
-
         productsForIllness.add(productsGroupedByType);
-        response.setIllness("'" + illnessOne + "' и '" + illnessTwo + "'");
         response.setResolution(resolution);
         response.setProducts(productsForIllness);
 
@@ -332,7 +330,7 @@ public class NutritionService {
     }
 
     public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
-        illnessRepository.findByIllnessTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+        illnessRepository.findByIllnessTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(illness + " - " + ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
         return mixRepository.findAll()
                 .stream().filter(mix -> mix.getIllness().getIllnessTitle().equals(illness)
                         && mix.getResolution().toString().equals(resolution)).collect(Collectors.toSet());
