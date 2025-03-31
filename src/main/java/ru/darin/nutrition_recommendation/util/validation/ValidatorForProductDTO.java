@@ -10,6 +10,10 @@ public class ValidatorForProductDTO implements ConstraintValidator<NutritionVali
 
     private static final String MSG_WRONG_LENGTH = "Название продукта должно содержать от 3 до 50 символов";
 
+    private static final String REGEX_VALUE = "[А-Я].+";
+
+    private static final String MSG_WRONG_FORMAT = "Название продукта должно начинаться с заглавной буквы";
+
     @Override
     public boolean isValid(ProductDTO dto, ConstraintValidatorContext context) {
         boolean isValid = true;
@@ -24,6 +28,13 @@ public class ValidatorForProductDTO implements ConstraintValidator<NutritionVali
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_LENGTH)
+                    .addPropertyNode("product")
+                    .addConstraintViolation();
+            isValid = false;
+        } else if (!dto.getProduct().matches(REGEX_VALUE)) {
+            context.disableDefaultConstraintViolation();
+            context
+                    .buildConstraintViolationWithTemplate(MSG_WRONG_FORMAT)
                     .addPropertyNode("product")
                     .addConstraintViolation();
             isValid = false;
