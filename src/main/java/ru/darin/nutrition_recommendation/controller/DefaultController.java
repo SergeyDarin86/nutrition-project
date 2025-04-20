@@ -2,6 +2,7 @@ package ru.darin.nutrition_recommendation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +20,7 @@ public class DefaultController {
     private final NutritionServiceForThymeleaf nutritionService;
 
     @GetMapping("/commonPage")
-    public String getCommonPage(){
+    public String getCommonPage() {
         return "people/commonPage";
     }
 
@@ -82,7 +83,8 @@ public class DefaultController {
         nutritionService.addProduct(productDTO, id);
         return "redirect:/nutrition/productType/{id}";
     }
-// ----> рабочие методы <----
+
+    // ----> рабочие методы <----
     @GetMapping("/allIllnesses/{id}/newMix")
     public String newMix(
             @PathVariable("id") UUID id, Model model,
@@ -110,17 +112,42 @@ public class DefaultController {
 
     // ------ рабочие методы
 
+    @GetMapping("/showMix/{id}")
+    public String getAllIllnessWithProductsGroupedByType(
+            @PathVariable("id") UUID id, Model modelIllness,
+            @ModelAttribute("resolutionField") @Valid String resolutionField,
+            Model modelResp
+    ) {
+        System.out.println("+++++++++++++++++++++++++++++++");
+        System.out.println(id + " - " + resolutionField);
+        System.out.println("+++++++++++++++++++++++++++++++");
+        modelIllness.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+        modelResp.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(),"РАЗРЕШЕНО"));
+//        model.addAttribute("modelResponse", nutritionService.getIllnessWithProductsGroupedByType(illness,resolution));
+        return "illnesses/showIllnessWithProducts";
+    }
 
     @GetMapping("/people/{id}")
     public String showPerson(
             @PathVariable("id") UUID id,
             Model model,
-            @ModelAttribute ("illnessDTO") IllnessDTO illnessDTO,
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
             Model illnessesListModel
     ) {
         illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
         model.addAttribute("personDTO", nutritionService.getPersonById(id));
         return "people/showPerson";
+    }
+
+    @PatchMapping("/people/{id}/addIllnessToPerson")
+    public String addIllnessToPerson(
+            Model illnessesListModel,
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
+            @PathVariable("id") UUID personId
+    ) {
+        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
+        nutritionService.addIllnessToPerson(personId, illnessDTO);
+        return "redirect:/nutrition/people/{id}";
     }
 
     @GetMapping("/people/{id}/edit")
@@ -137,24 +164,13 @@ public class DefaultController {
         if (bindingResult.hasErrors())
             return "people/editPerson";
 
-        nutritionService.updatePersonById(id,personDTO);
-        return "redirect:/nutrition/people/{id}";
-    }
-
-    @PatchMapping("/people/{id}/addIllnessToPerson")
-    public String addIllnessToPerson(
-            Model illnessesListModel,
-            @ModelAttribute ("illnessDTO") IllnessDTO illnessDTO,
-            @PathVariable("id") UUID personId
-    ) {
-        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
-        nutritionService.addIllnessToPerson(personId, illnessDTO);
+        nutritionService.updatePersonById(id, personDTO);
         return "redirect:/nutrition/people/{id}";
     }
 
     @PatchMapping("/people/{id}/curePerson")
     public String curePerson(
-            @ModelAttribute ("illnessDTO") IllnessDTO illnessDTO,
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
             @PathVariable("id") UUID personId
     ) {
         nutritionService.curePerson(personId);
@@ -208,7 +224,7 @@ public class DefaultController {
         if (bindingResult.hasErrors())
             return "illnesses/editIllness";
 
-        nutritionService.updateIllnessById(id,illnessDTO);
+        nutritionService.updateIllnessById(id, illnessDTO);
         return "redirect:/nutrition/allIllnesses/{id}";
     }
 
@@ -226,7 +242,7 @@ public class DefaultController {
         if (bindingResult.hasErrors())
             return "products/editProductType";
 
-        nutritionService.updateProductTypeById(id,productTypeDTO);
+        nutritionService.updateProductTypeById(id, productTypeDTO);
         return "redirect:/nutrition/productType/{id}";
     }
 
