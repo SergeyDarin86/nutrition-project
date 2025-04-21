@@ -7,42 +7,38 @@
 </head>
 <body>
 
-<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}"
-      th:object="${resolutionField}">
-    <label class="label_style" for="illness">Выберите РАЗРЕШЕНО/ЗАПРЕЩЕНО для заболевания: </label>
-    <label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>
+<label class="label_style" for="illness">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>
+<label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>
 
-    <p></p>
-    <label for="resolution"><b>Выберите, разрешен или нет продукт: </b></label>
-    <select th:object="${resolutionField}" name="section" class="reg-form__input form-select" , id="resolution">
+<br/>
+<hr/>
+<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}"
+      th:object="${resolutionDTO}">
+
+    <label for="resolution"><b>Выберите параметр: </b></label>
+    <select th:field="*{resolution}" class="reg-form__input form-select" , id="resolution">
         <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
 
-    <!--    -->
-    <hr/>
-    <div th:each="mix: ${response.getProducts()}">
-
-        <div th:each="entry : ${mix}">
-            <a style="color: red" th:text="${entry.key}"></a>:
-            <div th:each="valueProd : ${entry.value}">
-                <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>
-            </div>
-        </div>
-
-    </div>
-
-    <br/>
-    <hr/>
     <input type="submit" value="Показать">
 </form>
+
+<div th:each="mix: ${response.getProducts()}">
+
+    <div th:each="entry : ${mix}">
+        <a style="color: red" th:text="${entry.key}"></a>:
+        <div th:each="valueProd : ${entry.value}">
+            <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>
+        </div>
+    </div>
+
+</div>
 
 <hr/>
 <form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
     <input type="submit" value="Вернуться назад">
 </form>
 
-<!--новый вариант-->
-<hr/>
 </body>
 </html>

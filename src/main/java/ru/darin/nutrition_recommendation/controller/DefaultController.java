@@ -2,7 +2,6 @@ package ru.darin.nutrition_recommendation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -110,20 +109,15 @@ public class DefaultController {
         return "redirect:/nutrition/allIllnesses/{id}/newMix";
     }
 
-    // ------ рабочие методы
-
     @GetMapping("/showMix/{id}")
-    public String getAllIllnessWithProductsGroupedByType(
-            @PathVariable("id") UUID id, Model modelIllness,
-            @ModelAttribute("resolutionField") @Valid String resolutionField,
-            Model modelResp
+    public String showMixOfProductsForSingleIllness(
+            @PathVariable("id") UUID id,
+            Model modelIllness,
+            @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
+            Model model
     ) {
-        System.out.println("+++++++++++++++++++++++++++++++");
-        System.out.println(id + " - " + resolutionField);
-        System.out.println("+++++++++++++++++++++++++++++++");
         modelIllness.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
-        modelResp.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(),"РАЗРЕШЕНО"));
-//        model.addAttribute("modelResponse", nutritionService.getIllnessWithProductsGroupedByType(illness,resolution));
+        model.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(), resolutionDTO.getResolution()));
         return "illnesses/showIllnessWithProducts";
     }
 

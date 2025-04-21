@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <title>Заболевание</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<p class="person" th:text="${illnessDTO.getIllnessTitle()}">VALUE</p>
+<hr/>
+
+<!--новая кнопка-->
+<form class="colForm" th:action="@{/nutrition/allIllnesses/{id}/edit(id=${illnessDTO.getIllnessId()})}">
+    <input class="" type="submit" value="Редактировать">
+</form>
+<!--новая кнопка-->
+
+<form class="colForm" th:action="@{/nutrition/allIllnesses/{id}/newMix(id=${illnessDTO.getIllnessId()})}">
+    <input class="" type="submit" value="Добавить микс">
+</form>
+
+<form class="colForm" th:method="DELETE" th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
+    <input type="submit" value="Удалить">
+</form>
+
+<form class="colForm" th:action="@{/nutrition/allIllnesses}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+<!--новая кнопка для перехода на форму с отображением списка продуктов для заболевания-->
+<form class="colForm" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}">
+    <input type="submit" value="Показать микс">
+</form>
+
+</body>
+</html>
