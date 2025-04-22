@@ -36,6 +36,68 @@ public class DefaultController {
         return "redirect:/nutrition/people";
     }
 
+    @GetMapping("/people/{id}")
+    public String showPerson(
+            @PathVariable("id") UUID id,
+            Model model,
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
+            Model illnessesListModel
+    ) {
+        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
+        model.addAttribute("personDTO", nutritionService.getPersonById(id));
+        return "people/showPerson";
+    }
+
+    @GetMapping("/people/{id}/edit")
+    public String editPerson(Model model, @PathVariable("id") UUID id) {
+        model.addAttribute("personDTO", nutritionService.getPersonById(id));
+        return "people/editPerson";
+    }
+
+    @PatchMapping("/people/{id}")
+    public String updatePerson(
+            @ModelAttribute("personDTO") @Valid PersonDTO personDTO, BindingResult bindingResult,
+            @PathVariable("id") UUID id
+    ) {
+        if (bindingResult.hasErrors())
+            return "people/editPerson";
+
+        nutritionService.updatePersonById(id, personDTO);
+        return "redirect:/nutrition/people/{id}";
+    }
+
+    @PatchMapping("/people/{id}/addIllnessToPerson")
+    public String addIllnessToPerson(
+            Model illnessesListModel,
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
+            @PathVariable("id") UUID personId
+    ) {
+        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
+        nutritionService.addIllnessToPerson(personId, illnessDTO);
+        return "redirect:/nutrition/people/{id}";
+    }
+
+    @PatchMapping("/people/{id}/curePerson")
+    public String curePerson(
+            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
+            @PathVariable("id") UUID personId
+    ) {
+        nutritionService.curePerson(personId);
+        return "redirect:/nutrition/people/{id}";
+    }
+
+    @DeleteMapping("/people/{id}")
+    public String deletePerson(@PathVariable("id") UUID id) {
+        nutritionService.deletePersonById(id);
+        return "redirect:/nutrition/people";
+    }
+
+    @GetMapping("/people")
+    public String people(Model model) {
+        model.addAttribute("people", nutritionService.getAllPeople());
+        return "people/people";
+    }
+
     @GetMapping("/newProductType")
     public String newProductType(@ModelAttribute ProductTypeDTO productTypeDTO) {
         return "products/newProductType";
@@ -49,17 +111,40 @@ public class DefaultController {
         return "redirect:/nutrition/productTypeList";
     }
 
-    @GetMapping("/newIllness")
-    public String newIllness(@ModelAttribute IllnessDTO illnessDTO) {
-        return "illnesses/newIllness";
+    @GetMapping("/productType/{id}")
+    public String showProductType(@PathVariable("id") UUID id, Model model) {
+        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
+        return "products/showProductType";
     }
 
-    @PostMapping("/addIllness")
-    public String createIllness(@ModelAttribute("illnessDTO") @Valid IllnessDTO illnessDTO, BindingResult bindingResult) {
+    @GetMapping("/productType/{id}/edit")
+    public String editProductType(Model model, @PathVariable("id") UUID id) {
+        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
+        return "products/editProductType";
+    }
+
+    @PatchMapping("/productType/{id}")
+    public String updateProductType(
+            @ModelAttribute("productTypeDTO") @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult,
+            @PathVariable("id") UUID id
+    ) {
         if (bindingResult.hasErrors())
-            return "illnesses/newIllness";
-        nutritionService.addIllness(illnessDTO);
-        return "redirect:/nutrition/allIllnesses";
+            return "products/editProductType";
+
+        nutritionService.updateProductTypeById(id, productTypeDTO);
+        return "redirect:/nutrition/productType/{id}";
+    }
+
+    @DeleteMapping("/productType/{id}")
+    public String deleteProductType(@PathVariable("id") UUID id) {
+        nutritionService.deleteProductTypeById(id);
+        return "redirect:/nutrition/productTypeList";
+    }
+
+    @GetMapping("/productTypeList")
+    public String getProductTypeList(Model model) {
+        model.addAttribute("productTypeList", nutritionService.getAllProductTypes());
+        return "products/productTypeList";
     }
 
     @GetMapping("/productType/{id}/newProduct")
@@ -83,7 +168,98 @@ public class DefaultController {
         return "redirect:/nutrition/productType/{id}";
     }
 
-    // ----> рабочие методы <----
+    @GetMapping("/productType/{typeId}/product/{id}")
+    public String showProduct(
+            @PathVariable("id") UUID id, Model model,
+            @PathVariable("typeId") UUID typeId, Model modelType
+    ) {
+        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
+        modelType.addAttribute("productDTO", nutritionService.getProductById(id));
+        return "products/showProduct";
+    }
+
+    @GetMapping("/productType/{typeId}/product/{id}/edit")
+    public String editProduct(
+            @PathVariable("id") UUID id, Model model,
+            @PathVariable("typeId") UUID typeId, Model modelType
+    ) {
+        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
+        modelType.addAttribute("productDTO", nutritionService.getProductById(id));
+        return "products/editProduct";
+    }
+
+    @PatchMapping("/productType/{typeId}/product/{id}")
+    public String updateProduct(
+            @PathVariable("id") UUID id,
+            @ModelAttribute("productDTO") @Valid ProductDTO productDTO, BindingResult bindingResult,
+            @PathVariable("typeId") UUID typeId, Model modelType
+    ) {
+        modelType.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
+        if (bindingResult.hasErrors())
+            return "products/editProduct";
+
+        nutritionService.updateProductById(id, productDTO);
+        return "redirect:/nutrition/productType/{typeId}/product/{id}";
+    }
+
+    @DeleteMapping("/productType/{typeId}/product/{id}")
+    public String deleteProduct(
+            @PathVariable("id") UUID id, Model model,
+            @PathVariable("typeId") UUID typeId, Model modelType
+    ) {
+        nutritionService.deleteProductById(id);
+        return "redirect:/nutrition/productType/{typeId}";
+    }
+
+    @GetMapping("/newIllness")
+    public String newIllness(@ModelAttribute IllnessDTO illnessDTO) {
+        return "illnesses/newIllness";
+    }
+
+    @PostMapping("/addIllness")
+    public String createIllness(@ModelAttribute("illnessDTO") @Valid IllnessDTO illnessDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return "illnesses/newIllness";
+        nutritionService.addIllness(illnessDTO);
+        return "redirect:/nutrition/allIllnesses";
+    }
+
+    @GetMapping("/allIllnesses/{id}")
+    public String showIllness(@PathVariable("id") UUID id, Model model) {
+        model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+        return "illnesses/showIllness";
+    }
+
+    @GetMapping("/allIllnesses/{id}/edit")
+    public String editIllness(Model model, @PathVariable("id") UUID id) {
+        model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+        return "illnesses/editIllness";
+    }
+
+    @PatchMapping("/allIllnesses/{id}")
+    public String updateIllness(
+            @ModelAttribute("illnessDTO") @Valid IllnessDTO illnessDTO, BindingResult bindingResult,
+            @PathVariable("id") UUID id
+    ) {
+        if (bindingResult.hasErrors())
+            return "illnesses/editIllness";
+
+        nutritionService.updateIllnessById(id, illnessDTO);
+        return "redirect:/nutrition/allIllnesses/{id}";
+    }
+
+    @DeleteMapping("/allIllnesses/{id}")
+    public String deleteIllness(@PathVariable("id") UUID id) {
+        nutritionService.deleteIllnessById(id);
+        return "redirect:/nutrition/allIllnesses";
+    }
+
+    @GetMapping("/allIllnesses")
+    public String illnessList(Model model) {
+        model.addAttribute("illnessList", nutritionService.getAllIllnesses());
+        return "illnesses/illnessList";
+    }
+
     @GetMapping("/allIllnesses/{id}/newMix")
     public String newMix(
             @PathVariable("id") UUID id, Model model,
@@ -119,183 +295,6 @@ public class DefaultController {
         modelIllness.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
         model.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(), resolutionDTO.getResolution()));
         return "illnesses/showIllnessWithProducts";
-    }
-
-    @GetMapping("/people/{id}")
-    public String showPerson(
-            @PathVariable("id") UUID id,
-            Model model,
-            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
-            Model illnessesListModel
-    ) {
-        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
-        model.addAttribute("personDTO", nutritionService.getPersonById(id));
-        return "people/showPerson";
-    }
-
-    @PatchMapping("/people/{id}/addIllnessToPerson")
-    public String addIllnessToPerson(
-            Model illnessesListModel,
-            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
-            @PathVariable("id") UUID personId
-    ) {
-        illnessesListModel.addAttribute("illnessList", nutritionService.getAllIllnesses());
-        nutritionService.addIllnessToPerson(personId, illnessDTO);
-        return "redirect:/nutrition/people/{id}";
-    }
-
-    @GetMapping("/people/{id}/edit")
-    public String editPerson(Model model, @PathVariable("id") UUID id) {
-        model.addAttribute("personDTO", nutritionService.getPersonById(id));
-        return "people/editPerson";
-    }
-
-    @PatchMapping("/people/{id}")
-    public String updatePerson(
-            @ModelAttribute("personDTO") @Valid PersonDTO personDTO, BindingResult bindingResult,
-            @PathVariable("id") UUID id
-    ) {
-        if (bindingResult.hasErrors())
-            return "people/editPerson";
-
-        nutritionService.updatePersonById(id, personDTO);
-        return "redirect:/nutrition/people/{id}";
-    }
-
-    @PatchMapping("/people/{id}/curePerson")
-    public String curePerson(
-            @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
-            @PathVariable("id") UUID personId
-    ) {
-        nutritionService.curePerson(personId);
-        return "redirect:/nutrition/people/{id}";
-    }
-
-    @DeleteMapping("/people/{id}")
-    public String deletePerson(@PathVariable("id") UUID id) {
-        nutritionService.deletePersonById(id);
-        return "redirect:/nutrition/people";
-    }
-
-    @DeleteMapping("/allIllnesses/{id}")
-    public String deleteIllness(@PathVariable("id") UUID id) {
-        nutritionService.deleteIllnessById(id);
-        return "redirect:/nutrition/allIllnesses";
-    }
-
-    @DeleteMapping("/productType/{typeId}/product/{id}")
-    public String deleteProduct(
-            @PathVariable("id") UUID id, Model model,
-            @PathVariable("typeId") UUID typeId, Model modelType
-    ) {
-        nutritionService.deleteProductById(id);
-        return "redirect:/nutrition/productType/{typeId}";
-    }
-
-    @DeleteMapping("/productType/{id}")
-    public String deleteProductType(@PathVariable("id") UUID id) {
-        nutritionService.deleteProductTypeById(id);
-        return "redirect:/nutrition/productTypeList";
-    }
-
-    @GetMapping("/allIllnesses/{id}")
-    public String showIllness(@PathVariable("id") UUID id, Model model) {
-        model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
-        return "illnesses/showIllness";
-    }
-
-    @GetMapping("/allIllnesses/{id}/edit")
-    public String editIllness(Model model, @PathVariable("id") UUID id) {
-        model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
-        return "illnesses/editIllness";
-    }
-
-    @PatchMapping("/allIllnesses/{id}")
-    public String updateIllness(
-            @ModelAttribute("illnessDTO") @Valid IllnessDTO illnessDTO, BindingResult bindingResult,
-            @PathVariable("id") UUID id
-    ) {
-        if (bindingResult.hasErrors())
-            return "illnesses/editIllness";
-
-        nutritionService.updateIllnessById(id, illnessDTO);
-        return "redirect:/nutrition/allIllnesses/{id}";
-    }
-
-    @GetMapping("/productType/{id}/edit")
-    public String editProductType(Model model, @PathVariable("id") UUID id) {
-        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
-        return "products/editProductType";
-    }
-
-    @PatchMapping("/productType/{id}")
-    public String updateProduct(
-            @ModelAttribute("productTypeDTO") @Valid ProductTypeDTO productTypeDTO, BindingResult bindingResult,
-            @PathVariable("id") UUID id
-    ) {
-        if (bindingResult.hasErrors())
-            return "products/editProductType";
-
-        nutritionService.updateProductTypeById(id, productTypeDTO);
-        return "redirect:/nutrition/productType/{id}";
-    }
-
-    @GetMapping("/productType/{typeId}/product/{id}/edit")
-    public String editProduct(
-            @PathVariable("id") UUID id, Model model,
-            @PathVariable("typeId") UUID typeId, Model modelType
-    ) {
-        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
-        modelType.addAttribute("productDTO", nutritionService.getProductById(id));
-        return "products/editProduct";
-    }
-
-    @PatchMapping("/productType/{typeId}/product/{id}")
-    public String updateProduct(
-            @PathVariable("id") UUID id,
-            @ModelAttribute("productDTO") @Valid ProductDTO productDTO, BindingResult bindingResult,
-            @PathVariable("typeId") UUID typeId, Model modelType
-    ) {
-        modelType.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
-        if (bindingResult.hasErrors())
-            return "products/editProduct";
-
-        nutritionService.updateProductById(id, productDTO);
-        return "redirect:/nutrition/productType/{typeId}/product/{id}";
-    }
-
-    @GetMapping("/people")
-    public String people(Model model) {
-        model.addAttribute("people", nutritionService.getAllPeople());
-        return "people/people";
-    }
-
-    @GetMapping("/allIllnesses")
-    public String illnessList(Model model) {
-        model.addAttribute("illnessList", nutritionService.getAllIllnesses());
-        return "illnesses/illnessList";
-    }
-
-    @GetMapping("/productTypeList")
-    public String getProductTypeList(Model model) {
-        model.addAttribute("productTypeList", nutritionService.getAllProductTypes());
-        return "products/productTypeList";
-    }
-
-    @GetMapping("/productType/{id}")
-    public String showProductType(@PathVariable("id") UUID id, Model model) {
-        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
-        return "products/showProductType";
-    }
-
-    @GetMapping("/productType/{typeId}/product/{id}")
-    public String showProduct(
-            @PathVariable("id") UUID id, Model model,
-            @PathVariable("typeId") UUID typeId, Model modelType
-    ) {
-        model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
-        modelType.addAttribute("productDTO", nutritionService.getProductById(id));
-        return "products/showProduct";
     }
 
 }
