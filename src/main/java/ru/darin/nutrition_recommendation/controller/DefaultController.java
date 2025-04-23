@@ -285,15 +285,32 @@ public class DefaultController {
         return "redirect:/nutrition/allIllnesses/{id}/newMix";
     }
 
+//    @GetMapping("/showMix/{id}")
+//    public String showMixOfProductsForSingleIllness(
+//            @PathVariable("id") UUID id,
+//            Model modelIllness,
+//            @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
+//            Model model
+//    ) {
+//        modelIllness.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+//        model.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(), resolutionDTO.getResolution()));
+//        return "illnesses/showIllnessWithProducts";
+//    }
+
     @GetMapping("/showMix/{id}")
-    public String showMixOfProductsForSingleIllness(
+    public String showMixOfProductsForOneOreTwoIllnesses(
             @PathVariable("id") UUID id,
             Model modelIllness,
             @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
-            Model model
+            Model model,
+            Model illnessList,
+            @ModelAttribute("illnessTwo") IllnessDTO illnessTwo
     ) {
+        UUID illnessTwoId = illnessTwo.getIllnessId();
+        String illnessTwoTitle = (illnessTwoId != null) ? nutritionService.getIllnessById(illnessTwoId).getIllnessTitle() : null;
+        illnessList.addAttribute("illnessList", nutritionService.getAllIllnesses());
         modelIllness.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
-        model.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(), resolutionDTO.getResolution()));
+        model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoIllnesses(nutritionService.getIllnessById(id).getIllnessTitle(), illnessTwoTitle, resolutionDTO.getResolution()));
         return "illnesses/showIllnessWithProducts";
     }
 

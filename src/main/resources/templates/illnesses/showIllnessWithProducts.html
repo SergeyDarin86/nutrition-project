@@ -1,4 +1,48 @@
 <!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Микс продуктов для заболевания</title>-->
+<!--    <link href="/assets/css/styles.css" rel="stylesheet">-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<label class="label_style" for="illness">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>-->
+<!--<label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>-->
+
+<!--<br/>-->
+<!--<hr/>-->
+<!--<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}"-->
+<!--      th:object="${resolutionDTO}">-->
+
+<!--    <label for="resolution"><b>Выберите параметр: </b></label>-->
+<!--    <select th:field="*{resolution}" class="reg-form__input form-select" , id="resolution">-->
+<!--        <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>-->
+<!--        <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>-->
+<!--    </select>-->
+
+<!--    <input type="submit" value="Показать">-->
+<!--</form>-->
+
+<!--<div th:each="mix: ${response.getProducts()}">-->
+
+<!--    <div th:each="entry : ${mix}">-->
+<!--        <a style="color: red" th:text="${entry.key}"></a>:-->
+<!--        <div th:each="valueProd : ${entry.value}">-->
+<!--            <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<hr/>-->
+<!--<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">-->
+<!--    <input type="submit" value="Вернуться назад">-->
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -21,9 +65,16 @@
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
 
+    <label for="illnessTwo"><b>Выбрать заболевание:</b></label>
+    <select th:object="${illnessTwo}" th:field="*{illnessId}" id="illnessTwo"> <!-- Обратите внимание на изменение здесь -->
+        <option th:each="illnessTwo : ${illnessList}" th:value="${illnessTwo.getIllnessId()}"
+                th:text=" ${illnessTwo.getIllnessTitle()}"></option>
+    </select>
+
     <input type="submit" value="Показать">
 </form>
 
+</tr>
 <div th:each="mix: ${response.getProducts()}">
 
     <div th:each="entry : ${mix}">
