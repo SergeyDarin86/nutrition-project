@@ -19,15 +19,12 @@
 
 <form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson(id=${personDTO.getPersonId()})}">
     <tr th:each="illnessDTO : ${personDTO.getIllnesses()}">
-<!--        <p style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></p>-->
-<!--        <input class="for_illness" type="submit" value="освободить">-->
-<!--    </tr>-->
-<!--    <td>-->
         <div style="display: flex; align-items: center;">
-            <div style="color: red; margin-right: 10px; margin-top: 10px" th:text="${illnessDTO.getIllnessTitle()}"></div>
+            <div style="color: red; margin-right: 10px; margin-top: 10px"
+                 th:text="${illnessDTO.getIllnessTitle()}"></div>
             <input class="for_illness" type="submit" value="освободить">
         </div>
-<!--    </td>-->
+        <!--    </td>-->
     </tr>
 </form>
 
@@ -53,16 +50,6 @@
 <form th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}">
     <input type="submit" value="Удалить">
 </form>
-
-<!--<form th:method="DELETE" th:action="@{/library/people/{id}(id=${person.getPersonId()})}">-->
-<!--  <input type="submit" value="Удалить">-->
-<!--</form>-->
-
-<!--<br/>-->
-
-<!--<form th:action="@{/logout}" th:method="POST">-->
-<!--  <input type="submit" value="Выйти">-->
-<!--</form>-->
 
 <form th:action="@{/nutrition/people}">
     <input type="submit" value="Вернуться назад">
