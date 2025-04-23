@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta  charset="UTF-8">
+    <title>Новый клиент</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/nutrition/addPerson}" th:object="${personDTO}">
+    <label for="fullName">Введите ФИО: </label>
+    <input type="text" th:field="*{fullName}" id="fullName">
+    <p style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">FullName error</p>
+    <br/>
+    <input type="submit" value="Добавить">
+</form>
+<hr/>
+<form th:action="@{/nutrition/people}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

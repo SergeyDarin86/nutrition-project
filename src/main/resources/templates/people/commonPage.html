@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <title>Главная страница</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<h1 class="title_style">Главная страница</h1>
+
+<hr/>
+<form class="colForm" th:action="@{/nutrition/people}">
+    <input class="" type="submit" value="Люди">
+</form>
+
+<form class="colForm" th:action="@{/nutrition/productTypeList}">
+    <input class="" type="submit" value="Продукты питания">
+</form>
+
+<form class="colForm" th:action="@{/nutrition/allIllnesses}">
+    <input class="" type="submit" value="Заболевания">
+</form>
+
+<form class="colForm" th:action="@{/nutrition/allIllnesses}">
+    <input class="" type="submit" value="Получить миксы">
+</form>
+
+</body>
+</html>

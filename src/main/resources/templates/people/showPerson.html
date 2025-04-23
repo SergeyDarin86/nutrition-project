@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <title>Пользователь</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<p class="person" th:text="${personDTO.getFullName()}">VALUE</p>
+
+<tr th:if="${personDTO.getIllnesses().size()==0}">
+    <p style="font-weight: bold"> Человек пока не болен))) </p>
+</tr>
+
+<tr th:if="${personDTO.getIllnesses().size()!=0}">
+    <p style="font-weight: bold">Заболевания:</p>
+</tr>
+
+<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson(id=${personDTO.getPersonId()})}">
+    <tr th:each="illnessDTO : ${personDTO.getIllnesses()}">
+<!--        <p style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></p>-->
+<!--        <input class="for_illness" type="submit" value="освободить">-->
+<!--    </tr>-->
+<!--    <td>-->
+        <div style="display: flex; align-items: center;">
+            <div style="color: red; margin-right: 10px; margin-top: 10px" th:text="${illnessDTO.getIllnessTitle()}"></div>
+            <input class="for_illness" type="submit" value="освободить">
+        </div>
+<!--    </td>-->
+    </tr>
+</form>
+
+<hr/>
+<form th:method="PATCH" th:action="@{/nutrition/people/{id}/addIllnessToPerson(id=${personDTO.getPersonId()})}">
+    <label for="illnessDTO"><b>Выбрать заболевание:</b></label>
+    <select th:object="${illnessDTO}" th:field="*{illnessId}" id="illnessDTO">
+        <option id="opt" th:each="illnessDTO : ${illnessList}" th:value="${illnessDTO.getIllnessId()}"
+                th:text="${illnessDTO.getIllnessTitle()}"></option>
+    </select>
+    <input class="for_person" type="submit" value="Назначить">
+</form>
+
+</tr>
+</form>
+
+<hr/>
+<form th:action="@{/nutrition/people/{id}/edit(id=${personDTO.getPersonId()})}">
+    <input type="submit" value="Редактировать">
+</form>
+
+<hr/>
+<form th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}">
+    <input type="submit" value="Удалить">
+</form>
+
+<!--<form th:method="DELETE" th:action="@{/library/people/{id}(id=${person.getPersonId()})}">-->
+<!--  <input type="submit" value="Удалить">-->
+<!--</form>-->
+
+<!--<br/>-->
+
+<!--<form th:action="@{/logout}" th:method="POST">-->
+<!--  <input type="submit" value="Выйти">-->
+<!--</form>-->
+
+<form th:action="@{/nutrition/people}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>
