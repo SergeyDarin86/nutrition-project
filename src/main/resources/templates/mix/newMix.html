@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новый микс</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/nutrition/allIllnesses/{id}/addMix(id=${illnessDTO.getIllnessId()})}"
+      th:object="${mixDTO}">
+    <label class="label_style" for="illness">Выберите продукт для заболевания: </label>
+    <label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>
+
+    <p></p>
+    <label for="product"><b>Выбрать продукт:</b></label>
+    <select th:object="${productDTO}" th:field="*{productId}" id="product">
+        <option th:each="productDTO : ${productsList}" th:value="${productDTO.getProductId()}"
+                th:text="${productDTO.getProduct()}"></option>
+    </select>
+
+    <p></p>
+    <label for="resolution"><b>Выберите, разрешен или нет продукт: </b></label>
+    <select th:object="${mixDTO}" th:field="*{resolution}" name="section" class="reg-form__input form-select" ,
+            id="resolution">
+        <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
+        <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
+    </select>
+
+    <br/>
+    <hr/>
+    <input type="submit" value="Добавить">
+</form>
+<hr/>
+<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</div>
+</body>
+</html>
