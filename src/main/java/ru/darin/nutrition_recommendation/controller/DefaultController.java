@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
+import ru.darin.nutrition_recommendation.util.RecommendationResponse;
 
 import java.util.UUID;
 
@@ -265,10 +267,15 @@ public class DefaultController {
             @PathVariable("id") UUID id, Model model,
             @ModelAttribute MixDTO mixDTO,
             @ModelAttribute ProductDTO productDTO,
-            Model productsModel
+            Model productsModel,
+            Model response
     ) {
         productsModel.addAttribute("productsList", nutritionService.getAllProducts());
         model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+
+        String resolution = (String) response.asMap().get("resolution");
+        response.addAttribute("response", nutritionService
+                .getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(),resolution));
         return "mix/newMix";
     }
 
@@ -276,12 +283,15 @@ public class DefaultController {
     public String createMix(
             @PathVariable("id") UUID id, Model model,
             @ModelAttribute("mixDTO") @Valid MixDTO mixDTO, BindingResult bindingResult,
-            @ModelAttribute("productDTO") ProductDTO productDTO
+            @ModelAttribute("productDTO") ProductDTO productDTO,
+            RedirectAttributes redirectAttributes
     ) {
         model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+        String resolution = mixDTO.getResolution();
         if (bindingResult.hasErrors())
             return "mix/newMix";
         nutritionService.addMixOfProductsAndIllnesses(mixDTO, id, productDTO.getProductId());
+        redirectAttributes.addFlashAttribute("resolution", resolution);
         return "redirect:/nutrition/allIllnesses/{id}/newMix";
     }
 
