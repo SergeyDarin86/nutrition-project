@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактирование данных о продуктах</title>
+  <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
+      th:object="${productDTO}">
+  <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
+  <label for="product">Введите название продукта: </label>
+  <input type="text" th:field="*{product}" id="product">
+  <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
+  <input type="text" th:type="hidden" th:field="*{productId}" id="productId">
+  <br/>
+  <input type="submit" value="Изменить">
+  <hr/>
+</form>
+<form th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
+  <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

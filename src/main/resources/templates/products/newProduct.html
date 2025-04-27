@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новый продукт</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+<form th:method="POST" th:action="@{/nutrition/productType/{id}/addProduct(id=${productTypeDTO.getProductTypeId()})}"
+      th:object="${productDTO}">
+    <label for="product">Введите название продукта: </label>
+    <input type="text" th:field="*{product}" id="product">
+    <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
+    <br/>
+    <input type="submit" value="Добавить">
+</form>
+<hr/>
+<form th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
+    <input type="submit" value="Вернуться назад">
+</form>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <title>Тип продуктов</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<p class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>
+
+<tr th:if="${productTypeDTO.getProducts().size()==0}">
+    <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
+</tr>
+
+<div th:each="productDTO : ${productTypeDTO.getProducts()}">
+    <a th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
+       th:text="${productDTO.getProduct()}">product</a>
+</div>
+
+<hr/>
+<form th:action="@{/nutrition/productType/{id}/edit(id=${productTypeDTO.getProductTypeId()})}">
+    <input class="" type="submit" value="Редактировать">
+</form>
+
+<hr/>
+<form th:method="DELETE" th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
+    <input type="submit" value="Удалить">
+</form>
+
+<hr/>
+<form th:method="GET" th:action="@{/nutrition/productType/{id}/newProduct(id=${productTypeDTO.getProductTypeId()})}">
+    <input type="submit" value="Новый продукт">
+</form>
+<hr/>
+<form th:action="@{/nutrition/productTypeList}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

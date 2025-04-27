@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Типы продуктов</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+<h1 class="title_style">Список типов продуктов</h1>
+<div th:each="productTypeDto: ${productTypeList}">
+    <a th:href="@{/nutrition/productType/{id}(id=${productTypeDto.getProductTypeId()})}"
+       th:text="${productTypeDto.getProductType()}">productType</a>
+</div>
+
+<br/>
+<hr/>
+<!--<a href="/nutrition/newProductType">Добавить тип продукта</a>-->
+<p>Добавление нового типа продуктов</p>
+<form th:method="GET" th:action="@{/nutrition/newProductType}">
+    <input type="submit" value="Перейти">
+</form>
+<hr/>
+<form th:action="@{/nutrition/commonPage}">
+    <input class="" type="submit" value="На главную">
+</form>
+</body>
+</html>
