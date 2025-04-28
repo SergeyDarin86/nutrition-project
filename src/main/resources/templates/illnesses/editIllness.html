@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование данных заболевания</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}"
+      th:object="${illnessDTO}">
+    <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
+    <label for="illnessTitle">Введите ФИО: </label>
+    <input type="text" th:field="*{illnessTitle}" id="illnessTitle">
+    <p style="color: red" th:if="${#fields.hasErrors('illnessTitle')}" th:errors="*{illnessTitle}">IllnessTitle
+        error</p>
+    <input type="text" th:type="hidden" th:field="*{illnessId}" id="illnessId">
+    <br/>
+    <input type="submit" value="Изменить">
+    <hr/>
+</form>
+<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

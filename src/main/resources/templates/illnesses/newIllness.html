@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta  charset="UTF-8">
+  <title>Новое заболевание</title>
+  <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/nutrition/addIllness}" th:object="${illnessDTO}">
+  <label for="illnessTitle">Введите название заболевания: </label>
+  <input type="text" th:field="*{illnessTitle}" id="illnessTitle">
+  <p style="color: red" th:if="${#fields.hasErrors('illnessTitle')}" th:errors="*{illnessTitle}">Title error</p>
+  <br/>
+  <input type="submit" value="Добавить">
+</form>
+<hr/>
+<form th:action="@{/nutrition/allIllnesses}">
+  <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>
