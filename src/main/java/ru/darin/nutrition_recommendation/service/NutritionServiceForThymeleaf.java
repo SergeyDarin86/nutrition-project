@@ -12,7 +12,6 @@ import ru.darin.nutrition_recommendation.repository.*;
 import ru.darin.nutrition_recommendation.util.RecommendationResponse;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
-import ru.darin.nutrition_recommendation.util.validation.NutritionValidation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -157,6 +156,7 @@ public class NutritionServiceForThymeleaf {
                 .findByIllnessTitle(person.getIllnesses().stream().findFirst().get().getIllnessTitle())
                 .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
     }
+
     public IllnessDTO addIllness(IllnessDTO illnessDTO) {
         throwExceptionIfIllnessAlreadyExist(illnessDTO);
         Illness illness = illnessMapper.toIllness(illnessDTO);
@@ -312,13 +312,15 @@ public class NutritionServiceForThymeleaf {
         Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
 
         response.setIllness(illnessOne);
-        if (!illnessTwo.isEmpty()) {
+        if (illnessTwo != null) {
             response.setIllness(response.getIllness().concat(" и " + illnessTwo));
             mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
-            if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
-                mixForIllnesses.retainAll(mixIllnessTwo);
-            } else {
-                mixForIllnesses.addAll(mixIllnessTwo);
+            if (resolution != null) {
+                if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
+                    mixForIllnesses.retainAll(mixIllnessTwo);
+                } else {
+                    mixForIllnesses.addAll(mixIllnessTwo);
+                }
             }
         }
 
@@ -359,6 +361,20 @@ public class NutritionServiceForThymeleaf {
         Mix mix = new Mix(complexKey, product, illness, resolution);
 
         mixRepository.save(mix);
+    }
+
+    public Illness getIllnessByTitle(IllnessDTO illnessDTO) {
+        return illnessRepository
+                .findByIllnessTitle(illnessDTO.getIllnessTitle())
+                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+    }
+
+    public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
+        mixRepository.deleteById(new ProductIllness(productId,illnessId));
+    }
+
+    public ProductDTO getProductDTOByProductName(String product){
+        return productMapper.toProductDTO(productRepository.findByProduct(product).get());
     }
 
 }

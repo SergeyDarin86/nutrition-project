@@ -30,39 +30,28 @@
     <label class="label_style" for="resol">Вы выбрали: </label>
     <label id="resol" style="color: red" th:text="${resolution}"></label>
 
-
-    <hr/>
-    <div th:if="${response}">
-        <div th:object="${mixDTO}" th:field="*{resolution}" th:each="mix: ${response.getProducts()}">
-
-            <div th:each="entry : ${mix}">
-                <a style="color: red" th:text="${entry.key}"></a>:
-                <div th:each="valueProd : ${entry.value}">
-                    <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <br/>
     <hr/>
     <input type="submit" value="Добавить">
 </form>
 
-<p th:object="${mixDTO}" th:text="*{getResolution()}"></p>
+<div th:if="${response}">
+    <div th:each="mix: ${response.getProducts()}">
 
-<!--<p>Список</p>-->
-<!--    <div th:object="${mixDTO}" th:field="*{resolution}" th:each="mix: ${response.getProducts()}">-->
+        <div th:each="entry : ${mix}">
+            <a style="color: red" th:text="${entry.key}"></a>:
+            <div th:each="productE : ${entry.value}">
+                <form th:method="DELETE"
+                      th:action="@{/nutrition/allIllnesses/{id}/deleteFromMix/{product}(id=${illnessDTO.getIllnessId()},product=*{productE})}">
+                    <a style="margin-left: 15px; display: inline-block; width: 180px" th:object="${productDTO}"
+                       th:field="*{product}" th:value="productDTO.product" th:text="${productE}">Value</a>
+                    <input class="for_illness" type="submit" value="удалить">
+                </form>
+            </div>
+        </div>
 
-<!--        <div th:each="entry : ${mix}">-->
-<!--            <a style="color: red" th:text="${entry.key}"></a>:-->
-<!--            <div th:each="valueProd : ${entry.value}">-->
-<!--                <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--    </div>-->
+    </div>
+</div>
 
 <hr/>
 <form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">

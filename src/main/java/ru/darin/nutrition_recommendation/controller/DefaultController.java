@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
-import ru.darin.nutrition_recommendation.util.RecommendationResponse;
 
 import java.util.UUID;
 
@@ -275,7 +274,7 @@ public class DefaultController {
 
         String resolution = (String) response.asMap().get("resolution");
         response.addAttribute("response", nutritionService
-                .getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(),resolution));
+                .getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getIllnessTitle(), resolution));
         return "mix/newMix";
     }
 
@@ -292,6 +291,20 @@ public class DefaultController {
             return "mix/newMix";
         nutritionService.addMixOfProductsAndIllnesses(mixDTO, id, productDTO.getProductId());
         redirectAttributes.addFlashAttribute("resolution", resolution);
+        return "redirect:/nutrition/allIllnesses/{id}/newMix";
+    }
+
+    @DeleteMapping("/allIllnesses/{id}/deleteFromMix/{product}")
+    public String deleteFromMix(
+            @PathVariable("id") UUID id,
+            Model model,
+            @PathVariable("product") String product,
+            Model productModel
+    ) {
+        model.addAttribute("illnessDTO", nutritionService.getIllnessById(id));
+        ProductDTO productDTO = nutritionService.getProductDTOByProductName(product);
+        productModel.addAttribute("productDTO", productDTO);
+        nutritionService.deleteMixOfProductAndIllnessByProductIdWithIllnessId(productDTO.getProductId(),id);
         return "redirect:/nutrition/allIllnesses/{id}/newMix";
     }
 
