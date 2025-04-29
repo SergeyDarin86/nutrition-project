@@ -40,11 +40,11 @@
 
         <div th:each="entry : ${mix}">
             <a style="color: red" th:text="${entry.key}"></a>:
-            <div th:each="productE : ${entry.value}">
+            <div th:each="productEntry : ${entry.value}">
                 <form th:method="DELETE"
-                      th:action="@{/nutrition/allIllnesses/{id}/deleteFromMix/{product}(id=${illnessDTO.getIllnessId()},product=*{productE})}">
+                      th:action="@{/nutrition/allIllnesses/{id}/deleteFromMix/{product}(id=${illnessDTO.getIllnessId()},product=*{productEntry})}">
                     <a style="margin-left: 15px; display: inline-block; width: 180px" th:object="${productDTO}"
-                       th:field="*{product}" th:value="productDTO.product" th:text="${productE}">Value</a>
+                       th:field="*{product}" th:value="productDTO.product" th:text="${productEntry}">Value</a>
                     <input class="for_illness" type="submit" value="удалить">
                 </form>
             </div>

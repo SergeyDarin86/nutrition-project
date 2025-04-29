@@ -52,7 +52,7 @@
 <body>
 
 <label class="label_style" for="illness">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>
-<label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>
+<label id="illness" style="color: red" th:text="${response.getIllness()}"></label>
 
 <br/>
 <hr/>
@@ -65,8 +65,9 @@
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
 
-    <label for="illnessTwo"><b>Выбрать заболевание:</b></label>
-    <select th:object="${illnessTwo}" th:field="*{illnessId}" id="illnessTwo"> <!-- Обратите внимание на изменение здесь -->
+    <label for="illnessTwo"><b>Выбрать второе заболевание:</b></label>
+    <select th:object="${illnessTwo}" th:field="*{illnessId}" id="illnessTwo">
+        <option value=""></option>
         <option th:each="illnessTwo : ${illnessList}" th:value="${illnessTwo.getIllnessId()}"
                 th:text=" ${illnessTwo.getIllnessTitle()}"></option>
     </select>

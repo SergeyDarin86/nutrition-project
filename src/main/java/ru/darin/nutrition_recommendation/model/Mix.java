@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "mix")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Mix {
+public class Mix implements Comparable<Mix>{
 
     public Mix() {
     }
@@ -44,4 +44,8 @@ public class Mix {
     @Enumerated(EnumType.STRING)
     private Resolution resolution;
 
+    @Override
+    public int compareTo(Mix o) {
+        return this.getProduct().getProduct().compareTo(o.getProduct().getProduct());
+    }
 }

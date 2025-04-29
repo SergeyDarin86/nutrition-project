@@ -62,7 +62,7 @@ public class NutritionServiceForThymeleaf {
     private final String PRODUCT_WITH_TITLE_NOT_FOUND_MSG = "Продукт питания с таким названием не найден";
 
     public List<PersonDTO> getAllPeople() {
-        return personRepository.findAll().stream().map(personMapper::toPersonDto).toList();
+        return personRepository.findAll(Sort.by("fullName")).stream().map(personMapper::toPersonDto).toList();
     }
 
     public PersonDTO addPerson(PersonDTO personDTO) {
@@ -196,7 +196,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<IllnessDTO> getAllIllnesses() {
-        return illnessRepository.findAll().stream().map(illnessMapper::toIllnessDTO).toList();
+        return illnessRepository.findAll(Sort.by("illnessTitle")).stream().map(illnessMapper::toIllnessDTO).toList();
     }
 
     public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO) {
@@ -225,7 +225,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<ProductTypeDTO> getAllProductTypes() {
-        return productTypeRepository.findAll().stream().map(productTypeMapper::toProductTypeDTO).toList();
+        return productTypeRepository.findAll(Sort.by("productType")).stream().map(productTypeMapper::toProductTypeDTO).toList();
     }
 
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
@@ -275,7 +275,7 @@ public class NutritionServiceForThymeleaf {
     public RecommendationResponse getIllnessWithProductsGroupedByType(String illness, String resolution) {
 
         RecommendationResponse response = new RecommendationResponse();
-        Map<String, List<String>> productsGroupedByType = new HashMap<>();
+        Map<String, List<String>> productsGroupedByType = new TreeMap<>();
 
         response.setIllness(illness);
         response.setResolution(resolution);
@@ -309,7 +309,7 @@ public class NutritionServiceForThymeleaf {
 
         Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
         Set<Mix> mixIllnessTwo;
-        Set<Mix> mixForIllnesses = new HashSet<>(mixIllnessOne);
+        Set<Mix> mixForIllnesses = new TreeSet<>(mixIllnessOne);
 
         response.setIllness(illnessOne);
         if (illnessTwo != null) {
