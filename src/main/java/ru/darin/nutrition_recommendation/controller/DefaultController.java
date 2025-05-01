@@ -78,12 +78,13 @@ public class DefaultController {
         return "redirect:/nutrition/people/{id}";
     }
 
-    @PatchMapping("/people/{id}/curePerson")
+    @PatchMapping("/people/{id}/curePerson/{illness}")
     public String curePerson(
             @ModelAttribute("illnessDTO") IllnessDTO illnessDTO,
-            @PathVariable("id") UUID personId
+            @PathVariable("id") UUID personId,
+            @PathVariable("illness") String illness
     ) {
-        nutritionService.curePerson(personId);
+        nutritionService.curePerson(personId, illness);
         return "redirect:/nutrition/people/{id}";
     }
 

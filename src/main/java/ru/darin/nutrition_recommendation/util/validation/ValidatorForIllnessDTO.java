@@ -12,7 +12,7 @@ public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionVali
 
     private static final String MSG_WRONG_FORMAT = "Название заболевания должно начинаться с заглавной буквы";
 
-    private static final String REGEX_VALUE = "[А-Я]{1,3}[\s\\-а-я,ё]*";
+    private static final String REGEX_VALUE = "[А-Я].+";
 
     @Override
     public boolean isValid(IllnessDTO dto, ConstraintValidatorContext context) {

@@ -17,16 +17,18 @@
     <p style="font-weight: bold">Заболевания:</p>
 </tr>
 
-<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson(id=${personDTO.getPersonId()})}">
+<!--<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{illness}(id=${personDTO.getPersonId()}, illness=*{illnessDTO.getIllnessTitle()})}">-->
     <tr th:each="illnessDTO : ${personDTO.getIllnesses()}">
         <div style="display: flex; align-items: center;">
-            <div style="color: red; margin-right: 10px; margin-top: 10px"
-                 th:text="${illnessDTO.getIllnessTitle()}"></div>
+            <form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{illness}(id=${personDTO.getPersonId()}, illness=*{illnessDTO.getIllnessTitle()})}">
+            <a style="margin-left: 15px; color: red; display: inline-block; width: 180px"
+                 th:text="${illnessDTO.getIllnessTitle()}"></a>
             <input class="for_illness" type="submit" value="освободить">
+            </form>
         </div>
         <!--    </td>-->
     </tr>
-</form>
+<!--</form>-->
 
 <hr/>
 <form th:method="PATCH" th:action="@{/nutrition/people/{id}/addIllnessToPerson(id=${personDTO.getPersonId()})}">

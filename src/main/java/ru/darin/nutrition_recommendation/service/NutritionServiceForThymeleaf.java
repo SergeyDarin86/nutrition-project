@@ -129,22 +129,20 @@ public class NutritionServiceForThymeleaf {
     }
 
     @Transactional
-    public PersonDTO curePerson(UUID personId) {
+    public PersonDTO curePerson(UUID personId, String illnessTitle) {
         Person person = findPersonByIdFromRepo(personId);
 
         Person updatedPerson = new Person();
         updatedPerson.setPersonId(personId);
         updatedPerson.setFullName(person.getFullName());
 
-        Illness illness = getIllnessFromRepoByTitleNew(person);
-        System.out.println(illness.getIllnessTitle());
         Optional<Illness> optional = person.getIllnesses()
-                .stream().filter(s -> s.getIllnessTitle().equals(illness.getIllnessTitle())).findFirst();
+                .stream().filter(s -> s.getIllnessTitle().equals(illnessTitle)).findFirst();
 
         if (optional.isEmpty()) {
             throw new NutritionExceptionNotFound(PERSON_DOES_NOT_HAVE_THIS_ILLNESS_MSG);
         } else {
-            person.getIllnesses().remove(illness);
+            person.getIllnesses().remove(getIllnessFromRepoByTitle(illnessTitle));
             updatedPerson.setIllnesses(person.getIllnesses());
             personRepository.saveAndFlush(updatedPerson);
         }
@@ -363,11 +361,16 @@ public class NutritionServiceForThymeleaf {
         mixRepository.save(mix);
     }
 
-    public Illness getIllnessByTitle(IllnessDTO illnessDTO) {
-        return illnessRepository
-                .findByIllnessTitle(illnessDTO.getIllnessTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
-    }
+//    public Illness getIllnessByTitle(IllnessDTO illnessDTO) {
+//        return illnessRepository
+//                .findByIllnessTitle(illnessDTO.getIllnessTitle())
+//                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+//    }
+public Illness getIllnessFromRepoByTitle(String illnessTitle) {
+    return illnessRepository
+            .findByIllnessTitle(illnessTitle)
+            .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+}
 
     public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
         mixRepository.deleteById(new ProductIllness(productId,illnessId));
