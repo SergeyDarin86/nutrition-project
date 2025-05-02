@@ -11,19 +11,20 @@ import java.util.UUID;
 @Getter
 @Setter
 @Embeddable
-public class ProductIllness implements Serializable {
+public class ProductProtocol implements Serializable {
 
     @Column(name = "product_id")
     private UUID productId;
 
-    @Column(name = "illness_id")
-    private UUID illnessId;
+    @Column(name = "protocol_id")
+    private UUID protocolId;
 
-    public ProductIllness() {
+    public ProductProtocol() {
     }
 
-    public ProductIllness(UUID productId, UUID illnessId) {
+    public ProductProtocol(UUID productId, UUID protocolId) {
         this.productId = productId;
-        this.illnessId = illnessId;
+        this.protocolId = protocolId;
     }
+
 }

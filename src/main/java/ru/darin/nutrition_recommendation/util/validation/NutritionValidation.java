@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {
         ValidatorForPersonDTO.class,
-        ValidatorForIllnessDTO.class,
+        ValidatorForProtocolDTO.class,
         ValidatorForProductDTO.class,
         ValidatorForProductTypeDTO.class
 })

@@ -15,11 +15,14 @@ import ru.darin.nutrition_recommendation.model.Product;
 public interface ProductMapper {
 
     @Mapping(target = "product", source = "product")
-    @Mapping(target = "productType", source = "productTypeDTO")
+//    @Mapping(target = "productType", source = "productTypeDTO")
+    @Mapping(target = "product_id", source = "productId")
     Product toProduct(ProductDTO productDTO);
 
     @Mapping(target = "product", source = "product")
-    @Mapping(target = "productTypeDTO", source = "productType")
+    //из-за этого маппинга не отображается страница с продуктами
+//    @Mapping(target = "productTypeDTO", source = "productType")
+    @Mapping(target = "productId", source = "product_id")
     ProductDTO toProductDTO(Product product);
 
 }

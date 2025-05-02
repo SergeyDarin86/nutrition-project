@@ -8,7 +8,7 @@ import java.util.Map;
 @Data
 public class RecommendationResponse {
 
-    private String illness;
+    private String protocol;
 
     private String resolution;
 

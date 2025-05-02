@@ -17,4 +17,7 @@
     <include file="add_unique_constraint_for_product_type_column.xml" relativeToChangelogFile="true"/>
     <include file="initial_mix.xml" relativeToChangelogFile="true"/>
     <include file="change_illness_title_min_length.xml" relativeToChangelogFile="true"/>
+    <include file="change_illness_table_name_to_protocol.xml" relativeToChangelogFile="true"/>
+    <include file="change_person_illness_table_to_person_protocol.xml" relativeToChangelogFile="true"/>
+    <include file="change_illness_id_field_to_protocol_id_field_in_mix_table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -24,11 +24,11 @@ public class Person {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "person_illness",
+            name = "person_protocol",
             joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "illness_id")
+            inverseJoinColumns = @JoinColumn(name = "protocol_id")
     )
 
-    private List<Illness> illnesses;
+    private List<Protocol> protocols;
 
 }

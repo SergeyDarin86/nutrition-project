@@ -2,40 +2,40 @@ package ru.darin.nutrition_recommendation.util.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import ru.darin.nutrition_recommendation.dto.IllnessDTO;
+import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
 
-public class ValidatorForIllnessDTO implements ConstraintValidator<NutritionValidation, IllnessDTO> {
+public class ValidatorForProtocolDTO implements ConstraintValidator<NutritionValidation, ProtocolDTO> {
 
     private static final String MSG_NOT_EMPTY = "Поле не может быть пустым";
 
-    private static final String MSG_WRONG_LENGTH = "Название заболевания должно содержать от 3 до 50 символов";
+    private static final String MSG_WRONG_LENGTH = "Название протокола должно содержать от 3 до 50 символов";
 
-    private static final String MSG_WRONG_FORMAT = "Название заболевания должно начинаться с заглавной буквы";
+    private static final String MSG_WRONG_FORMAT = "Название протокола должно начинаться с заглавной буквы";
 
     private static final String REGEX_VALUE = "[А-Я].+";
 
     @Override
-    public boolean isValid(IllnessDTO dto, ConstraintValidatorContext context) {
+    public boolean isValid(ProtocolDTO dto, ConstraintValidatorContext context) {
         boolean isValid = true;
-        if (dto.getIllnessTitle() == null || dto.getIllnessTitle().isEmpty()) {
+        if (dto.getProtocolTitle() == null || dto.getProtocolTitle().isEmpty()) {
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_NOT_EMPTY)
-                    .addPropertyNode("illnessTitle")
+                    .addPropertyNode("protocolTitle")
                     .addConstraintViolation();
             isValid = false;
-        } else if (dto.getIllnessTitle().length() < 3 || dto.getIllnessTitle().length() > 50) {
+        } else if (dto.getProtocolTitle().length() < 3 || dto.getProtocolTitle().length() > 50) {
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_LENGTH)
-                    .addPropertyNode("illnessTitle")
+                    .addPropertyNode("protocolTitle")
                     .addConstraintViolation();
             isValid = false;
-        } else if (!dto.getIllnessTitle().matches(REGEX_VALUE)) {
+        } else if (!dto.getProtocolTitle().matches(REGEX_VALUE)) {
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_FORMAT)
-                    .addPropertyNode("illnessTitle")
+                    .addPropertyNode("protocolTitle")
                     .addConstraintViolation();
             isValid = false;
         }

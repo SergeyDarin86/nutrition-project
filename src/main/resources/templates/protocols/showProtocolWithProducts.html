@@ -7,12 +7,12 @@
 <!--</head>-->
 <!--<body>-->
 
-<!--<label class="label_style" for="illness">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>-->
-<!--<label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>-->
+<!--<label class="label_style" for="protocol">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>-->
+<!--<label id="protocol" style="color: red" th:text="${protocolDTO.getProtocolTitle()}"></label>-->
 
 <!--<br/>-->
 <!--<hr/>-->
-<!--<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}"-->
+<!--<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${protocolDTO.getProtocolId()})}"-->
 <!--      th:object="${resolutionDTO}">-->
 
 <!--    <label for="resolution"><b>Выберите параметр: </b></label>-->
@@ -36,7 +36,7 @@
 <!--</div>-->
 
 <!--<hr/>-->
-<!--<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">-->
+<!--<form th:action="@{/nutrition/allIllnesses/{id}(id=${protocolDTO.getProtocolId()})}">-->
 <!--    <input type="submit" value="Вернуться назад">-->
 <!--</form>-->
 
@@ -46,17 +46,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Микс продуктов для заболевания</title>
+    <title>Микс продуктов для протокола</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
 
-<label class="label_style" for="illness">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>
-<label id="illness" style="color: red" th:text="${response.getIllness()}"></label>
+<label class="label_style" for="protocol">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для протокола: </label>
+<label id="protocol" style="color: red" th:text="${response.getProtocol()}"></label>
 
 <br/>
 <hr/>
-<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${illnessDTO.getIllnessId()})}"
+<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${protocolDTO.getProtocolId()})}"
       th:object="${resolutionDTO}">
 
     <label for="resolution"><b>Выберите параметр: </b></label>
@@ -65,11 +65,11 @@
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
 
-    <label for="illnessTwo"><b>Выбрать второе заболевание:</b></label>
-    <select th:object="${illnessTwo}" th:field="*{illnessId}" id="illnessTwo">
+    <label for="protocolTwo"><b>Выбрать второй протокол:</b></label>
+    <select th:object="${protocolTwo}" th:field="*{protocolId}" id="protocolTwo">
         <option value=""></option>
-        <option th:each="illnessTwo : ${illnessList}" th:value="${illnessTwo.getIllnessId()}"
-                th:text=" ${illnessTwo.getIllnessTitle()}"></option>
+        <option th:each="protocolTwo : ${protocolList}" th:value="${protocolTwo.getProtocolId()}"
+                th:text=" ${protocolTwo.getProtocolTitle()}"></option>
     </select>
 
     <input type="submit" value="Показать">
@@ -88,7 +88,7 @@
 </div>
 
 <hr/>
-<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
+<form th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
     <input type="submit" value="Вернуться назад">
 </form>
 

@@ -3,8 +3,8 @@ package ru.darin.nutrition_recommendation.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.darin.nutrition_recommendation.model.Mix;
-import ru.darin.nutrition_recommendation.model.ProductIllness;
+import ru.darin.nutrition_recommendation.model.ProductProtocol;
 
 @Repository
-public interface MixRepository extends JpaRepository<Mix, ProductIllness> {
+public interface MixRepository extends JpaRepository<Mix, ProductProtocol> {
 }

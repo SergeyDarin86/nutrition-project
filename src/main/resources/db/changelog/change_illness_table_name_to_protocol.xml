@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet author="Sergey D" id="change-illness-table-name-to-protocol">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="illness"/>
+                <columnExists tableName="illness" columnName="illness_id"/>
+                <columnExists tableName="illness" columnName="illness_title"/>
+            </and>
+        </preConditions>
+        <renameColumn tableName="illness" oldColumnName="illness_id" newColumnName="protocol_id"/>
+        <renameColumn tableName="illness" oldColumnName="illness_title" newColumnName="protocol_title"/>
+        <renameTable oldTableName="illness" newTableName="protocol"/>
+    </changeSet>
+</databaseChangeLog>

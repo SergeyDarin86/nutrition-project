@@ -11,13 +11,15 @@ import ru.darin.nutrition_recommendation.model.ProductType;
 @Component
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = {ProductMapper.class})
 public interface ProductTypeMapper {
 
     @Mapping(target = "productType", source = "productType")
     ProductType toProductType(ProductTypeDTO productTypeDTO);
 
     @Mapping(target = "productType", source = "productType")
+    @Mapping(target = "productTypeId", source = "productTypeId")
+    @Mapping(target = "products", source = "products")
     ProductTypeDTO toProductTypeDTO(ProductType productType);
 
 }

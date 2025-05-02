@@ -9,20 +9,20 @@
 
 <p class="person" th:text="${personDTO.getFullName()}">VALUE</p>
 
-<tr th:if="${personDTO.getIllnesses().size()==0}">
+<tr th:if="${personDTO.getProtocols().size()==0}">
     <p style="font-weight: bold"> Человек пока не болен))) </p>
 </tr>
 
-<tr th:if="${personDTO.getIllnesses().size()!=0}">
-    <p style="font-weight: bold">Заболевания:</p>
+<tr th:if="${personDTO.getProtocols().size()!=0}">
+    <p style="font-weight: bold">Протоколы:</p>
 </tr>
 
-<!--<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{illness}(id=${personDTO.getPersonId()}, illness=*{illnessDTO.getIllnessTitle()})}">-->
-    <tr th:each="illnessDTO : ${personDTO.getIllnesses()}">
+<!--<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{protocol}(id=${personDTO.getPersonId()}, protocol=*{protocolDTO.getProtocolTitle()})}">-->
+    <tr th:each="protocolDTO : ${personDTO.getProtocols()}">
         <div style="display: flex; align-items: center;">
-            <form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{illness}(id=${personDTO.getPersonId()}, illness=*{illnessDTO.getIllnessTitle()})}">
+            <form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{protocol}(id=${personDTO.getPersonId()}, protocol=*{protocolDTO.getProtocolTitle()})}">
             <a style="margin-left: 15px; color: red; display: inline-block; width: 180px"
-                 th:text="${illnessDTO.getIllnessTitle()}"></a>
+                 th:text="${protocolDTO.getProtocolTitle()}"></a>
             <input class="for_illness" type="submit" value="освободить">
             </form>
         </div>
@@ -31,11 +31,11 @@
 <!--</form>-->
 
 <hr/>
-<form th:method="PATCH" th:action="@{/nutrition/people/{id}/addIllnessToPerson(id=${personDTO.getPersonId()})}">
-    <label for="illnessDTO"><b>Выбрать заболевание:</b></label>
-    <select th:object="${illnessDTO}" th:field="*{illnessId}" id="illnessDTO">
-        <option id="opt" th:each="illnessDTO : ${illnessList}" th:value="${illnessDTO.getIllnessId()}"
-                th:text="${illnessDTO.getIllnessTitle()}"></option>
+<form th:method="PATCH" th:action="@{/nutrition/people/{id}/addProtocolToPerson(id=${personDTO.getPersonId()})}">
+    <label for="protocolDTO"><b>Выбрать протокол:</b></label>
+    <select th:object="${protocolDTO}" th:field="*{protocolId}" id="protocolDTO">
+        <option id="opt" th:each="protocolDTO : ${protocolList}" th:value="${protocolDTO.getProtocolId()}"
+                th:text="${protocolDTO.getProtocolTitle()}"></option>
     </select>
     <input class="for_person" type="submit" value="Назначить">
 </form>

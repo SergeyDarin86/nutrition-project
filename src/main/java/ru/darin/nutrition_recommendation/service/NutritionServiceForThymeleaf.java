@@ -1,7 +1,6 @@
 package ru.darin.nutrition_recommendation.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class NutritionServiceForThymeleaf {
     private final PersonRepository personRepository;
 
-    private final IllnessRepository illnessRepository;
+    private final ProtocolRepository protocolRepository;
 
     private final ProductTypeRepository productTypeRepository;
 
@@ -31,7 +30,7 @@ public class NutritionServiceForThymeleaf {
 
     private final PersonMapper personMapper;
 
-    private final IllnessMapper illnessMapper;
+    private final ProtocolMapper protocolMapper;
 
     private final ProductTypeMapper productTypeMapper;
 
@@ -41,13 +40,13 @@ public class NutritionServiceForThymeleaf {
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
-    private final String PERSON_DOES_NOT_HAVE_THIS_ILLNESS_MSG = "У человека нет такого заболевания";
+    private final String PERSON_DOES_NOT_HAVE_THIS_PROTOCOL_MSG = "У человека нет такого протокола";
 
-    private final String ILLNESS_WITH_TITLE_NOT_FOUND_MSG = "Заболевания с таким названием не найдено";
+    private final String PROTOCOL_WITH_TITLE_NOT_FOUND_MSG = "Протокола с таким названием не найдено";
 
-    private final String ILLNESS_WITH_ID_NOT_FOUND_MSG = "Заболевания с таким идентификационным номером не найдено";
+    private final String PROTOCOL_WITH_ID_NOT_FOUND_MSG = "Протокола с таким идентификационным номером не найдено";
 
-    private final String ILLNESS_IS_ALREADY_EXIST_MSG = "Такое заболевание уже есть в БД";
+    private final String PROTOCOL_IS_ALREADY_EXIST_MSG = "Такой протокол уже есть в БД";
 
     private final String PRODUCT_IS_ALREADY_EXIST_MSG = "Такой продукт уже есть в БД";
 
@@ -83,7 +82,7 @@ public class NutritionServiceForThymeleaf {
 
         Person updatedPerson = personMapper.toPerson(personDTO);
         updatedPerson.setPersonId(id);
-        updatedPerson.setIllnesses(person.getIllnesses());
+        updatedPerson.setProtocols(person.getProtocols());
         personRepository.save(updatedPerson);
         return personMapper.toPersonDto(updatedPerson);
     }
@@ -94,30 +93,30 @@ public class NutritionServiceForThymeleaf {
         personRepository.delete(person);
     }
 
-    public Illness getIllnessFromRepoByTitle(PersonDTO personDTO) {
-        return illnessRepository
-                .findByIllnessTitle(personDTO.getIllnesses().stream().findFirst().get().getIllnessTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+    public Protocol getProtocolFromRepoByTitle(PersonDTO personDTO) {
+        return protocolRepository
+                .findByProtocolTitle(personDTO.getProtocols().stream().findFirst().get().getProtocolTitle())
+                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
     }
 
     @Transactional
-    public PersonDTO addIllnessToPerson(UUID personId, IllnessDTO illnessDTO) {
+    public PersonDTO addProtocolToPerson(UUID personId, ProtocolDTO protocolDTO) {
         Person person = findPersonByIdFromRepo(personId);
 
         Person updatedPerson = new Person();
         updatedPerson.setPersonId(personId);
         updatedPerson.setFullName(person.getFullName());
 
-        Illness illness = illnessRepository.findById(illnessDTO.getIllnessId()).get();
-        Optional<Illness> optional = person.getIllnesses()
-                .stream().filter(s -> s.getIllnessTitle().equals(illness.getIllnessTitle())).findFirst();
+        Protocol protocol = protocolRepository.findById(protocolDTO.getProtocolId()).get();
+        Optional<Protocol> optional = person.getProtocols()
+                .stream().filter(s -> s.getProtocolTitle().equals(protocol.getProtocolTitle())).findFirst();
 
         if (optional.isEmpty()) {
-            List<Illness> illnessList = new ArrayList<>(person.getIllnesses());
-            illnessList.add(illness);
-            updatedPerson.setIllnesses(illnessList);
+            List<Protocol> protocolList = new ArrayList<>(person.getProtocols());
+            protocolList.add(protocol);
+            updatedPerson.setProtocols(protocolList);
         } else {
-            updatedPerson.setIllnesses(person.getIllnesses());
+            updatedPerson.setProtocols(person.getProtocols());
         }
         personRepository.saveAndFlush(updatedPerson);
         return personMapper.toPersonDto(updatedPerson);
@@ -136,65 +135,65 @@ public class NutritionServiceForThymeleaf {
         updatedPerson.setPersonId(personId);
         updatedPerson.setFullName(person.getFullName());
 
-        Optional<Illness> optional = person.getIllnesses()
-                .stream().filter(s -> s.getIllnessTitle().equals(illnessTitle)).findFirst();
+        Optional<Protocol> optional = person.getProtocols()
+                .stream().filter(s -> s.getProtocolTitle().equals(illnessTitle)).findFirst();
 
         if (optional.isEmpty()) {
-            throw new NutritionExceptionNotFound(PERSON_DOES_NOT_HAVE_THIS_ILLNESS_MSG);
+            throw new NutritionExceptionNotFound(PERSON_DOES_NOT_HAVE_THIS_PROTOCOL_MSG);
         } else {
-            person.getIllnesses().remove(getIllnessFromRepoByTitle(illnessTitle));
-            updatedPerson.setIllnesses(person.getIllnesses());
+            person.getProtocols().remove(getProtocolFromRepoByTitle(illnessTitle));
+            updatedPerson.setProtocols(person.getProtocols());
             personRepository.saveAndFlush(updatedPerson);
         }
         return personMapper.toPersonDto(updatedPerson);
     }
 
-    public Illness getIllnessFromRepoByTitleNew(Person person) {
-        return illnessRepository
-                .findByIllnessTitle(person.getIllnesses().stream().findFirst().get().getIllnessTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+    public Protocol getIllnessFromRepoByTitleNew(Person person) {
+        return protocolRepository
+                .findByProtocolTitle(person.getProtocols().stream().findFirst().get().getProtocolTitle())
+                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
     }
 
-    public IllnessDTO addIllness(IllnessDTO illnessDTO) {
-        throwExceptionIfIllnessAlreadyExist(illnessDTO);
-        Illness illness = illnessMapper.toIllness(illnessDTO);
-        illnessRepository.save(illness);
-        return illnessMapper.toIllnessDTO(illness);
-    }
-
-    @Transactional
-    public IllnessDTO updateIllnessById(UUID id, IllnessDTO illnessDTO) {
-        illnessRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
-        throwExceptionIfIllnessAlreadyExist(illnessDTO);
-
-        Illness updatedIllness = illnessMapper.toIllness(illnessDTO);
-        updatedIllness.setIllness_id(id);
-
-        illnessRepository.save(updatedIllness);
-        return illnessMapper.toIllnessDTO(updatedIllness);
-    }
-
-    public IllnessDTO getIllnessById(UUID id) {
-        return illnessMapper.toIllnessDTO(illnessRepository.findById(id)
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG)));
+    public ProtocolDTO addProtocol(ProtocolDTO protocolDTO) {
+        throwExceptionIfProtocolAlreadyExist(protocolDTO);
+        Protocol protocol = protocolMapper.toProtocol(protocolDTO);
+        protocolRepository.save(protocol);
+        return protocolMapper.toProtocolDTO(protocol);
     }
 
     @Transactional
-    public void deleteIllnessById(UUID id) {
-        illnessRepository.findById(id)
-                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
+    public ProtocolDTO updateProtocolById(UUID id, ProtocolDTO protocolDTO) {
+        protocolRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
+        throwExceptionIfProtocolAlreadyExist(protocolDTO);
 
-        illnessRepository.deleteFromPersonIllnessTableAndIllnessTableByIllnessId(id);
+        Protocol updatedProtocol = protocolMapper.toProtocol(protocolDTO);
+        updatedProtocol.setProtocol_id(id);
+
+        protocolRepository.save(updatedProtocol);
+        return protocolMapper.toProtocolDTO(updatedProtocol);
     }
 
-    public void throwExceptionIfIllnessAlreadyExist(IllnessDTO illnessDTO) {
-        if (illnessRepository.findByIllnessTitle(illnessDTO.getIllnessTitle()).isPresent()) {
-            throw new NutritionException(ILLNESS_IS_ALREADY_EXIST_MSG);
+    public ProtocolDTO getProtocolById(UUID id) {
+        return protocolMapper.toProtocolDTO(protocolRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG)));
+    }
+
+    @Transactional
+    public void deleteProtocolById(UUID id) {
+        protocolRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
+
+        protocolRepository.deleteFromPersonProtocolTableAndProtocolTableByProtocolId(id);
+    }
+
+    public void throwExceptionIfProtocolAlreadyExist(ProtocolDTO protocolDTO) {
+        if (protocolRepository.findByProtocolTitle(protocolDTO.getProtocolTitle()).isPresent()) {
+            throw new NutritionException(PROTOCOL_IS_ALREADY_EXIST_MSG);
         }
     }
 
-    public List<IllnessDTO> getAllIllnesses() {
-        return illnessRepository.findAll(Sort.by("illnessTitle")).stream().map(illnessMapper::toIllnessDTO).toList();
+    public List<ProtocolDTO> getAllProtocols() {
+        return protocolRepository.findAll(Sort.by("protocolTitle")).stream().map(protocolMapper::toProtocolDTO).toList();
     }
 
     public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO) {
@@ -270,22 +269,22 @@ public class NutritionServiceForThymeleaf {
     }
 
     // метод нахождения микса продуктов для одного заболевания (РАЗРЕШЕНО/ЗАПРЕЩЕНО)
-    public RecommendationResponse getIllnessWithProductsGroupedByType(String illness, String resolution) {
+    public RecommendationResponse getProtocolWithProductsGroupedByType(String protocol, String resolution) {
 
         RecommendationResponse response = new RecommendationResponse();
         Map<String, List<String>> productsGroupedByType = new TreeMap<>();
 
-        response.setIllness(illness);
+        response.setProtocol(protocol);
         response.setResolution(resolution);
 
-        List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
+        List<Map<String, List<String>>> productsForProtocol = new ArrayList<>();
 
         mixRepository.findAll().stream()
-                .filter(mix -> illness.equals(mix.getIllness().getIllnessTitle()) && mix.getResolution().toString().equals(resolution))
+                .filter(mix -> protocol.equals(mix.getProtocol().getProtocolTitle()) && mix.getResolution().toString().equals(resolution))
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
 
         for (Mix mix : mixRepository.findAll()) {
-            if (!(illness.equals(mix.getIllness().getIllnessTitle()) && mix.getResolution().toString().equals(resolution)))
+            if (!(protocol.equals(mix.getProtocol().getProtocolTitle()) && mix.getResolution().toString().equals(resolution)))
                 continue;
             for (Map.Entry<String, List<String>> listEntry : productsGroupedByType.entrySet()) {
                 if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
@@ -293,13 +292,15 @@ public class NutritionServiceForThymeleaf {
             }
         }
 
-        productsForIllness.add(productsGroupedByType);
-        response.setProducts(productsForIllness);
+        productsForProtocol.add(productsGroupedByType);
+        response.setProducts(productsForProtocol);
         return response;
     }
 
     // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний (а также для одного заболевания)
-    @Cacheable("myCash")
+    // если использовать этот метод, то при удалении продуктов питания, данные остаются в кэше
+    // и используется старая информация
+//    @Cacheable("myCash")
     public RecommendationResponse getMixOfProductsForOneOrTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
         RecommendationResponse response = new RecommendationResponse();
         Map<String, List<String>> productsGroupedByType = new HashMap<>();
@@ -309,9 +310,9 @@ public class NutritionServiceForThymeleaf {
         Set<Mix> mixIllnessTwo;
         Set<Mix> mixForIllnesses = new TreeSet<>(mixIllnessOne);
 
-        response.setIllness(illnessOne);
+        response.setProtocol(illnessOne);
         if (illnessTwo != null) {
-            response.setIllness(response.getIllness().concat(" и " + illnessTwo));
+            response.setProtocol(response.getProtocol().concat(" и " + illnessTwo));
             mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
             if (resolution != null) {
                 if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
@@ -343,32 +344,32 @@ public class NutritionServiceForThymeleaf {
     }
 
     public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
-        illnessRepository.findByIllnessTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(illness + " - " + ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+        protocolRepository.findByProtocolTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(illness + " - " + PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
         return mixRepository.findAll()
-                .stream().filter(mix -> mix.getIllness().getIllnessTitle().equals(illness)
+                .stream().filter(mix -> mix.getProtocol().getProtocolTitle().equals(illness)
                         && mix.getResolution().toString().equals(resolution)).collect(Collectors.toSet());
     }
 
-    public void addMixOfProductsAndIllnesses(MixDTO mixDTO, UUID illnessId, UUID productId) {
-        Illness illness = illnessRepository.findById(illnessId).orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_ID_NOT_FOUND_MSG));
+    public void addMixOfProductsAndProtocols(MixDTO mixDTO, UUID protocolId, UUID productId) {
+        Protocol protocol = protocolRepository.findById(protocolId).orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
         Product product = productRepository.findById(productId).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_TITLE_NOT_FOUND_MSG));
 
-        ProductIllness complexKey = new ProductIllness(product.getProduct_id(), illness.getIllness_id());
+        ProductProtocol complexKey = new ProductProtocol(product.getProduct_id(), protocol.getProtocol_id());
 
         Resolution resolution = mIxMapper.toResolutionEnum(mixDTO.getResolution());
-        Mix mix = new Mix(complexKey, product, illness, resolution);
+        Mix mix = new Mix(complexKey, product, protocol, resolution);
 
         mixRepository.save(mix);
     }
 
-public Illness getIllnessFromRepoByTitle(String illnessTitle) {
-    return illnessRepository
-            .findByIllnessTitle(illnessTitle)
-            .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
+public Protocol getProtocolFromRepoByTitle(String protocolTitle) {
+    return protocolRepository
+            .findByProtocolTitle(protocolTitle)
+            .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
 }
 
     public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
-        mixRepository.deleteById(new ProductIllness(productId,illnessId));
+        mixRepository.deleteById(new ProductProtocol(productId,illnessId));
     }
 
     public ProductDTO getProductDTOByProductName(String product){

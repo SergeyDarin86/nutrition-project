@@ -7,10 +7,10 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/nutrition/allIllnesses/{id}/addMix(id=${illnessDTO.getIllnessId()})}"
+<form th:method="POST" th:action="@{/nutrition/allProtocols/{id}/addMix(id=${protocolDTO.getProtocolId()})}"
       th:object="${mixDTO}">
-    <label class="label_style" for="illness">Выберите продукт для заболевания: </label>
-    <label id="illness" style="color: red" th:text="${illnessDTO.getIllnessTitle()}"></label>
+    <label class="label_style" for="protocol">Выберите продукт для протокола: </label>
+    <label id="protocol" style="color: red" th:text="${protocolDTO.getProtocolTitle()}"></label>
 
     <p></p>
     <label for="product"><b>Выбрать продукт:</b></label>
@@ -42,7 +42,7 @@
             <a style="color: red" th:text="${entry.key}"></a>:
             <div th:each="productEntry : ${entry.value}">
                 <form th:method="DELETE"
-                      th:action="@{/nutrition/allIllnesses/{id}/deleteFromMix/{product}(id=${illnessDTO.getIllnessId()},product=*{productEntry})}">
+                      th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry})}">
                     <a style="margin-left: 15px; display: inline-block; width: 180px" th:object="${productDTO}"
                        th:field="*{product}" th:value="productDTO.product" th:text="${productEntry}">Value</a>
                     <input class="for_illness" type="submit" value="удалить">
@@ -54,7 +54,7 @@
 </div>
 
 <hr/>
-<form th:action="@{/nutrition/allIllnesses/{id}(id=${illnessDTO.getIllnessId()})}">
+<form th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
     <input type="submit" value="Вернуться назад">
 </form>
 

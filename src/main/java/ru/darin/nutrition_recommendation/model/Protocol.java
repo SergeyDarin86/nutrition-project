@@ -11,28 +11,28 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "illness")
-public class Illness {
+@Table(name = "protocol")
+public class Protocol {
 
     @Id
-    @Column(name = "illness_id", updatable = false)
+    @Column(name = "protocol_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID illness_id;
+    private UUID protocol_id;
 
-    @Column(name = "illness_title")
-    private String illnessTitle;
+    @Column(name = "protocol_title")
+    private String protocolTitle;
 
-    @ManyToMany(mappedBy = "illnesses")
+    @ManyToMany(mappedBy = "protocols")
     private List<Person> people;
 
-    @OneToMany(mappedBy = "illness")
+    @OneToMany(mappedBy = "protocol")
     @Cascade(org.hibernate.annotations.CascadeType.REMOVE)
     private List<Mix>mixes;
 
     @Override
     public String toString() {
-        return "Illness{" +
-                "illnessTitle='" + illnessTitle + '\'' +
+        return "Protocol{" +
+                "protocolTitle='" + protocolTitle + '\'' +
                 '}';
     }
 

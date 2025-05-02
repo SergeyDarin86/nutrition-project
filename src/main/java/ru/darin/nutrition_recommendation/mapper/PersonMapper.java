@@ -8,15 +8,16 @@ import ru.darin.nutrition_recommendation.model.Person;
 @Component
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = ProtocolMapper.class)
 public interface PersonMapper {
 
     @Mapping(source = "fullName", target = "fullName")
-    @Mapping(target = "illnesses", source = "illnesses")
+    @Mapping(target = "protocols", source = "protocols")
     Person toPerson(PersonDTO dto);
 
     @Mapping(source = "fullName", target = "fullName")
-    @Mapping(target = "illnesses", source = "illnesses")
+    @Mapping(target = "protocols", source = "protocols")
+    @Mapping(target = "personId", source = "personId")
     PersonDTO toPersonDto(Person person);
 
 }
