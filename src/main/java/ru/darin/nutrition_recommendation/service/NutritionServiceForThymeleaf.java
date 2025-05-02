@@ -361,11 +361,6 @@ public class NutritionServiceForThymeleaf {
         mixRepository.save(mix);
     }
 
-//    public Illness getIllnessByTitle(IllnessDTO illnessDTO) {
-//        return illnessRepository
-//                .findByIllnessTitle(illnessDTO.getIllnessTitle())
-//                .orElseThrow(() -> new NutritionExceptionNotFound(ILLNESS_WITH_TITLE_NOT_FOUND_MSG));
-//    }
 public Illness getIllnessFromRepoByTitle(String illnessTitle) {
     return illnessRepository
             .findByIllnessTitle(illnessTitle)
