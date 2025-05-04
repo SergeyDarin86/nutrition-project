@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.darin.nutrition_recommendation.dto.*;
+import ru.darin.nutrition_recommendation.resource.NutritionResource;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
 
 import java.util.UUID;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/nutrition")
 @RequiredArgsConstructor
-public class DefaultController {
+public class DefaultController implements NutritionResource {
 
     private final NutritionServiceForThymeleaf nutritionService;
 
