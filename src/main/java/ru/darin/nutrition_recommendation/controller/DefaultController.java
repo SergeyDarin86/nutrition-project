@@ -11,6 +11,7 @@ import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.resource.NutritionResource;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -115,7 +116,9 @@ public class DefaultController implements NutritionResource {
     }
 
     @GetMapping("/productType/{id}")
-    public String showProductType(@PathVariable("id") UUID id, Model model) {
+    public String showProductType(
+            @PathVariable("id") UUID id, Model model
+    ) {
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
         return "products/showProductType";
     }
@@ -153,8 +156,11 @@ public class DefaultController implements NutritionResource {
     @GetMapping("/productType/{id}/newProduct")
     public String newProduct(
             @PathVariable("id") UUID id, Model model,
-            @ModelAttribute ProductDTO productDTO
+            @ModelAttribute ProductDTO productDTO,
+            Model allergenList
+
     ) {
+        allergenList.addAttribute("allergenList", nutritionService.getAllergenTypes());
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
         return "products/newProduct";
     }
@@ -162,12 +168,15 @@ public class DefaultController implements NutritionResource {
     @PostMapping("/productType/{id}/addProduct")
     public String createProduct(
             @PathVariable("id") UUID id, Model model,
-            @ModelAttribute("productDTO") @Valid ProductDTO productDTO, BindingResult bindingResult) {
+            @ModelAttribute("productDTO") @Valid ProductDTO productDTO, BindingResult bindingResult,
+            Model allergenList,
+            @RequestParam(value = "allergen", required = false) List<UUID> selectedAllergens
+    ) {
+        allergenList.addAttribute("allergenList", nutritionService.getAllergenTypes());
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
         if (bindingResult.hasErrors())
             return "products/newProduct";
-
-        nutritionService.addProduct(productDTO, id);
+        nutritionService.addProduct(productDTO, id, selectedAllergens);
         return "redirect:/nutrition/productType/{id}";
     }
 
@@ -306,20 +315,26 @@ public class DefaultController implements NutritionResource {
         model.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
         ProductDTO productDTO = nutritionService.getProductDTOByProductName(product);
         productModel.addAttribute("productDTO", productDTO);
-        nutritionService.deleteMixOfProductAndIllnessByProductIdWithIllnessId(productDTO.getProductId(),id);
+        nutritionService.deleteMixOfProductAndIllnessByProductIdWithIllnessId(productDTO.getProductId(), id);
         return "redirect:/nutrition/allProtocols/{id}/newMix";
     }
 
+    // рабочий эндпоинт
 //    @GetMapping("/showMix/{id}")
-//    public String showMixOfProductsForSingleIllness(
+//    public String showMixOfProductsForOneOreTwoProtocols(
 //            @PathVariable("id") UUID id,
-//            Model modelIllness,
+//            Model modelProtocol,
 //            @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
-//            Model model
+//            Model model,
+//            Model protocolList,
+//            @ModelAttribute("protocolTwo") ProtocolDTO protocolTwo
 //    ) {
-//        modelIllness.addAttribute("protocolDTO", nutritionService.getIllnessById(id));
-//        model.addAttribute("response", nutritionService.getIllnessWithProductsGroupedByType(nutritionService.getIllnessById(id).getProtocolTitle(), resolutionDTO.getResolution()));
-//        return "protocols/showIllnessWithProducts";
+//        UUID protocolTwoId = protocolTwo.getProtocolId();
+//        String protocolTwoTitle = (protocolTwoId != null) ? nutritionService.getProtocolById(protocolTwoId).getProtocolTitle() : null;
+//        protocolList.addAttribute("protocolList", nutritionService.getAllProtocols());
+//        modelProtocol.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
+//        model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoIllnesses(nutritionService.getProtocolById(id).getProtocolTitle(), protocolTwoTitle, resolutionDTO.getResolution()));
+//        return "protocols/showProtocolWithProducts";
 //    }
 
     @GetMapping("/showMix/{id}")
@@ -337,6 +352,60 @@ public class DefaultController implements NutritionResource {
         modelProtocol.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
         model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoIllnesses(nutritionService.getProtocolById(id).getProtocolTitle(), protocolTwoTitle, resolutionDTO.getResolution()));
         return "protocols/showProtocolWithProducts";
+    }
+
+    @GetMapping("/newAllergenType")
+    public String newAllergenType(@ModelAttribute AllergenTypeDTO allergenTypeDTO) {
+        return "allergens/newAllergenType";
+    }
+
+    @PostMapping("/addAllergenType")
+    public String createAllergenType(@ModelAttribute("allergenTypeDTO") AllergenTypeDTO allergenTypeDTO) {
+//        if (bindingResult.hasErrors())
+//            return "people/newPerson";
+        nutritionService.addAllergenType(allergenTypeDTO);
+        return "redirect:/nutrition/allAllergenTypes";
+    }
+
+    @GetMapping("/allAllergenTypes/{id}")
+    public String showAllergenType(
+            @PathVariable("id") UUID id,
+            Model model,
+            Model colorModel
+    ) {
+        colorModel.addAttribute("titleColor", nutritionService.getAllergenTypeById(id).getTitleColor());
+        model.addAttribute("allergenTypeDTO", nutritionService.getAllergenTypeById(id));
+        return "allergens/showAllergenType";
+    }
+
+    @GetMapping("/allAllergenTypes/{id}/edit")
+    public String editAllergenType(Model model, @PathVariable("id") UUID id) {
+        model.addAttribute("allergenTypeDTO", nutritionService.getAllergenTypeById(id));
+        return "allergens/editAllergenType";
+    }
+
+    @PatchMapping("/allAllergenTypes/{id}")
+    public String updateAllergenType(
+            @ModelAttribute("allergenTypeDTO") @Valid AllergenTypeDTO allergenTypeDTO, BindingResult bindingResult,
+            @PathVariable("id") UUID id
+    ) {
+        if (bindingResult.hasErrors())
+            return "allergens/editAllergenType";
+
+        nutritionService.updateAllergenTypeById(id, allergenTypeDTO);
+        return "redirect:/nutrition/allAllergenTypes/{id}";
+    }
+
+    @DeleteMapping("/allAllergenTypes/{id}")
+    public String deleteAllergenType(@PathVariable("id") UUID id) {
+        nutritionService.deleteAllergenTypeById(id);
+        return "redirect:/nutrition/allAllergenTypes";
+    }
+
+    @GetMapping("/allAllergenTypes")
+    public String allAllergenTypes(Model model) {
+        model.addAttribute("allergens", nutritionService.getAllergenTypes());
+        return "allergens/allAllergenTypes";
     }
 
 }

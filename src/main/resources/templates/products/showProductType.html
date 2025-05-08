@@ -12,10 +12,12 @@
 <tr th:if="${productTypeDTO.getProducts().size()==0}">
     <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
 </tr>
-
 <div th:each="productDTO : ${productTypeDTO.getProducts()}">
     <a th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
-       th:text="${productDTO.getProduct()}">product</a>
+       th:text="${productDTO.getProduct()}"
+       th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+                  'color:  black'">product
+    </a>
 </div>
 
 <hr/>

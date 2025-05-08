@@ -1,48 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Микс продуктов для заболевания</title>-->
-<!--    <link href="/assets/css/styles.css" rel="stylesheet">-->
-<!--</head>-->
-<!--<body>-->
-
-<!--<label class="label_style" for="protocol">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для заболевания: </label>-->
-<!--<label id="protocol" style="color: red" th:text="${protocolDTO.getProtocolTitle()}"></label>-->
-
-<!--<br/>-->
-<!--<hr/>-->
-<!--<form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${protocolDTO.getProtocolId()})}"-->
-<!--      th:object="${resolutionDTO}">-->
-
-<!--    <label for="resolution"><b>Выберите параметр: </b></label>-->
-<!--    <select th:field="*{resolution}" class="reg-form__input form-select" , id="resolution">-->
-<!--        <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>-->
-<!--        <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>-->
-<!--    </select>-->
-
-<!--    <input type="submit" value="Показать">-->
-<!--</form>-->
-
-<!--<div th:each="mix: ${response.getProducts()}">-->
-
-<!--    <div th:each="entry : ${mix}">-->
-<!--        <a style="color: red" th:text="${entry.key}"></a>:-->
-<!--        <div th:each="valueProd : ${entry.value}">-->
-<!--            <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--</div>-->
-
-<!--<hr/>-->
-<!--<form th:action="@{/nutrition/allIllnesses/{id}(id=${protocolDTO.getProtocolId()})}">-->
-<!--    <input type="submit" value="Вернуться назад">-->
-<!--</form>-->
-
-<!--</body>-->
-<!--</html>-->
-
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -80,8 +35,11 @@
 
     <div th:each="entry : ${mix}">
         <a style="color: red" th:text="${entry.key}"></a>:
-        <div th:each="valueProd : ${entry.value}">
-            <a style="margin-left: 15px" th:text="${valueProd.toString()}">Value</a>
+        <div th:each="productDTO : ${entry.value}">
+            <a style="margin-left: 15px"
+               th:style="${productDTO.getAllergenTypes().size() > 0} ? 'margin-left: 15px; display: inline-block; width: 180px; color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+                  'margin-left: 15px; display: inline-block; width: 180px; color:  black'"
+               th:text="${productDTO.getProduct()}">Value</a>
         </div>
     </div>
 

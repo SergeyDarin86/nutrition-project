@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новый тип аллергена</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/nutrition/addAllergenType}" th:object="${allergenTypeDTO}">
+    <label for="allergenTitle">Введите тип аллергена: </label>
+    <input type="text" th:field="*{allergenTitle}" id="allergenTitle">
+    <p style="color: red" th:if="${#fields.hasErrors('allergenTitle')}" th:errors="*{allergenTitle}">Allergen error</p>
+
+    <label for="allergenColor">Выберите цвет для обозначения: </label>
+    <select id="allergenColor" th:object="${allergenTypeDTO}" th:field="*{titleColor}" name="section"
+            class="reg-form__input form-select">
+        <option style="color: black; font-weight: bold" value="black">По умолчанию</option>
+        <option style="color: red; font-weight: bold" value="red">Красный</option>
+        <option style="color: green; font-weight: bold" value="green">Зеленый</option>
+        <option style="color: blue; font-weight: bold" value="blue">Синий</option>
+        <option style="color: brown; font-weight: bold" value="brown">Коричневый</option>
+        <option style="color: orange; font-weight: bold" value="orange">Оранжевый</option>
+        <option style="color: violet; font-weight: bold" value="violet">Фиолетовый</option>
+        <option style="color: chartreuse; font-weight: bold" value="violet">Салатовый</option>
+    </select>
+
+    <br/>
+    <input type="submit" value="Добавить">
+</form>
+<hr/>
+<form th:action="@{/nutrition/allAllergenTypes}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

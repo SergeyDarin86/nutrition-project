@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="createAllergenTypeTable" author="Sergey">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="allergen_type"/>
+            </not>
+        </preConditions>
+        <createTable tableName="allergen_type">
+            <column name="allergen_id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="allergen_title" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+        <sql>
+            ALTER TABLE allergen_type ADD CONSTRAINT min_length_check_allergen check (char_length((allergen_type)::text) >= 3)
+        </sql>
+    </changeSet>
+</databaseChangeLog>

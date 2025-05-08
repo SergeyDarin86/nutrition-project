@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <title>Тип аллергена</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<p th:style="'color: ' + ${titleColor}" th:text="${allergenTypeDTO.getAllergenTitle()}">VALUE</p>
+
+<hr/>
+<form th:action="@{/nutrition/allAllergenTypes/{id}/edit(id=${allergenTypeDTO.getAllergenId()})}">
+    <input type="submit" value="Редактировать">
+</form>
+
+<hr/>
+<form th:method="DELETE" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}">
+    <input type="submit" value="Удалить">
+</form>
+
+<form th:action="@{/nutrition/allAllergenTypes}">
+    <input type="submit" value="Вернуться назад">
+</form>
+
+</body>
+</html>

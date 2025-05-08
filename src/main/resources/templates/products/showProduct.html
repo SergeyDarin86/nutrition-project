@@ -7,14 +7,16 @@
 </head>
 <body>
 
-<p th:text="${productDTO.getProduct()}">VALUE</p>
+<p th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+                  'color:  black'" th:text="${productDTO.getProduct()}">VALUE</p>
 
 <hr/>
 <form th:action="@{/nutrition/productType/{typeId}/product/{id}/edit(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
     <input class="" type="submit" value="Изменить">
 </form>
 <p></p>
-<form th:method="DELETE" th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
+<form th:method="DELETE"
+      th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
     <input type="submit" value="Удалить">
 </form>
 <p></p>

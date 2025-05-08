@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список типов аллергенов</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+<h1 class="title_style">Список типов аллергенов</h1>
+<div th:each="allergenTypeDTO: ${allergens}">
+    <a th:style="'color: ' + *{allergenTypeDTO.getTitleColor()}"
+       th:href="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
+       th:text="${allergenTypeDTO.getAllergenTitle()}">allergen</a>
+</div>
+
+<br/>
+<hr/>
+<form th:action="@{/nutrition/commonPage}">
+    <input class="" type="submit" value="На главную">
+</form>
+<form th:action="@{/nutrition/newAllergenType}">
+    <input class="" type="submit" value="Добавить новый тип аллергена">
+</form>
+</body>
+</html>

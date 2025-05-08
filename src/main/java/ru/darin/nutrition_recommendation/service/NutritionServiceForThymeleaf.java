@@ -8,7 +8,7 @@ import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.mapper.*;
 import ru.darin.nutrition_recommendation.model.*;
 import ru.darin.nutrition_recommendation.repository.*;
-import ru.darin.nutrition_recommendation.util.RecommendationResponse;
+import ru.darin.nutrition_recommendation.util.RecommendationResponseWithDTO;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
@@ -231,13 +231,21 @@ public class NutritionServiceForThymeleaf {
         }
     }
 
-    public ProductDTO addProduct(ProductDTO productDTO, UUID productTypeId) {
+    public ProductDTO addProduct(ProductDTO productDTO, UUID productTypeId, List<UUID> selectedAllergens) {
+        List<AllergenTypeDTO> allergenTypes = new ArrayList<>();
+        if (selectedAllergens != null)
+            selectedAllergens.stream().forEach(uuid -> allergenTypes.add(getAllergenTypeById(uuid)));
+
         throwExceptionIfProductAlreadyExist(productDTO);
+
         Product product = productMapper.toProduct(productDTO);
         ProductType productType = productTypeRepository.findById(productTypeId).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG));
         product.setProductType(productType);
-        productRepository.save(product);
-        return productMapper.toProductDTO(product);
+
+        Product savedProduct = productRepository.save(product);
+        Product productWithAllergens = new Product(savedProduct.getProduct_id(), savedProduct.getProduct(), savedProduct.getProductType(), savedProduct.getMixes());
+        productWithAllergens.setAllergenTypes(allergenTypes.stream().map(allergenTypeMapper::toAllergenType).toList());
+        return productMapper.toProductDTO(productRepository.save(productWithAllergens));
     }
 
     public void deleteProductById(UUID id) {
@@ -269,15 +277,15 @@ public class NutritionServiceForThymeleaf {
     }
 
     // метод нахождения микса продуктов для одного заболевания (РАЗРЕШЕНО/ЗАПРЕЩЕНО)
-    public RecommendationResponse getProtocolWithProductsGroupedByType(String protocol, String resolution) {
+    public RecommendationResponseWithDTO getProtocolWithProductsGroupedByType(String protocol, String resolution) {
 
-        RecommendationResponse response = new RecommendationResponse();
-        Map<String, List<String>> productsGroupedByType = new TreeMap<>();
+        RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
+        Map<String, List<ProductDTO>> productsGroupedByType = new TreeMap<>();
 
         response.setProtocol(protocol);
         response.setResolution(resolution);
 
-        List<Map<String, List<String>>> productsForProtocol = new ArrayList<>();
+        List<Map<String, List<ProductDTO>>> productsForProtocol = new ArrayList<>();
 
         mixRepository.findAll().stream()
                 .filter(mix -> protocol.equals(mix.getProtocol().getProtocolTitle()) && mix.getResolution().toString().equals(resolution))
@@ -286,9 +294,9 @@ public class NutritionServiceForThymeleaf {
         for (Mix mix : mixRepository.findAll()) {
             if (!(protocol.equals(mix.getProtocol().getProtocolTitle()) && mix.getResolution().toString().equals(resolution)))
                 continue;
-            for (Map.Entry<String, List<String>> listEntry : productsGroupedByType.entrySet()) {
+            for (Map.Entry<String, List<ProductDTO>> listEntry : productsGroupedByType.entrySet()) {
                 if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
-                listEntry.getValue().add(mix.getProduct().getProduct());
+                listEntry.getValue().add(productMapper.toProductDTO(mix.getProduct()));
             }
         }
 
@@ -301,10 +309,10 @@ public class NutritionServiceForThymeleaf {
     // если использовать этот метод, то при удалении продуктов питания, данные остаются в кэше
     // и используется старая информация
 //    @Cacheable("myCash")
-    public RecommendationResponse getMixOfProductsForOneOrTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
-        RecommendationResponse response = new RecommendationResponse();
-        Map<String, List<String>> productsGroupedByType = new HashMap<>();
-        List<Map<String, List<String>>> productsForIllness = new ArrayList<>();
+    public RecommendationResponseWithDTO getMixOfProductsForOneOrTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
+        RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
+        Map<String, List<ProductDTO>> productsGroupedByType = new HashMap<>();
+        List<Map<String, List<ProductDTO>>> productsForIllness = new ArrayList<>();
 
         Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
         Set<Mix> mixIllnessTwo;
@@ -323,7 +331,7 @@ public class NutritionServiceForThymeleaf {
             }
         }
 
-        fillingMapOfProductsGroupedByType(productsGroupedByType, mixForIllnesses);
+        fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType, mixForIllnesses);
         productsForIllness.add(productsGroupedByType);
         response.setResolution(resolution);
         response.setProducts(productsForIllness);
@@ -331,14 +339,14 @@ public class NutritionServiceForThymeleaf {
         return response;
     }
 
-    public void fillingMapOfProductsGroupedByType(Map<String, List<String>> productsGroupedByType, Set<Mix> mixForIllnesses) {
+    public void fillingMapOfProductsGroupedByTypeWithDTO(Map<String, List<ProductDTO>> productsGroupedByType, Set<Mix> mixForIllnesses) {
         mixForIllnesses.stream()
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
 
         for (Mix mix : mixForIllnesses) {
-            for (Map.Entry<String, List<String>> listEntry : productsGroupedByType.entrySet()) {
+            for (Map.Entry<String, List<ProductDTO>> listEntry : productsGroupedByType.entrySet()) {
                 if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
-                listEntry.getValue().add(mix.getProduct().getProduct());
+                listEntry.getValue().add(productMapper.toProductDTO(mix.getProduct()));
             }
         }
     }
@@ -362,18 +370,62 @@ public class NutritionServiceForThymeleaf {
         mixRepository.save(mix);
     }
 
-public Protocol getProtocolFromRepoByTitle(String protocolTitle) {
-    return protocolRepository
-            .findByProtocolTitle(protocolTitle)
-            .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
-}
-
-    public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
-        mixRepository.deleteById(new ProductProtocol(productId,illnessId));
+    public Protocol getProtocolFromRepoByTitle(String protocolTitle) {
+        return protocolRepository
+                .findByProtocolTitle(protocolTitle)
+                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
     }
 
-    public ProductDTO getProductDTOByProductName(String product){
+    public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
+        mixRepository.deleteById(new ProductProtocol(productId, illnessId));
+    }
+
+    public ProductDTO getProductDTOByProductName(String product) {
         return productMapper.toProductDTO(productRepository.findByProduct(product).get());
+    }
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    private final AllergenTypeRepository allergenTypeRepository;
+
+    private final AllergenTypeMapper allergenTypeMapper;
+
+    public List<AllergenTypeDTO> getAllergenTypes() {
+        return allergenTypeRepository.findAll().stream().map(allergenTypeMapper::toAllergenTypeDTO).toList();
+    }
+
+    public AllergenTypeDTO addAllergenType(AllergenTypeDTO allergenTypeDTO) {
+        AllergenType allergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
+        allergenTypeRepository.save(allergenType);
+        return allergenTypeMapper.toAllergenTypeDTO(allergenType);
+    }
+
+    public AllergenTypeDTO getAllergenTypeById(UUID uuid) {
+        return allergenTypeMapper.toAllergenTypeDTO(allergenTypeRepository.findById(uuid)
+                .orElseThrow(() -> new NutritionExceptionNotFound("Нет такого аллергена")));
+    }
+
+    @Transactional
+    public AllergenTypeDTO updateAllergenTypeById(UUID id, AllergenTypeDTO allergenTypeDTO) {
+//        AllergenType allergenType = allergenTypeRepository.findById(id)
+//                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
+
+        AllergenType updatedAllergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
+        updatedAllergenType.setAllergenId(id);
+        updatedAllergenType.setTitleColor(findAllergenTypeByIdFromRepo(id).getTitleColor());
+        allergenTypeRepository.save(updatedAllergenType);
+        return allergenTypeMapper.toAllergenTypeDTO(updatedAllergenType);
+    }
+
+    public void deleteAllergenTypeById(UUID id) {
+        AllergenType allergenType = allergenTypeRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
+        allergenTypeRepository.delete(allergenType);
+    }
+
+    public AllergenType findAllergenTypeByIdFromRepo(UUID id) {
+        return allergenTypeRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
     }
 
 }

@@ -16,7 +16,8 @@
     <label for="product"><b>Выбрать продукт:</b></label>
     <select th:object="${productDTO}" th:field="*{productId}" id="product">
         <option th:each="productDTO : ${productsList}" th:value="${productDTO.getProductId()}"
-                th:text="${productDTO.getProduct()}"></option>
+                th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+                  'color:  black'" th:text="${productDTO.getProduct()}"></option>
     </select>
 
     <p></p>
@@ -42,9 +43,12 @@
             <a style="color: red" th:text="${entry.key}"></a>:
             <div th:each="productEntry : ${entry.value}">
                 <form th:method="DELETE"
-                      th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry})}">
-                    <a style="margin-left: 15px; display: inline-block; width: 180px" th:object="${productDTO}"
-                       th:field="*{product}" th:value="productDTO.product" th:text="${productEntry}">Value</a>
+                      th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry.getProduct()})}">
+                    <a th:object="${productDTO}"
+                       th:style="${productEntry.getAllergenTypes().size() > 0} ? 'margin-left: 15px; display: inline-block; width: 180px; color: '+ ${productEntry.getAllergenTypes().get(0).getTitleColor()} :
+                  'margin-left: 15px; display: inline-block; width: 180px; color:  black'"
+                       th:field="*{product}" th:value="productDTO.product"
+                       th:text="${productEntry.getProduct()}">Value</a>
                     <input class="for_illness" type="submit" value="удалить">
                 </form>
             </div>
