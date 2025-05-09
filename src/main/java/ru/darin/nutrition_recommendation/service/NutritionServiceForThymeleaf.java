@@ -417,9 +417,22 @@ public class NutritionServiceForThymeleaf {
         return allergenTypeMapper.toAllergenTypeDTO(updatedAllergenType);
     }
 
+    //TODO: в редактировании продукта добавить изменение типа аллергена
+    // в редактровании типа аллергена добавить изменение цвета!?
+    // реализовать отображение цвета для продукта с двумя типами аллергенов
+    // добавить Валидацию для аллергена
+    // добавить сообщение на экран: "Создайте аллерген", если список пустой
+
     public void deleteAllergenTypeById(UUID id) {
         AllergenType allergenType = allergenTypeRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
+
+        //TODO: получить id аллергена
+        // найти все продукты, которые связаны с этим аллергеном
+        // далее по id очистить коллекцию
+        // в конце удалить аллерген
+
+        allergenType.getProducts().forEach(product -> product.getAllergenTypes().clear());
         allergenTypeRepository.delete(allergenType);
     }
 
