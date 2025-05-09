@@ -360,9 +360,9 @@ public class DefaultController implements NutritionResource {
     }
 
     @PostMapping("/addAllergenType")
-    public String createAllergenType(@ModelAttribute("allergenTypeDTO") AllergenTypeDTO allergenTypeDTO) {
-//        if (bindingResult.hasErrors())
-//            return "people/newPerson";
+    public String createAllergenType(@ModelAttribute("allergenTypeDTO") @Valid AllergenTypeDTO allergenTypeDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return "allergens/newAllergenType";
         nutritionService.addAllergenType(allergenTypeDTO);
         return "redirect:/nutrition/allAllergenTypes";
     }

@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
         ValidatorForPersonDTO.class,
         ValidatorForProtocolDTO.class,
         ValidatorForProductDTO.class,
-        ValidatorForProductTypeDTO.class
+        ValidatorForProductTypeDTO.class,
+        ValidatorForAllergenTypeDTO.class
 })
 @Target({ElementType.TYPE})
 public @interface NutritionValidation{

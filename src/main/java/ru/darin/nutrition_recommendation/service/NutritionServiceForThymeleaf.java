@@ -28,6 +28,8 @@ public class NutritionServiceForThymeleaf {
 
     private final MixRepository mixRepository;
 
+    private final AllergenTypeRepository allergenTypeRepository;
+
     private final PersonMapper personMapper;
 
     private final ProtocolMapper protocolMapper;
@@ -37,6 +39,8 @@ public class NutritionServiceForThymeleaf {
     private final ProductMapper productMapper;
 
     private final MIxMapper mIxMapper;
+
+    private final AllergenTypeMapper allergenTypeMapper;
 
     private final String PERSON_NOT_FOUND_MSG = "Пользователь не найден";
 
@@ -48,6 +52,8 @@ public class NutritionServiceForThymeleaf {
 
     private final String PROTOCOL_IS_ALREADY_EXIST_MSG = "Такой протокол уже есть в БД";
 
+    private final String ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип аллергена уже есть в БД";
+
     private final String PRODUCT_IS_ALREADY_EXIST_MSG = "Такой продукт уже есть в БД";
 
     private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукт уже есть в БД";
@@ -55,6 +61,8 @@ public class NutritionServiceForThymeleaf {
     private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
 
     private final String PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип продуктов питания с таким идентификационным номером не найден";
+
+    private final String ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип аллергена с таким идентификационным номером не найден";
 
     private final String PRODUCT_WITH_ID_NOT_FOUND_MSG = "Продукт питания с таким идентификационным номером не найден";
 
@@ -384,17 +392,12 @@ public class NutritionServiceForThymeleaf {
         return productMapper.toProductDTO(productRepository.findByProduct(product).get());
     }
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    private final AllergenTypeRepository allergenTypeRepository;
-
-    private final AllergenTypeMapper allergenTypeMapper;
-
     public List<AllergenTypeDTO> getAllergenTypes() {
         return allergenTypeRepository.findAll().stream().map(allergenTypeMapper::toAllergenTypeDTO).toList();
     }
 
     public AllergenTypeDTO addAllergenType(AllergenTypeDTO allergenTypeDTO) {
+        throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO);
         AllergenType allergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
         allergenTypeRepository.save(allergenType);
         return allergenTypeMapper.toAllergenTypeDTO(allergenType);
@@ -407,30 +410,25 @@ public class NutritionServiceForThymeleaf {
 
     @Transactional
     public AllergenTypeDTO updateAllergenTypeById(UUID id, AllergenTypeDTO allergenTypeDTO) {
-//        AllergenType allergenType = allergenTypeRepository.findById(id)
-//                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
-
-        AllergenType updatedAllergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
-        updatedAllergenType.setAllergenId(id);
-        updatedAllergenType.setTitleColor(findAllergenTypeByIdFromRepo(id).getTitleColor());
-        allergenTypeRepository.save(updatedAllergenType);
-        return allergenTypeMapper.toAllergenTypeDTO(updatedAllergenType);
+        AllergenType allergenType = allergenTypeRepository.findById(id)
+                .orElseThrow(() -> new NutritionExceptionNotFound(ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG));
+        throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO);
+        allergenType.setAllergenTitle(allergenTypeDTO.getAllergenTitle());
+        return allergenTypeMapper.toAllergenTypeDTO(allergenType);
     }
 
     //TODO: в редактировании продукта добавить изменение типа аллергена
     // в редактровании типа аллергена добавить изменение цвета!?
-    // реализовать отображение цвета для продукта с двумя типами аллергенов
-    // добавить Валидацию для аллергена
+    // +- реализовать отображение цвета для продукта с двумя типами аллергенов
+    // +- добавить Валидацию для аллергена
+    // + не должно быть повторяющихся значений для названия
+    // не должно быть повторяющихся значений для цвета
     // добавить сообщение на экран: "Создайте аллерген", если список пустой
+    // добавить ограничение на тип поля title_color - не может быть NULL
 
     public void deleteAllergenTypeById(UUID id) {
         AllergenType allergenType = allergenTypeRepository.findById(id)
-                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
-
-        //TODO: получить id аллергена
-        // найти все продукты, которые связаны с этим аллергеном
-        // далее по id очистить коллекцию
-        // в конце удалить аллерген
+                .orElseThrow(() -> new NutritionExceptionNotFound(ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG));
 
         allergenType.getProducts().forEach(product -> product.getAllergenTypes().clear());
         allergenTypeRepository.delete(allergenType);
@@ -439,6 +437,12 @@ public class NutritionServiceForThymeleaf {
     public AllergenType findAllergenTypeByIdFromRepo(UUID id) {
         return allergenTypeRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
+    }
+
+    public void throwExceptionIfAllergenTypeAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
+        if (allergenTypeRepository.findByAllergenTitle(allergenTypeDTO.getAllergenTitle()).isPresent()) {
+            throw new NutritionException(ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG);
+        }
     }
 
 }
