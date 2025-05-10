@@ -54,6 +54,8 @@ public class NutritionServiceForThymeleaf {
 
     private final String ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип аллергена уже есть в БД";
 
+    private final String ALLERGEN_TYPE_COLOR_IS_ALREADY_EXIST_MSG = "Такой цвет для аллергена уже используется";
+
     private final String PRODUCT_IS_ALREADY_EXIST_MSG = "Такой продукт уже есть в БД";
 
     private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукт уже есть в БД";
@@ -240,10 +242,6 @@ public class NutritionServiceForThymeleaf {
     }
 
     public ProductDTO addProduct(ProductDTO productDTO, UUID productTypeId, List<UUID> selectedAllergens) {
-        List<AllergenTypeDTO> allergenTypes = new ArrayList<>();
-        if (selectedAllergens != null)
-            selectedAllergens.stream().forEach(uuid -> allergenTypes.add(getAllergenTypeById(uuid)));
-
         throwExceptionIfProductAlreadyExist(productDTO);
 
         Product product = productMapper.toProduct(productDTO);
@@ -252,7 +250,7 @@ public class NutritionServiceForThymeleaf {
 
         Product savedProduct = productRepository.save(product);
         Product productWithAllergens = new Product(savedProduct.getProduct_id(), savedProduct.getProduct(), savedProduct.getProductType(), savedProduct.getMixes());
-        productWithAllergens.setAllergenTypes(allergenTypes.stream().map(allergenTypeMapper::toAllergenType).toList());
+        productWithAllergens.setAllergenTypes(getAllergenTypeDTOList(selectedAllergens).stream().map(allergenTypeMapper::toAllergenType).toList());
         return productMapper.toProductDTO(productRepository.save(productWithAllergens));
     }
 
@@ -266,16 +264,41 @@ public class NutritionServiceForThymeleaf {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
 
+//    @Transactional
+//    public ProductDTO updateProductById(UUID id, ProductDTO productDTO) {
+//        Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
+//        throwExceptionIfProductAlreadyExist(productDTO);
+//        product.setProduct(productDTO.getProduct());
+//        return productMapper.toProductDTO(product);
+//    }
+
+    //TODO: описать как решил проблему: org.hibernate.persistentobjectexception: detached entity passed to persist: jpa repository
+    // убрал CascadeType.Persist - оставил Merge
     @Transactional
-    public ProductDTO updateProductById(UUID id, ProductDTO productDTO) {
+    public ProductDTO updateProductById(UUID id, ProductDTO productDTO, List<UUID> selectedAllergens) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
-        throwExceptionIfProductAlreadyExist(productDTO);
+        throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(productDTO, selectedAllergens);
         product.setProduct(productDTO.getProduct());
+        if (selectedAllergens != null)
+            product.setAllergenTypes(getAllergenTypeDTOList(selectedAllergens).stream().map(allergenTypeMapper::toAllergenType).toList());
         return productMapper.toProductDTO(product);
+    }
+
+    public List<AllergenTypeDTO> getAllergenTypeDTOList(List<UUID> selectedAllergens) {
+        List<AllergenTypeDTO> allergenTypes = new ArrayList<>();
+        if (selectedAllergens != null)
+            selectedAllergens.forEach(uuid -> allergenTypes.add(getAllergenTypeById(uuid)));
+        return allergenTypes;
     }
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll(Sort.by("product")).stream().map(productMapper::toProductDTO).toList();
+    }
+
+    public void throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(ProductDTO productDTO, List<UUID> selectedAllergens) {
+        if (productRepository.findByProduct(productDTO.getProduct()).isPresent() && selectedAllergens == null) {
+            throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);
+        }
     }
 
     public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {
@@ -398,6 +421,7 @@ public class NutritionServiceForThymeleaf {
 
     public AllergenTypeDTO addAllergenType(AllergenTypeDTO allergenTypeDTO) {
         throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO);
+        throwExceptionIfAllergenTypeColorAlreadyExist(allergenTypeDTO);
         AllergenType allergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
         allergenTypeRepository.save(allergenType);
         return allergenTypeMapper.toAllergenTypeDTO(allergenType);
@@ -418,13 +442,17 @@ public class NutritionServiceForThymeleaf {
     }
 
     //TODO: в редактировании продукта добавить изменение типа аллергена
-    // в редактровании типа аллергена добавить изменение цвета!?
+    // в редактировании типа аллергена добавить изменение цвета!?
     // +- реализовать отображение цвета для продукта с двумя типами аллергенов
     // +- добавить Валидацию для аллергена
     // + не должно быть повторяющихся значений для названия
     // не должно быть повторяющихся значений для цвета
     // добавить сообщение на экран: "Создайте аллерген", если список пустой
     // добавить ограничение на тип поля title_color - не может быть NULL
+    // добавить ограничение на количество аллергенов для продукта (не более 2-х)
+    // -
+    //  +- добавить в редактировании продукта возможность добавить его к определенной категории аллергенов
+    // (пользователь может забыть это сделать сразу)
 
     public void deleteAllergenTypeById(UUID id) {
         AllergenType allergenType = allergenTypeRepository.findById(id)
@@ -442,6 +470,12 @@ public class NutritionServiceForThymeleaf {
     public void throwExceptionIfAllergenTypeAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
         if (allergenTypeRepository.findByAllergenTitle(allergenTypeDTO.getAllergenTitle()).isPresent()) {
             throw new NutritionException(ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG);
+        }
+    }
+
+    public void throwExceptionIfAllergenTypeColorAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
+        if (allergenTypeRepository.findByTitleColor(allergenTypeDTO.getTitleColor()).isPresent()) {
+            throw new NutritionException(ALLERGEN_TYPE_COLOR_IS_ALREADY_EXIST_MSG);
         }
     }
 

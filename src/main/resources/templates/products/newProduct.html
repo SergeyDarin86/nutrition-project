@@ -13,7 +13,7 @@
     <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
     <br/>
     <hr/>
-
+    <label>Выберите тип аллергена (при необходимости): </label>
     <div class="col-md-4" th:each="allergenTypeDTO : ${allergenList}">
         <div class="checkbox checkbox-custom checkbox-circle">
             <input name="allergen" type="checkbox" th:id="'allerg_' + ${allergenTypeDTO.getAllergenId()}"

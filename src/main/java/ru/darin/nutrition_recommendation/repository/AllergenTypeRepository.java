@@ -13,4 +13,6 @@ public interface AllergenTypeRepository extends JpaRepository<AllergenType, UUID
 
     Optional<AllergenType> findByAllergenTitle(String allergenTitle);
 
+    Optional<AllergenType> findByTitleColor(String titleColor);
+
 }

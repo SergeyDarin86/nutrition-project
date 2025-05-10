@@ -38,7 +38,7 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Mix>mixes;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(cascade = {CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "allergen_product",

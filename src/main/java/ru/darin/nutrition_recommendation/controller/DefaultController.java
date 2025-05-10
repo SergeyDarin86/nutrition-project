@@ -193,8 +193,10 @@ public class DefaultController implements NutritionResource {
     @GetMapping("/productType/{typeId}/product/{id}/edit")
     public String editProduct(
             @PathVariable("id") UUID id, Model model,
-            @PathVariable("typeId") UUID typeId, Model modelType
+            @PathVariable("typeId") UUID typeId, Model modelType,
+            Model allergenList
     ) {
+        allergenList.addAttribute("allergenList", nutritionService.getAllergenTypes());
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
         modelType.addAttribute("productDTO", nutritionService.getProductById(id));
         return "products/editProduct";
@@ -204,13 +206,16 @@ public class DefaultController implements NutritionResource {
     public String updateProduct(
             @PathVariable("id") UUID id,
             @ModelAttribute("productDTO") @Valid ProductDTO productDTO, BindingResult bindingResult,
-            @PathVariable("typeId") UUID typeId, Model modelType
+            @PathVariable("typeId") UUID typeId, Model modelType,
+            Model allergenList,
+            @RequestParam(value = "allergen", required = false) List<UUID> selectedAllergens
     ) {
+        allergenList.addAttribute("allergenList", nutritionService.getAllergenTypes());
         modelType.addAttribute("productTypeDTO", nutritionService.getProductTypeById(typeId));
         if (bindingResult.hasErrors())
             return "products/editProduct";
 
-        nutritionService.updateProductById(id, productDTO);
+        nutritionService.updateProductById(id, productDTO, selectedAllergens);
         return "redirect:/nutrition/productType/{typeId}/product/{id}";
     }
 
