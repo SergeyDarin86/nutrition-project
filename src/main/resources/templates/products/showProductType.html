@@ -4,20 +4,50 @@
     <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
     <title>Тип продуктов</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
+    <style>
+        .container { display: flex; flex-direction: row; }
+        .column { flex: 1; padding: 10px; box-sizing: border-box; }
+        .left-column { background-color: #f0f0f0; }
+        .right-column { background-color: #d0d0d0; }
+    </style>
 </head>
 <body>
 
-<p class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>
-
+<p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>
+<label for="productType" style="margin-left: 15px">Аллергены</label>
+<table border="1" style="width:30px">
+    <tr th:each="allergenType : ${allergens}">
+        <td th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
+            th:text="${allergenType.allergenTitle}">allergen
+        </td>
+    </tr>
+</table>
+<hr/>
+<!--<div class="container">-->
+<!--    <div class="column left-column">-->
+<!--        <h2>Left Column</h2>-->
+<!--        <p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>-->
+<!--    </div>-->
+<!--    <div class="column right-column">-->
+<!--        <h2>Right Column</h2>-->
+<!--        <p>Это содержимое правого столбца.</p>-->
+<!--    </div>-->
+<!--</div>-->
+<hr/>
 <tr th:if="${productTypeDTO.getProducts().size()==0}">
     <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
 </tr>
 <div th:each="productDTO : ${productTypeDTO.getProducts()}">
-    <a th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
+    <a id="product" th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
        th:text="${productDTO.getProduct()}"
        th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'">product
     </a>
+    <label
+            th:if="${productDTO.getAllergenTypes().size() > 1}"
+            th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
+            th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
+            for="product"></label>
 </div>
 
 <hr/>
