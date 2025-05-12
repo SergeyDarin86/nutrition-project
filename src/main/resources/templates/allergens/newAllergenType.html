@@ -15,14 +15,13 @@
     <label for="allergenColor">Выберите цвет для обозначения: </label>
     <select id="allergenColor" th:object="${allergenTypeDTO}" th:field="*{titleColor}" name="section"
             class="reg-form__input form-select">
-        <option style="color: black; font-weight: bold" value="black">По умолчанию</option>
         <option style="color: red; font-weight: bold" value="red">Красный</option>
         <option style="color: green; font-weight: bold" value="green">Зеленый</option>
         <option style="color: blue; font-weight: bold" value="blue">Синий</option>
         <option style="color: brown; font-weight: bold" value="brown">Коричневый</option>
         <option style="color: orange; font-weight: bold" value="orange">Оранжевый</option>
         <option style="color: violet; font-weight: bold" value="violet">Фиолетовый</option>
-        <option style="color: chartreuse; font-weight: bold" value="violet">Салатовый</option>
+        <option style="color: chartreuse; font-weight: bold" value="chartreuse">Салатовый</option>
     </select>
 
     <br/>
