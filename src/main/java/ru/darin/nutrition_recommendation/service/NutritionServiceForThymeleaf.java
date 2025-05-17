@@ -340,41 +340,41 @@ public class NutritionServiceForThymeleaf {
     // если использовать этот метод, то при удалении продуктов питания, данные остаются в кэше
     // и используется старая информация
 //    @Cacheable("myCash")
-    public RecommendationResponseWithDTO getMixOfProductsForOneOrTwoIllnesses(String illnessOne, String illnessTwo, String resolution) {
+    public RecommendationResponseWithDTO getMixOfProductsForOneOrTwoProtocols(String protocolOne, String protocolTwo, String resolution) {
         RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
         Map<String, List<ProductDTO>> productsGroupedByType = new HashMap<>();
-        List<Map<String, List<ProductDTO>>> productsForIllness = new ArrayList<>();
+        List<Map<String, List<ProductDTO>>> productsForProtocol = new ArrayList<>();
 
-        Set<Mix> mixIllnessOne = getMixOfProductsForSingleIllness(illnessOne, resolution);
-        Set<Mix> mixIllnessTwo;
-        Set<Mix> mixForIllnesses = new TreeSet<>(mixIllnessOne);
+        Set<Mix> mixProtocolOne = getMixOfProductsForSingleProtocol(protocolOne, resolution);
+        Set<Mix> mixProtocolTwo;
+        Set<Mix> mixForProtocols = new TreeSet<>(mixProtocolOne);
 
-        response.setProtocol(illnessOne);
-        if (illnessTwo != null) {
-            response.setProtocol(response.getProtocol().concat(" и " + illnessTwo));
-            mixIllnessTwo = getMixOfProductsForSingleIllness(illnessTwo, resolution);
+        response.setProtocol(protocolOne);
+        if (protocolTwo != null) {
+            response.setProtocol(response.getProtocol().concat(" и " + protocolTwo));
+            mixProtocolTwo = getMixOfProductsForSingleProtocol(protocolTwo, resolution);
             if (resolution != null) {
                 if (mIxMapper.toResolutionEnum(resolution).equals(Resolution.РАЗРЕШЕНО)) {
-                    mixForIllnesses.retainAll(mixIllnessTwo);
+                    mixForProtocols.retainAll(mixProtocolTwo);
                 } else {
-                    mixForIllnesses.addAll(mixIllnessTwo);
+                    mixForProtocols.addAll(mixProtocolTwo);
                 }
             }
         }
 
-        fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType, mixForIllnesses);
-        productsForIllness.add(productsGroupedByType);
+        fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType, mixForProtocols);
+        productsForProtocol.add(productsGroupedByType);
         response.setResolution(resolution);
-        response.setProducts(productsForIllness);
+        response.setProducts(productsForProtocol);
 
         return response;
     }
 
-    public void fillingMapOfProductsGroupedByTypeWithDTO(Map<String, List<ProductDTO>> productsGroupedByType, Set<Mix> mixForIllnesses) {
-        mixForIllnesses.stream()
+    public void fillingMapOfProductsGroupedByTypeWithDTO(Map<String, List<ProductDTO>> productsGroupedByType, Set<Mix> mixForProtocols) {
+        mixForProtocols.stream()
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
 
-        for (Mix mix : mixForIllnesses) {
+        for (Mix mix : mixForProtocols) {
             for (Map.Entry<String, List<ProductDTO>> listEntry : productsGroupedByType.entrySet()) {
                 if (!listEntry.getKey().equals(mix.getProduct().getProductType().getProductType())) continue;
                 listEntry.getValue().add(productMapper.toProductDTO(mix.getProduct()));
@@ -382,10 +382,10 @@ public class NutritionServiceForThymeleaf {
         }
     }
 
-    public Set<Mix> getMixOfProductsForSingleIllness(String illness, String resolution) {
-        protocolRepository.findByProtocolTitle(illness).orElseThrow(() -> new NutritionExceptionNotFound(illness + " - " + PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
+    public Set<Mix> getMixOfProductsForSingleProtocol(String protocol, String resolution) {
+        protocolRepository.findByProtocolTitle(protocol).orElseThrow(() -> new NutritionExceptionNotFound(protocol + " - " + PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
         return mixRepository.findAll()
-                .stream().filter(mix -> mix.getProtocol().getProtocolTitle().equals(illness)
+                .stream().filter(mix -> mix.getProtocol().getProtocolTitle().equals(protocol)
                         && mix.getResolution().toString().equals(resolution)).collect(Collectors.toSet());
     }
 
