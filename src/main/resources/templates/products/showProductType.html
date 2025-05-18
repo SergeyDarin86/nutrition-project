@@ -4,49 +4,21 @@
     <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
     <title>Тип продуктов</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
-    <style>
-        .container {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .column {
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .left-column {
-            background-color: #f0f0f0;
-        }
-
-        .right-column {
-            background-color: #d0d0d0;
-        }
-    </style>
 </head>
 <body>
 
-<!--<p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>-->
-<!--<label for="productType" style="margin-left: 15px">Аллергены</label>-->
-<!--<table border="1" style="width:30px">-->
-<!--    <tr th:each="allergenType : ${allergens}">-->
-<!--        <td th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"-->
-<!--            th:text="${allergenType.allergenTitle}">allergen-->
-<!--        </td>-->
-<!--    </tr>-->
-<!--</table>-->
-<!--<hr/>-->
 <div class="container">
     <div class="column left-column">
-        <p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()}">VALUE</p>
+        <p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()} + ':'">VALUE</p>
     </div>
     <div class="column right-column">
-        <h2 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">Аллергены</h2>
+        <!--        <h2 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">Аллергены</h2>-->
         <table id="tab" border="1" style="width:30px">
             <tr th:each="allergenType : ${allergens}">
-                <td th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
-                    th:text="${allergenType.allergenTitle}">allergen
+                <td
+                        class="for_products_in_type"
+                        th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
+                        th:text="${allergenType.allergenTitle}">allergen
                 </td>
             </tr>
         </table>
@@ -59,11 +31,12 @@
 <div th:each="productDTO : ${productTypeDTO.getProducts()}">
     <a class="for_products_in_type" id="product"
        th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
-       th:text="${productDTO.getProduct()}"
+       th:text="${' - ' + productDTO.getProduct()}"
        th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'">product
     </a>
     <label
+            class="for_products_in_type"
             th:if="${productDTO.getAllergenTypes().size() > 1}"
             th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
             th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
@@ -73,24 +46,26 @@
 <p></p>
 <div class="button-container">
 
-    <form class="colForm" th:method="GET"
+    <form class="inner" style="margin-right: 10px" th:method="GET"
           th:action="@{/nutrition/productType/{id}/newProduct(id=${productTypeDTO.getProductTypeId()})}">
-        <input type="submit" value="Новый продукт">
+        <input class="input_new" type="submit" value="Новый продукт">
     </form>
 
-    <form class="colForm" th:action="@{/nutrition/productType/{id}/edit(id=${productTypeDTO.getProductTypeId()})}">
-        <input class="" type="submit" value="Редактировать">
+    <form class="inner" style="margin-right: 10px" th:action="@{/nutrition/productType/{id}/edit(id=${productTypeDTO.getProductTypeId()})}">
+        <input class="input_new" type="submit" value="Редактировать">
     </form>
 
-    <form class="colForm" th:method="DELETE"
+    <form class="inner" style="margin-right: 10px" th:method="DELETE"
           th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
         <input class="delete" type="submit" value="Удалить">
     </form>
 
-    <form class="colForm" th:action="@{/nutrition/productTypeList}">
-        <input type="submit" value="Вернуться назад">
+    <form class="inner" th:action="@{/nutrition/productTypeList}">
+        <input class="input_new" type="submit" value="Назад">
     </form>
+
 </div>
+
 </body>
 
 </html>
