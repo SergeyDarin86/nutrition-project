@@ -25,24 +25,34 @@
     </div>
 </div>
 <hr/>
-<tr th:if="${productTypeDTO.getProducts().size()==0}">
-    <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
-</tr>
-<div th:each="productDTO : ${productTypeDTO.getProducts()}">
-    <a class="for_products_in_type" id="product"
-       th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
-       th:text="${' - ' + productDTO.getProduct()}"
-       th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+<div class="product_list_container">
+    <div class="product_list_column product_list_left-column">
+        <tr th:if="${productTypeDTO.getProducts().size()==0}">
+            <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
+        </tr>
+        <div th:each="productDTO : ${productTypeDTO.getProducts()}">
+            <a class="for_products_in_type" id="product"
+               th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
+               th:text="${' - ' + productDTO.getProduct()}"
+               th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'">product
-    </a>
-    <label
-            class="for_products_in_type"
-            th:if="${productDTO.getAllergenTypes().size() > 1}"
-            th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
-            th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
-            for="product"></label>
+            </a>
+            <label
+                    class="for_products_in_type"
+                    th:if="${productDTO.getAllergenTypes().size() > 1}"
+                    th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
+                    th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
+                    for="product"></label>
+        </div>
+    </div>
+    <!--    <div style="width: 250px; height: 450px" class="product_list_column product_list_right-column">-->
+    <!--    </div>-->
+    <div class="product_list_column product_list_right-column">
+        <img class="image_for_product_types"
+             src="/assets/css/img/nutrition_background.jpg"
+             alt="здесь будет рисунок">
+    </div>
 </div>
-
 <p></p>
 <div class="button-container">
 
@@ -51,7 +61,8 @@
         <input class="input_new" type="submit" value="Новый продукт">
     </form>
 
-    <form class="inner" style="margin-right: 10px" th:action="@{/nutrition/productType/{id}/edit(id=${productTypeDTO.getProductTypeId()})}">
+    <form class="inner" style="margin-right: 10px"
+          th:action="@{/nutrition/productType/{id}/edit(id=${productTypeDTO.getProductTypeId()})}">
         <input class="input_new" type="submit" value="Редактировать">
     </form>
 

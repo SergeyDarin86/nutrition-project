@@ -9,21 +9,25 @@
 
 <h1 class="title_style">Главная страница</h1>
 
-<form class="colForm" th:action="@{/nutrition/people}">
-    <input class="" type="submit" value="Люди">
-</form>
+<div class="button-container">
 
-<form class="colForm" th:action="@{/nutrition/productTypeList}">
-    <input class="" type="submit" value="Продукты питания">
-</form>
+    <form class="inner" th:action="@{/nutrition/people}">
+        <input class="input_new" type="submit" value="Люди">
+    </form>
 
-<form class="colForm" th:action="@{/nutrition/allProtocols}">
-    <input class="" type="submit" value="Протоколы">
-</form>
+    <form class="inner" th:action="@{/nutrition/productTypeList}">
+        <input class="input_new" type="submit" value="Продукты питания">
+    </form>
 
-<form class="colForm" th:action="@{/nutrition/allAllergenTypes}">
-    <input class="" type="submit" value="Типы аллергенов">
-</form>
+    <form class="inner" th:action="@{/nutrition/allProtocols}">
+        <input class="input_new" type="submit" value="Протоколы">
+    </form>
+
+    <form class="inner" th:action="@{/nutrition/allAllergenTypes}">
+        <input class="input_new" type="submit" value="Типы аллергенов">
+    </form>
+
+</div>
 
 </body>
 </html>
