@@ -117,8 +117,10 @@ public class DefaultController implements NutritionResource {
 
     @GetMapping("/productType/{id}")
     public String showProductType(
-            @PathVariable("id") UUID id, Model model
+            @PathVariable("id") UUID id, Model model,
+            Model allergensList
     ) {
+        allergensList.addAttribute("allergens",nutritionService.getAllergenTypes());
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
         return "products/showProductType";
     }
@@ -324,24 +326,6 @@ public class DefaultController implements NutritionResource {
         return "redirect:/nutrition/allProtocols/{id}/newMix";
     }
 
-    // рабочий эндпоинт
-//    @GetMapping("/showMix/{id}")
-//    public String showMixOfProductsForOneOreTwoProtocols(
-//            @PathVariable("id") UUID id,
-//            Model modelProtocol,
-//            @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
-//            Model model,
-//            Model protocolList,
-//            @ModelAttribute("protocolTwo") ProtocolDTO protocolTwo
-//    ) {
-//        UUID protocolTwoId = protocolTwo.getProtocolId();
-//        String protocolTwoTitle = (protocolTwoId != null) ? nutritionService.getProtocolById(protocolTwoId).getProtocolTitle() : null;
-//        protocolList.addAttribute("protocolList", nutritionService.getAllProtocols());
-//        modelProtocol.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
-//        model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoIllnesses(nutritionService.getProtocolById(id).getProtocolTitle(), protocolTwoTitle, resolutionDTO.getResolution()));
-//        return "protocols/showProtocolWithProducts";
-//    }
-
     @GetMapping("/showMix/{id}")
     public String showMixOfProductsForOneOreTwoProtocols(
             @PathVariable("id") UUID id,
@@ -349,13 +333,15 @@ public class DefaultController implements NutritionResource {
             @ModelAttribute("resolutionDTO") @Valid ResolutionDTO resolutionDTO,
             Model model,
             Model protocolList,
-            @ModelAttribute("protocolTwo") ProtocolDTO protocolTwo
+            @ModelAttribute("protocolTwo") ProtocolDTO protocolTwo,
+            Model allergensList
     ) {
+        allergensList.addAttribute("allergens",nutritionService.getAllergenTypes());
         UUID protocolTwoId = protocolTwo.getProtocolId();
         String protocolTwoTitle = (protocolTwoId != null) ? nutritionService.getProtocolById(protocolTwoId).getProtocolTitle() : null;
         protocolList.addAttribute("protocolList", nutritionService.getAllProtocols());
         modelProtocol.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
-        model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoIllnesses(nutritionService.getProtocolById(id).getProtocolTitle(), protocolTwoTitle, resolutionDTO.getResolution()));
+        model.addAttribute("response", nutritionService.getMixOfProductsForOneOrTwoProtocols(nutritionService.getProtocolById(id).getProtocolTitle(), protocolTwoTitle, resolutionDTO.getResolution()));
         return "protocols/showProtocolWithProducts";
     }
 
