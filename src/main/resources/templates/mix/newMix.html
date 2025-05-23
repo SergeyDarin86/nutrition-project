@@ -40,7 +40,7 @@
     <div th:each="mix: ${response.getProducts()}">
 
         <div th:each="entry : ${mix}">
-            <a style="color: red" th:text="${entry.key}"></a>:
+            <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
             <div th:each="productEntry : ${entry.value}">
                 <form th:method="DELETE"
                       th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry.getProduct()})}">
