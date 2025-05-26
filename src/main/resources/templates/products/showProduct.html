@@ -7,14 +7,14 @@
 </head>
 <body>
 
-<label id="product" th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+<label class="text_with_shadow" id="product" th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'" th:text="${productDTO.getProduct()}">VALUE</label>
 
-<label
-        th:if="${productDTO.getAllergenTypes().size() > 1}"
-        th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
-        th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
-        for="product"></label>
+<label class="text_with_shadow"
+       th:if="${productDTO.getAllergenTypes().size() > 1}"
+       th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
+       th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
+       for="product"></label>
 
 <hr/>
 <form th:action="@{/nutrition/productType/{typeId}/product/{id}/edit(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
