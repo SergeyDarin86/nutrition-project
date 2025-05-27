@@ -16,7 +16,7 @@
         <table id="tab" border="1" style="width:30px">
             <tr th:each="allergenType : ${allergens}">
                 <td
-                        class="for_products_in_type"
+                        class="text_with_shadow"
                         th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
                         th:text="${allergenType.allergenTitle}">allergen
                 </td>
@@ -31,14 +31,14 @@
             <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
         </tr>
         <div th:each="productDTO : ${productTypeDTO.getProducts()}">
-            <a class="for_products_in_type" id="product"
+            <a class="text_with_shadow" id="product"
                th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
                th:text="${' - ' + productDTO.getProduct()}"
                th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'">product
             </a>
             <label
-                    class="for_products_in_type"
+                    class="text_with_shadow"
                     th:if="${productDTO.getAllergenTypes().size() > 1}"
                     th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
                     th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
