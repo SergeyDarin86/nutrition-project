@@ -28,18 +28,33 @@
     </select>
 
     <input type="submit" value="Показать">
+    <label style="margin-left: 15px">Аллергены</label>
+    <table border="1" style="width:30px">
+        <tr th:each="allergenType : ${allergens}">
+            <td th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
+                th:text="${allergenType.allergenTitle}">allergen
+            </td>
+        </tr>
+    </table>
 </form>
 
 </tr>
 <div th:each="mix: ${response.getProducts()}">
 
     <div th:each="entry : ${mix}">
-        <a style="color: red" th:text="${entry.key}"></a>:
+        <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
         <div th:each="productDTO : ${entry.value}">
-            <a style="margin-left: 15px"
+            <a id="prod" style="margin-left: 15px"
                th:style="${productDTO.getAllergenTypes().size() > 0} ? 'margin-left: 15px; display: inline-block; width: 180px; color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'margin-left: 15px; display: inline-block; width: 180px; color:  black'"
                th:text="${productDTO.getProduct()}">Value</a>
+
+            <label
+                    th:if="${productDTO.getAllergenTypes().size() > 1}"
+                    th:style=" 'color: '+ ${productDTO.getAllergenTypes().get(1).getTitleColor()}"
+                    th:text="${' + (' + productDTO.getAllergenTypes().get(1).getAllergenTitle() + ')'}"
+                    for="prod"></label>
+
         </div>
     </div>
 
