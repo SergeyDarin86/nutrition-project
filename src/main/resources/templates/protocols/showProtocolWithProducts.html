@@ -14,13 +14,13 @@
 <form th:method="GET" th:action="@{/nutrition/showMix/{id}(id=${protocolDTO.getProtocolId()})}"
       th:object="${resolutionDTO}">
 
-    <label for="resolution"><b>Выберите параметр: </b></label>
+    <label class="text_with_shadow" for="resolution"><b>Выберите параметр: </b></label>
     <select th:field="*{resolution}" class="reg-form__input form-select" , id="resolution">
         <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
 
-    <label for="protocolTwo"><b>Выбрать второй протокол:</b></label>
+    <label class="text_with_shadow" for="protocolTwo"><b>Выбрать второй протокол:</b></label>
     <select th:object="${protocolTwo}" th:field="*{protocolId}" id="protocolTwo">
         <option value=""></option>
         <option th:each="protocolTwo : ${protocolList}" th:value="${protocolTwo.getProtocolId()}"
@@ -31,8 +31,10 @@
     <label style="margin-left: 15px">Аллергены</label>
     <table border="1" style="width:30px">
         <tr th:each="allergenType : ${allergens}">
-            <td th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
-                th:text="${allergenType.allergenTitle}">allergen
+            <td
+                    class="text_with_shadow"
+                    th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
+                    th:text="${allergenType.allergenTitle}">allergen
             </td>
         </tr>
     </table>
@@ -41,7 +43,7 @@
 </tr>
 <div th:each="mix: ${response.getProducts()}">
 
-    <div th:each="entry : ${mix}">
+    <div class="text_with_shadow" th:each="entry : ${mix}">
         <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
         <div th:each="productDTO : ${entry.value}">
             <a id="prod" style="margin-left: 15px"
