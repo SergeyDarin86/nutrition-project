@@ -264,14 +264,6 @@ public class NutritionServiceForThymeleaf {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
 
-//    @Transactional
-//    public ProductDTO updateProductById(UUID id, ProductDTO productDTO) {
-//        Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
-//        throwExceptionIfProductAlreadyExist(productDTO);
-//        product.setProduct(productDTO.getProduct());
-//        return productMapper.toProductDTO(product);
-//    }
-
     //TODO: описать как решил проблему: org.hibernate.persistentobjectexception: detached entity passed to persist: jpa repository
     // убрал CascadeType.Persist - оставил Merge
     @Transactional
