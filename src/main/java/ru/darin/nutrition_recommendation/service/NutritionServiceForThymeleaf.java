@@ -449,11 +449,6 @@ public class NutritionServiceForThymeleaf {
         allergenTypeRepository.delete(allergenType);
     }
 
-    public AllergenType findAllergenTypeByIdFromRepo(UUID id) {
-        return allergenTypeRepository.findById(id)
-                .orElseThrow(() -> new NutritionExceptionNotFound("Нет аллергена с таким ID"));
-    }
-
     public void throwExceptionIfAllergenTypeAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
         if (allergenTypeRepository.findByAllergenTitle(allergenTypeDTO.getAllergenTitle()).isPresent()) {
             throw new NutritionException(ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG);
