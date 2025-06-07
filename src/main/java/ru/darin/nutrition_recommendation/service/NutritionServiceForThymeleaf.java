@@ -440,9 +440,6 @@ public class NutritionServiceForThymeleaf {
     // добавить сообщение на экран: "Создайте аллерген", если список пустой
     // добавить ограничение на тип поля title_color - не может быть NULL
     // добавить ограничение на количество аллергенов для продукта (не более 2-х)
-    // -
-    //  +- добавить в редактировании продукта возможность добавить его к определенной категории аллергенов
-    // (пользователь может забыть это сделать сразу)
 
     public void deleteAllergenTypeById(UUID id) {
         AllergenType allergenType = allergenTypeRepository.findById(id)
