@@ -22,7 +22,6 @@ public interface AllergenTypeMapper {
     @Mapping(source = "allergenTitle", target = "allergenTitle")
     @Mapping(target = "allergenId", source = "allergenId")
     @Mapping(target = "titleColor", source = "titleColor")
-//    @Mapping(target = "products", source = "products")
     AllergenTypeDTO toAllergenTypeDTO(AllergenType allergenType);
 
 }
