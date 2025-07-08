@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### NutritionController ###
+src/main/java/ru/darin/nutrition_recommendation/controller/NutritionController.java
