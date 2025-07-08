@@ -34,3 +34,6 @@ build/
 
 ### NutritionController ###
 src/main/java/ru/darin/nutrition_recommendation/controller/NutritionController.java
+
+### NutritionService ###
+src/main/java/ru/darin/nutrition_recommendation/service/NutritionService.java

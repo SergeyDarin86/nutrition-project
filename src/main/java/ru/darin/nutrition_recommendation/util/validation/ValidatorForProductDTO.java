@@ -14,6 +14,8 @@ public class ValidatorForProductDTO implements ConstraintValidator<NutritionVali
 
     private static final String MSG_WRONG_FORMAT = "Название продукта должно начинаться с заглавной буквы";
 
+    private static final String MSG_WRONG_COUNT_OF_ALLERGEN_TYPES = "Продукт одновременно может относиться не более, чем к двум типам аллергенов";
+
     @Override
     public boolean isValid(ProductDTO dto, ConstraintValidatorContext context) {
         boolean isValid = true;
@@ -35,6 +37,13 @@ public class ValidatorForProductDTO implements ConstraintValidator<NutritionVali
             context.disableDefaultConstraintViolation();
             context
                     .buildConstraintViolationWithTemplate(MSG_WRONG_FORMAT)
+                    .addPropertyNode("product")
+                    .addConstraintViolation();
+            isValid = false;
+        }else if (dto == null) {
+            context.disableDefaultConstraintViolation();
+            context
+                    .buildConstraintViolationWithTemplate(MSG_WRONG_COUNT_OF_ALLERGEN_TYPES)
                     .addPropertyNode("product")
                     .addConstraintViolation();
             isValid = false;
