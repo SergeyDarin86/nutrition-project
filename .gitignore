@@ -37,3 +37,6 @@ src/main/java/ru/darin/nutrition_recommendation/controller/NutritionController.j
 
 ### NutritionService ###
 src/main/java/ru/darin/nutrition_recommendation/service/NutritionService.java
+
+### RecommendationResponse ###
+src/main/java/ru/darin/nutrition_recommendation/util/RecommendationResponse.java
