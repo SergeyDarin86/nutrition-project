@@ -7,7 +7,7 @@
 </head>
 <body>
 <p class="product_type_title" th:align="center">Список типов продуктов</p>
-<div th:each="productTypeDto: ${productTypeList}">
+<div  th:each="productTypeDto: ${productTypeList}">
     <a th:href="@{/nutrition/productType/{id}(id=${productTypeDto.getProductTypeId()})}"
        th:text="${productTypeDto.getProductType()}" class="text_with_shadow">productType</a>
 </div>
