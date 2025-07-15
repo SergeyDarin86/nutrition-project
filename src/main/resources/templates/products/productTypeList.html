@@ -6,16 +6,16 @@
     <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-<h1 class="title_style">Список типов продуктов</h1>
+<p class="product_type_title" th:align="center">Список типов продуктов</p>
 <div th:each="productTypeDto: ${productTypeList}">
     <a th:href="@{/nutrition/productType/{id}(id=${productTypeDto.getProductTypeId()})}"
-       th:text="${productTypeDto.getProductType()}">productType</a>
+       th:text="${productTypeDto.getProductType()}" class="text_with_shadow">productType</a>
 </div>
 
 <br/>
 <hr/>
 <!--<a href="/nutrition/newProductType">Добавить тип продукта</a>-->
-<p>Добавление нового типа продуктов</p>
+<p class="text_with_shadow">Добавление нового типа продуктов</p>
 <form th:method="GET" th:action="@{/nutrition/newProductType}">
     <input type="submit" value="Перейти">
 </form>
