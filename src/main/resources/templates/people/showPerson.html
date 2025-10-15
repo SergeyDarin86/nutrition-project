@@ -16,20 +16,16 @@
 <tr th:if="${personDTO.getProtocols().size()!=0}">
     <p style="font-weight: bold">Протоколы:</p>
 </tr>
-
-<!--<form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{protocol}(id=${personDTO.getPersonId()}, protocol=*{protocolDTO.getProtocolTitle()})}">-->
-    <tr th:each="protocolDTO : ${personDTO.getProtocols()}">
-        <div style="display: flex; align-items: center;">
-            <form th:method="PATCH" th:action="@{/nutrition/people/{id}/curePerson/{protocol}(id=${personDTO.getPersonId()}, protocol=*{protocolDTO.getProtocolTitle()})}">
+<tr th:each="protocolDTO : ${personDTO.getProtocols()}">
+    <div style="display: flex; align-items: center;">
+        <form th:method="PATCH"
+              th:action="@{/nutrition/people/{id}/curePerson/{protocol}(id=${personDTO.getPersonId()}, protocol=*{protocolDTO.getProtocolTitle()})}">
             <a style="margin-left: 15px; color: red; display: inline-block; width: 180px"
-                 th:text="${protocolDTO.getProtocolTitle()}"></a>
-            <input class="for_illness" type="submit" value="освободить">
-            </form>
-        </div>
-        <!--    </td>-->
-    </tr>
-<!--</form>-->
-
+               th:text="${protocolDTO.getProtocolTitle()}"></a>
+            <input class="for_illness" type="submit" value="убрать">
+        </form>
+    </div>
+</tr>
 <hr/>
 <form th:method="PATCH" th:action="@{/nutrition/people/{id}/addProtocolToPerson(id=${personDTO.getPersonId()})}">
     <label for="protocolDTO"><b>Выбрать протокол:</b></label>
