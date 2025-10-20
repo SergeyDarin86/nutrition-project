@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Список людей</title>
-  <link href="/assets/css/styles.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Список людей</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-<h1 class="title_style">Список людей</h1>
+
+<p class="product_type_title" th:align="center">Список людей</p>
 <div th:each="personDto: ${people}">
-  <a th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}" th:text="${personDto.getFullName()}">user</a>
+    <a th:style="'color: black'"
+       th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}"
+       th:text="${personDto.getFullName()}" class="text_with_shadow">user</a>
 </div>
 
 <br/>
 <hr/>
 <form th:action="@{/nutrition/commonPage}">
-  <input class="" type="submit" value="На главную">
+    <input class="" type="submit" value="На главную">
 </form>
 <form th:action="@{/nutrition/newPerson}">
-  <input class="" type="submit" value="Добавить человека">
+    <input class="" type="submit" value="Добавить человека">
 </form>
 </body>
 </html>
