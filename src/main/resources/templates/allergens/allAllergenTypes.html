@@ -10,7 +10,7 @@
 <div th:each="allergenTypeDTO: ${allergens}">
     <a th:style="'color: ' + *{allergenTypeDTO.getTitleColor()}"
        th:href="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
-       th:text="${allergenTypeDTO.getAllergenTitle()}">allergen</a>
+       th:text="${allergenTypeDTO.getAllergenTitle()}" class="text_with_shadow">allergen</a>
 </div>
 
 <br/>
