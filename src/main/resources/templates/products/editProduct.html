@@ -12,7 +12,7 @@
       th:object="${productDTO}">
     <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
     <label for="product">Введите название продукта: </label>
-    <input type="text" th:field="*{product}" id="product">
+    <input class="edit" type="text" th:field="*{product}" id="product">
     <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
     <input type="text" th:type="hidden" th:field="*{productId}" id="productId">
     <br/>
