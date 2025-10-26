@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<p th:style="'color: ' + ${titleColor}" th:text="${allergenTypeDTO.getAllergenTitle()}">VALUE</p>
+<p th:style="'color: ' + ${titleColor}" th:text="${allergenTypeDTO.getAllergenTitle()}" class="text_with_shadow">VALUE</p>
 
 <hr/>
 <form th:action="@{/nutrition/allAllergenTypes/{id}/edit(id=${allergenTypeDTO.getAllergenId()})}">
