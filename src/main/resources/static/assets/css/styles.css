@@ -63,7 +63,7 @@ input {
     border-radius: 0.375rem;
 }
 
-input.edit {
+input.field {
     color: white;
     font-style: italic;
     background: #ccccc4;

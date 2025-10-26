@@ -11,7 +11,7 @@
       th:object="${protocolDTO}">
     <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
     <label for="protocolTitle">Введите название протокола: </label>
-    <input class="edit" type="text" th:field="*{protocolTitle}" id="protocolTitle">
+    <input class="field" type="text" th:field="*{protocolTitle}" id="protocolTitle">
     <p style="color: red" th:if="${#fields.hasErrors('protocolTitle')}" th:errors="*{protocolTitle}">ProtocolTitle
         error</p>
     <input type="text" th:type="hidden" th:field="*{protocolId}" id="protocolId">

@@ -10,7 +10,7 @@
 <form th:method="PATCH" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}" th:object="${personDTO}">
   <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
   <label for="fullName">Введите ФИО: </label>
-  <input class="edit" type="text" th:field="*{fullName}" id="fullName">
+  <input class="field" type="text" th:field="*{fullName}" id="fullName">
   <p style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">FullName error</p>
   <input type="text" th:type="hidden" th:field="*{personId}" id="personId">
 <!--  <input type="text" th:type="hidden" th:field="*{login}" id="login">-->
