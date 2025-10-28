@@ -9,7 +9,7 @@
 <form th:method="POST" th:action="@{/nutrition/productType/{id}/addProduct(id=${productTypeDTO.getProductTypeId()})}"
       th:object="${productDTO}">
     <label for="product">Введите название продукта: </label>
-    <input type="text" th:field="*{product}" id="product">
+    <input class="field" type="text" th:field="*{product}" id="product">
     <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
     <br/>
     <hr/>

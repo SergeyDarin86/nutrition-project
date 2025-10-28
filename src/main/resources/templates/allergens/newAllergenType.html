@@ -9,7 +9,7 @@
 
 <form th:method="POST" th:action="@{/nutrition/addAllergenType}" th:object="${allergenTypeDTO}">
     <label for="allergenTitle">Введите тип аллергена: </label>
-    <input type="text" th:field="*{allergenTitle}" id="allergenTitle">
+    <input class="field" type="text" th:field="*{allergenTitle}" id="allergenTitle">
     <p style="color: red" th:if="${#fields.hasErrors('allergenTitle')}" th:errors="*{allergenTitle}">Allergen error</p>
 
     <label for="allergenColor">Выберите цвет для обозначения: </label>

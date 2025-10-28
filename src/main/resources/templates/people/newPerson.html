@@ -9,7 +9,7 @@
 
 <form th:method="POST" th:action="@{/nutrition/addPerson}" th:object="${personDTO}">
     <label for="fullName">Введите ФИО: </label>
-    <input type="text" th:field="*{fullName}" id="fullName">
+    <input class="field" type="text" th:field="*{fullName}" id="fullName">
     <p style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">FullName error</p>
     <br/>
     <input type="submit" value="Добавить">

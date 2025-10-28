@@ -9,7 +9,7 @@
 
 <form th:method="POST" th:action="@{/nutrition/addProtocol}" th:object="${protocolDTO}">
   <label for="protocolTitle">Введите название протокола: </label>
-  <input type="text" th:field="*{protocolTitle}" id="protocolTitle">
+  <input class="field" type="text" th:field="*{protocolTitle}" id="protocolTitle">
   <p style="color: red" th:if="${#fields.hasErrors('protocolTitle')}" th:errors="*{protocolTitle}">Title error</p>
   <br/>
   <input type="submit" value="Добавить">
