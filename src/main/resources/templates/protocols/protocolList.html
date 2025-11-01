@@ -8,7 +8,7 @@
 <body>
 <h1 class="title_style">Список протоколов</h1>
 <div th:each="protocolDTO: ${protocolList}">
-  <a th:href="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}" th:text="${protocolDTO.getProtocolTitle()}">protocol</a>
+  <a class="text_with_shadow" th:href="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}" th:text="${protocolDTO.getProtocolTitle()}">protocol</a>
 </div>
 
 <br/>

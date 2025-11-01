@@ -9,12 +9,11 @@
 
 <p class="product_type_title" th:align="center">Список людей</p>
 <div th:each="personDto: ${people}">
-    <a th:style="'color: black'"
-       th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}"
+    <a th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}"
        th:text="${personDto.getFullName()}" class="text_with_shadow">user</a>
 </div>
 
-<br/>
+<br>
 <hr/>
 <form th:action="@{/nutrition/commonPage}">
     <input class="" type="submit" value="На главную">

@@ -63,6 +63,20 @@ input {
     border-radius: 0.375rem;
 }
 
+.btn_onclick {
+    color: white;
+    font-style: italic;
+    background: #7aafec;
+    font-weight: bold;
+    font-size: 15px;
+    height: 30px;
+    border-radius: 0.375rem;
+}
+/* тень для button на форме подтверждения удаления*/
+button:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
 input.field {
     color: white;
     font-style: italic;
@@ -85,6 +99,7 @@ input.delete {
     border-radius: 0.375rem;
 }
 
+/* тень для класса input (все кнопки в проекте - добавить, удалить, назад и т.д.) */
 input:hover {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
@@ -108,7 +123,7 @@ input.for_illness {
 }
 
 a {
-    color: darkcyan;
+    color: black;
 }
 
 .colForm {
