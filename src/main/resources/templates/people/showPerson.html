@@ -45,7 +45,12 @@
 </form>
 
 <hr/>
-<form th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}">
+
+<!-- Подключаем модальное окно -->
+<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${personDTO.getPersonId()})"></div>
+
+<form th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}"
+      onsubmit="showCustomConfirm(event)">
     <input type="submit" value="Удалить">
 </form>
 

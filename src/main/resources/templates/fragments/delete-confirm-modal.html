@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete confirm</title>
+</head>
+<body>
+<div th:fragment="deleteConfirmModal(id)">
+    <div id="deleteConfirm"
+         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; margin:15% auto; padding:20px; width:300px; text-align:center;">
+            <p class="text_with_shadow">Вы уверены, что хотите удалить этот объект?</p>
+            <button class="btn_onclick" onclick="confirmDelete(true)">Да</button>
+            <button class="btn_onclick" onclick="confirmDelete(false)">Нет</button>
+        </div>
+    </div>
+
+    <script>
+        let currentForm;
+
+        function showCustomConfirm(event) {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+            currentForm = event.target; // Сохраняем текущую форму
+            document.getElementById('deleteConfirm').style.display = 'block'; // Показываем кастомное окно
+        }
+
+        function confirmDelete(isConfirmed) {
+            if (isConfirmed) {
+                currentForm.submit(); // Отправляем форму, если пользователь подтвердил
+            }
+            document.getElementById('deleteConfirm').style.display = 'none'; // Скрываем кастомное окно
+        }
+    </script>
+</div>
+
+</body>
+</html>
