@@ -7,7 +7,8 @@
 </head>
 <body>
 
-<p th:style="'color: ' + ${titleColor}" th:text="${allergenTypeDTO.getAllergenTitle()}" class="text_with_shadow">VALUE</p>
+<p th:style="'color: ' + ${titleColor}" th:text="${allergenTypeDTO.getAllergenTitle()}" class="text_with_shadow">
+    VALUE</p>
 
 <hr/>
 <form th:action="@{/nutrition/allAllergenTypes/{id}/edit(id=${allergenTypeDTO.getAllergenId()})}">
@@ -15,9 +16,38 @@
 </form>
 
 <hr/>
-<form th:method="DELETE" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}">
-    <input type="submit" value="Удалить">
+<!--<form th:method="DELETE" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}">-->
+<!--    <input type="submit" value="Удалить">-->
+<!--</form>-->
+
+<div id="deleteConfirm"
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; margin:15% auto; padding:20px; width:300px; text-align:center;">
+        <p class="text_with_shadow">Вы уверены, что хотите удалить этот объект?</p>
+        <button class="btn_onclick" onclick="confirmDelete(true)">Да</button>
+        <button class="btn_onclick" onclick="confirmDelete(false)">Нет</button>
+    </div>
+</div>
+
+<form id="deleteForm" th:method="DELETE"
+      th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
+      onsubmit="showCustomConfirm(event)">
+    <input type="submit" class="delete" value="Удалить">
 </form>
+
+<script>
+    function showCustomConfirm(event) {
+        event.preventDefault(); // Отменяем стандартное поведение формы
+        document.getElementById('deleteConfirm').style.display = 'block'; // Показываем кастомное окно
+    }
+
+    function confirmDelete(isConfirmed) {
+        if (isConfirmed) {
+            document.getElementById('deleteForm').submit(); // Отправляем форму, если пользователь подтвердил
+        }
+        document.getElementById('deleteConfirm').style.display = 'none'; // Скрываем кастомное окно
+    }
+</script>
 
 <form th:action="@{/nutrition/allAllergenTypes}">
     <input type="submit" value="Вернуться назад">

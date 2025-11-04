@@ -20,7 +20,10 @@
     <input class="" type="submit" value="Добавить микс">
 </form>
 
-<form class="colForm" th:method="DELETE" th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
+<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${protocolDTO.getProtocolId()})"></div>
+
+<form class="colForm" th:method="DELETE" th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}"
+      onsubmit="showCustomConfirm(event)">
     <input class="delete" type="submit" value="Удалить">
 </form>
 
