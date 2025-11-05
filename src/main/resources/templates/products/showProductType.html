@@ -54,6 +54,8 @@
     </div>
 </div>
 <p></p>
+<!-- поместил данный блок выше всех кнопок - иначе расположение кнопок плывет -->
+<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${productTypeDTO.getProductTypeId()})"></div>
 <div class="button-container">
 
     <form class="inner" style="margin-right: 10px" th:method="GET"
@@ -67,7 +69,8 @@
     </form>
 
     <form class="inner" style="margin-right: 10px" th:method="DELETE"
-          th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
+          th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}"
+          onsubmit="showCustomConfirm(event)">
         <input class="delete" type="submit" value="Удалить">
     </form>
 

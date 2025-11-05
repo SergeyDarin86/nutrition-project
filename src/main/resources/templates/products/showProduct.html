@@ -21,8 +21,12 @@
     <input class="" type="submit" value="Изменить">
 </form>
 <p></p>
+
+<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})"></div>
+
 <form th:method="DELETE"
-      th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
+      th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
+      onsubmit="showCustomConfirm(event)">
     <input type="submit" value="Удалить">
 </form>
 <p></p>
