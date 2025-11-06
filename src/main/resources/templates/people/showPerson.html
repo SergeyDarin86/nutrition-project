@@ -40,23 +40,22 @@
 </form>
 
 <hr/>
-<form th:action="@{/nutrition/people/{id}/edit(id=${personDTO.getPersonId()})}">
-    <input type="submit" value="Редактировать">
-</form>
-
-<hr/>
-
 <!-- Подключаем модальное окно -->
 <div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${personDTO.getPersonId()})"></div>
 
-<form th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}"
-      onsubmit="showCustomConfirm(event)">
-    <input type="submit" value="Удалить">
-</form>
+<div class="button-container">
+    <form class="inner" th:action="@{/nutrition/people/{id}/edit(id=${personDTO.getPersonId()})}">
+        <input class="input_new" type="submit" value="Редактировать">
+    </form>
 
-<form th:action="@{/nutrition/people}">
-    <input type="submit" value="Вернуться назад">
-</form>
+    <form class="inner" th:method="DELETE" th:action="@{/nutrition/people/{id}(id=${personDTO.getPersonId()})}"
+          onsubmit="showCustomConfirm(event)">
+        <input class="delete" type="submit" value="Удалить">
+    </form>
 
+    <form class="inner" th:action="@{/nutrition/people}">
+        <input class="input_new" type="submit" value="Вернуться назад">
+    </form>
+</div>
 </body>
 </html>
