@@ -41,7 +41,7 @@
 
 <hr/>
 <!-- Подключаем модальное окно -->
-<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${personDTO.getPersonId()})"></div>
+<div th:replace="~{fragments/delete-confirm-modal :: deleteConfirmModal(id=${personDTO.getPersonId()})}"></div>
 
 <div class="button-container">
     <form class="inner" th:action="@{/nutrition/people/{id}/edit(id=${personDTO.getPersonId()})}">
