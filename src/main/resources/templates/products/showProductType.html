@@ -45,8 +45,6 @@
                     for="product"></label>
         </div>
     </div>
-    <!--    <div style="width: 250px; height: 450px" class="product_list_column product_list_right-column">-->
-    <!--    </div>-->
     <div class="product_list_column product_list_right-column">
         <img class="image_for_product_types"
              src="/assets/css/img/nutrition_background.jpg"
@@ -55,7 +53,7 @@
 </div>
 <p></p>
 <!-- поместил данный блок выше всех кнопок - иначе расположение кнопок плывет -->
-<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${productTypeDTO.getProductTypeId()})"></div>
+<div th:replace="~{fragments/delete-confirm-modal :: deleteConfirmModal(id=${productTypeDTO.getProductTypeId()})}"></div>
 <div class="button-container">
 
     <form class="inner" style="margin-right: 10px" th:method="GET"
