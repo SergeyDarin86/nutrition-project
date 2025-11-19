@@ -17,22 +17,24 @@
        for="product"></label>
 
 <hr/>
-<form th:action="@{/nutrition/productType/{typeId}/product/{id}/edit(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
-    <input class="" type="submit" value="Изменить">
-</form>
-<p></p>
 
-<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})"></div>
+<div th:replace="~{fragments/delete-confirm-modal :: deleteConfirmModal(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"></div>
+<div class="button-container">
 
-<form th:method="DELETE"
-      th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
-      onsubmit="showCustomConfirm(event)">
-    <input type="submit" value="Удалить">
-</form>
-<p></p>
-<form th:method="GET" th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
-    <input type="submit" value="Вернуться назад">
-</form>
+    <form class="inner" th:action="@{/nutrition/productType/{typeId}/product/{id}/edit(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
+        <input class="" type="submit" value="Изменить">
+    </form>
 
+    <form class="inner" th:method="DELETE"
+          th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
+          onsubmit="showCustomConfirm(event)">
+        <input class="delete" type="submit" value="Удалить">
+    </form>
+
+    <form class="inner" th:method="GET" th:action="@{/nutrition/productType/{id}(id=${productTypeDTO.getProductTypeId()})}">
+        <input type="submit" value="Вернуться назад">
+    </form>
+
+</div>
 </body>
 </html>
