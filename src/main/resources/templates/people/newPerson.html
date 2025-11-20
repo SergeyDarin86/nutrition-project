@@ -7,17 +7,19 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/nutrition/addPerson}" th:object="${personDTO}">
-    <label for="fullName">Введите ФИО: </label>
-    <input class="field" type="text" th:field="*{fullName}" id="fullName">
-    <p style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">FullName error</p>
-    <br/>
-    <input type="submit" value="Добавить">
-</form>
-<hr/>
-<form th:action="@{/nutrition/people}">
-    <input type="submit" value="Вернуться назад">
-</form>
+<div class="button-container-add">
+    <form th:method="POST" th:action="@{/nutrition/addPerson}" th:object="${personDTO}">
+        <label for="fullName">Введите ФИО: </label>
+        <input class="field" type="text" th:field="*{fullName}" id="fullName">
+        <p style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">FullName error</p>
+        <p>
+        <input class="input_add" type="submit" value="Добавить">
+    </form>
+
+    <form th:align="left" th:action="@{/nutrition/people}">
+        <input type="submit" value="Вернуться назад">
+    </form>
+</div>
 
 </body>
 </html>

@@ -13,13 +13,14 @@
        th:text="${personDto.getFullName()}" class="text_with_shadow">user</a>
 </div>
 
-<br>
 <hr/>
-<form th:action="@{/nutrition/commonPage}">
-    <input class="" type="submit" value="На главную">
-</form>
-<form th:action="@{/nutrition/newPerson}">
-    <input class="" type="submit" value="Добавить человека">
-</form>
+<div class="button-container">
+    <form class="inner" th:action="@{/nutrition/commonPage}">
+        <input class="" type="submit" value="На главную">
+    </form>
+    <form class="inner" th:action="@{/nutrition/newPerson}">
+        <input class="input_add" type="submit" value="Добавить человека">
+    </form>
+</div>
 </body>
 </html>
