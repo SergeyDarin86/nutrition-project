@@ -63,6 +63,16 @@ input {
     border-radius: 0.375rem;
 }
 
+.input_add {
+    color: white;
+    font-style: italic;
+    background: #62404b;
+    font-weight: bold;
+    font-size: 15px;
+    height: 30px;
+    border-radius: 0.375rem;
+}
+
 .btn_onclick {
     color: white;
     font-style: italic;
@@ -210,6 +220,29 @@ select {
     margin-right: auto;
     border-radius: 5px;
     text-align: center;
+}
+
+/*контейнер для формы добавления новых элементов в базу*/
+.button-container-add{
+    background: #e7e9ee;
+    border: 1px solid #4f5252;
+    padding: 10px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    text-align: left;
+}
+
+/*контейнер для отображения списка всех людей*/
+.button-container-people{
+    background: #e7e9ee;
+    border: 1px solid #4f5252;
+    padding: 10px;
+    width: fit-content;
+    margin-right: auto;
+    border-radius: 3px;
+    text-align: left;
 }
 
 /*таблица для шапки типов продуктов (отображается слева тип продукта, справа - аллергены)*/
