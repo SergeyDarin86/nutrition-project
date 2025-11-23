@@ -8,10 +8,13 @@
 <body>
 
 <p class="product_type_title" th:align="center">Список людей</p>
-<div th:each="personDto: ${people}">
-    <a th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}"
-       th:text="${personDto.getFullName()}" class="text_with_shadow">user</a>
+<div class="button-container-people">
+    <div th:each="personDto: ${people}">
+        <a th:href="@{/nutrition/people/{id}(id=${personDto.getPersonId()})}"
+           th:text="${personDto.getFullName()}" class="text_with_shadow">user</a>
+    </div>
 </div>
+
 
 <hr/>
 <div class="button-container">
