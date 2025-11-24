@@ -15,13 +15,15 @@
 
 <br/>
 <hr/>
-<p class="text_with_shadow">Добавление нового типа продуктов</p>
-<form th:method="GET" th:action="@{/nutrition/newProductType}">
-    <input type="submit" value="Перейти">
-</form>
-<hr/>
-<form th:action="@{/nutrition/commonPage}">
-    <input class="" type="submit" value="На главную">
-</form>
+<div class="button-container">
+    <form class="inner" th:method="GET" th:action="@{/nutrition/newProductType}">
+        <input class="input_add" type="submit" value="Новый тип">
+    </form>
+
+    <form class="inner" th:action="@{/nutrition/commonPage}">
+        <input class="" type="submit" value="На главную">
+    </form>
+</div>
+
 </body>
 </html>
