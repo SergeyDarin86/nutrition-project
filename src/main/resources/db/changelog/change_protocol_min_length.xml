@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet author="Sergey D" id="change-protocol-title-min-length-in-protocol-table">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="protocol"/>
+                <columnExists tableName="protocol" columnName="protocol_title"/>
+            </and>
+        </preConditions>
+        <sql>
+            ALTER TABLE protocol ADD CONSTRAINT min_length_check_protocol_title check (char_length((protocol_title)::text) >= 3)
+        </sql>
+    </changeSet>
+</databaseChangeLog>

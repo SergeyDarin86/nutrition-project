@@ -24,4 +24,5 @@
     <include file="сhange_allergen_type_min_length.xml" relativeToChangelogFile="true"/>
     <include file="add_title_color_to_allergen_type_table.xml" relativeToChangelogFile="true"/>
     <include file="initial_allergen_product_table.xml" relativeToChangelogFile="true"/>
+    <include file="change_protocol_min_length.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
