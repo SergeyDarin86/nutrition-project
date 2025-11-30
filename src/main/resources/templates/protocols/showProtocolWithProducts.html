@@ -3,11 +3,13 @@
     <meta charset="UTF-8">
     <title>Микс продуктов для протокола</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
+    <script src="/assets/js/printDocument.js"></script>
 </head>
 <body>
-
-<label class="label_style" for="protocol">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для протокола: </label>
-<label id="protocol" style="color: red" th:text="${response.getProtocol()}"></label>
+<div id="printProtocol">
+    <label class="label_style" for="protocol">Список РАЗРЕШЕННЫХ/ЗАПРЕЩЕННЫХ продуктов для протокола: </label>
+    <label id="protocol" style="color: red" th:text="${response.getProtocol()}"></label>
+</div>
 
 <br/>
 <hr/>
@@ -15,7 +17,7 @@
       th:object="${resolutionDTO}">
 
     <label class="text_with_shadow" for="resolution"><b>Выберите параметр: </b></label>
-    <select th:field="*{resolution}" class="reg-form__input form-select" , id="resolution">
+    <select id="resolution" th:field="*{resolution}" class="reg-form__input form-select">
         <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
         <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
     </select>
@@ -41,7 +43,7 @@
 </form>
 
 </tr>
-<div th:each="mix: ${response.getProducts()}">
+<div id="productListForMix" th:each="mix: ${response.getProducts()}">
 
     <div class="text_with_shadow" th:each="entry : ${mix}">
         <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
@@ -61,11 +63,15 @@
     </div>
 
 </div>
-
 <hr/>
-<form th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
-    <input type="submit" value="Вернуться назад">
-</form>
+<div class="button-container">
+    <form class="inner" th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
+        <input class="" type="submit" value="Вернуться назад">
+    </form>
+    <form class="inner" onsubmit="printDiv(); return false;">
+        <input type="button" value="Распечатать" onclick="printDiv()">
+    </form>
+</div>
 
 </body>
 </html>

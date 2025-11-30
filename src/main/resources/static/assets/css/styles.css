@@ -295,3 +295,55 @@ select {
     height: 500px;
     object-fit: contain;
 }
+
+/* параметры для распечатки блоков данных: типы продуктов, продукты, микс для протоколов */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #productTypeList, #productTypeList * {
+        visibility: visible;
+    }
+
+    #productTypeTitle, #productTypeTitle * {
+        visibility: visible;
+    }
+
+    #productList, #productList * {
+        visibility: visible;
+    }
+
+    #resolution, #resolution * {
+        visibility: visible;
+    }
+
+    #printProtocol, #printProtocol * {
+        visibility: visible;
+    }
+
+    #productListForMix, #productListForMix * {
+        visibility: visible;
+    }
+
+    #productListForMix {
+        position: absolute;
+        top: 100px;
+        left: 0;
+        width: 100%;
+    }
+
+    #productTypeTitle {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+    }
+
+    #resolution {
+        position: absolute;
+        top: 70px;
+        left: 10px;
+        width: auto;
+    }
+}
