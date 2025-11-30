@@ -1,0 +1,25 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="dropOldConstraintNew" author="Sergey D">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*)
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'min_length_check_illness_title'
+                  AND table_name = 'protocol'
+            </sqlCheck>
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*)
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'min_length_check_protocol_title'
+                  AND table_name = 'protocol'
+            </sqlCheck>
+        </preConditions>
+        <dropUniqueConstraint tableName="protocol" constraintName="min_length_check_illness_title"/>
+        <dropUniqueConstraint tableName="protocol" constraintName="min_length_check_protocol_title"/>
+    </changeSet>
+
+</databaseChangeLog>

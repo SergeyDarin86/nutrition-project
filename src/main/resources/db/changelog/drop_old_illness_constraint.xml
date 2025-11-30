@@ -1,0 +1,30 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="dropOldConstraint" author="Sergey D">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*)
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'min_length_title_check'
+                  AND table_name = 'protocol'
+            </sqlCheck>
+        </preConditions>
+        <dropUniqueConstraint tableName="protocol" constraintName="min_length_title_check"/>
+    </changeSet>
+
+    <changeSet id="addCheckConstraintSql" author="Sergey D">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="protocol"/>
+                <columnExists tableName="protocol" columnName="protocol_title"/>
+            </and>
+        </preConditions>
+        <sql>
+            ALTER TABLE protocol
+                ADD CONSTRAINT min_length_title_check CHECK (char_length(protocol_title) >= 3);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
