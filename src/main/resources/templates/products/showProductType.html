@@ -4,15 +4,15 @@
     <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
     <title>Тип продуктов</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
+    <script src="/assets/js/printDocument.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <div class="column left-column">
+    <div id="productTypeTitle" class="column left-column">
         <p id="productType" class="product_type_title" th:text="${productTypeDTO.getProductType()} + ':'">VALUE</p>
     </div>
     <div class="column right-column">
-        <!--        <h2 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">Аллергены</h2>-->
         <table id="tab" border="1" style="width:30px">
             <tr th:each="allergenType : ${allergens}">
                 <td
@@ -30,7 +30,7 @@
         <tr th:if="${productTypeDTO.getProducts().size()==0}">
             <p style="font-weight: bold"> Пока в списке нет ни одного продукта </p>
         </tr>
-        <div th:each="productDTO : ${productTypeDTO.getProducts()}">
+        <div id="productList" th:each="productDTO : ${productTypeDTO.getProducts()}">
             <a class="text_with_shadow" id="product"
                th:href="@{/nutrition/productType/{typeId}/product/{id}(typeId=${productTypeDTO.getProductTypeId()}, id=${productDTO.getProductId()})}"
                th:text="${' - ' + productDTO.getProduct()}"
@@ -72,8 +72,12 @@
         <input class="delete" type="submit" value="Удалить">
     </form>
 
-    <form class="inner" th:action="@{/nutrition/productTypeList}">
+    <form class="inner" style="margin-right: 10px" th:action="@{/nutrition/productTypeList}">
         <input class="input_new" type="submit" value="Назад">
+    </form>
+
+    <form class="inner" onsubmit="printDiv(); return false;">
+        <input type="button" value="Распечатать" onclick="printDiv()">
     </form>
 
 </div>
