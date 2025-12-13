@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <title>Типы продуктов</title>
     <link href="/assets/css/styles.css" rel="stylesheet">
+    <script src="/assets/js/printDocument.js"></script>
 </head>
 <body>
-<p class="product_type_title" th:align="center">Список типов продуктов</p>
-<div th:each="productTypeDto: ${productTypeList}">
-    <a th:style="'color: black'"
-       th:href="@{/nutrition/productType/{id}(id=${productTypeDto.getProductTypeId()})}"
-       th:text="${productTypeDto.getProductType()}" class="text_with_shadow">productType</a>
+
+<div id="productTypeList">
+    <p class="product_type_title" th:align="center">Список типов продуктов</p>
+    <div th:each="productTypeDto: ${productTypeList}">
+        <a th:style="'color: black'"
+           th:href="@{/nutrition/productType/{id}(id=${productTypeDto.getProductTypeId()})}"
+           th:text="${productTypeDto.getProductType()}" class="text_with_shadow">productType</a>
+    </div>
 </div>
+
 
 <br/>
 <hr/>
@@ -22,6 +27,10 @@
 
     <form class="inner" th:action="@{/nutrition/commonPage}">
         <input class="" type="submit" value="На главную">
+    </form>
+
+    <form class="inner" onsubmit="printDiv(); return false;">
+        <input type="button" value="Распечатать" onclick="printDiv()">
     </form>
 </div>
 
