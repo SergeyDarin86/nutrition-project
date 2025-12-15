@@ -11,23 +11,24 @@
     VALUE</p>
 
 <hr/>
-<form th:action="@{/nutrition/allAllergenTypes/{id}/edit(id=${allergenTypeDTO.getAllergenId()})}">
-    <input type="submit" value="Редактировать">
-</form>
+<div th:replace="~{fragments/delete-confirm-modal :: deleteConfirmModal(id=${allergenTypeDTO.getAllergenId()})}"></div>
 
-<hr/>
+<div class="button-container">
+    <form class="inner" th:action="@{/nutrition/allAllergenTypes/{id}/edit(id=${allergenTypeDTO.getAllergenId()})}">
+        <input type="submit" value="Редактировать">
+    </form>
 
-<div th:replace="fragments/delete-confirm-modal :: deleteConfirmModal(id=${allergenTypeDTO.getAllergenId()})"></div>
+    <form class="inner" id="deleteForm" th:method="DELETE"
+          th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
+          onsubmit="showCustomConfirm(event)">
+        <input type="submit" class="delete" value="Удалить">
+    </form>
 
-<form id="deleteForm" th:method="DELETE"
-      th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
-      onsubmit="showCustomConfirm(event)">
-    <input type="submit" class="delete" value="Удалить">
-</form>
+    <form class="inner" th:action="@{/nutrition/allAllergenTypes}">
+        <input type="submit" value="Вернуться назад">
+    </form>
 
-<form th:action="@{/nutrition/allAllergenTypes}">
-    <input type="submit" value="Вернуться назад">
-</form>
+</div>
 
 </body>
 </html>
