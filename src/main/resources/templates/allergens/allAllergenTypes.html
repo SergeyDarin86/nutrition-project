@@ -15,11 +15,13 @@
 
 <br/>
 <hr/>
-<form th:action="@{/nutrition/commonPage}">
-    <input class="" type="submit" value="На главную">
-</form>
-<form th:action="@{/nutrition/newAllergenType}">
-    <input class="" type="submit" value="Добавить новый тип аллергена">
-</form>
+<div class="button-container">
+    <form class="inner" th:action="@{/nutrition/commonPage}">
+        <input class="" type="submit" value="На главную">
+    </form>
+    <form class="inner" th:action="@{/nutrition/newAllergenType}">
+        <input class="input_add" type="submit" value="Новый тип аллергена">
+    </form>
+</div>
 </body>
 </html>
