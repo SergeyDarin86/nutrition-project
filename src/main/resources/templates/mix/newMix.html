@@ -7,60 +7,62 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/nutrition/allProtocols/{id}/addMix(id=${protocolDTO.getProtocolId()})}"
-      th:object="${mixDTO}">
-    <label class="label_style" for="protocol">Выберите продукт для протокола: </label>
-    <label id="protocol" style="color: red" th:text="${protocolDTO.getProtocolTitle()}"></label>
+<div class="button-container-add">
+    <form th:method="POST" th:action="@{/nutrition/allProtocols/{id}/addMix(id=${protocolDTO.getProtocolId()})}"
+          th:object="${mixDTO}">
+        <label class="label_style" for="protocol">Выберите продукт для протокола: </label>
+        <label id="protocol" style="color: red" th:text="${protocolDTO.getProtocolTitle()}"></label>
 
-    <p></p>
-    <label for="product"><b>Выбрать продукт:</b></label>
-    <select th:object="${productDTO}" th:field="*{productId}" id="product">
-        <option th:each="productDTO : ${productsList}" th:value="${productDTO.getProductId()}"
-                th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
+        <p></p>
+        <label for="product"><b>Выбрать продукт:</b></label>
+        <select th:object="${productDTO}" th:field="*{productId}" id="product">
+            <option th:each="productDTO : ${productsList}" th:value="${productDTO.getProductId()}"
+                    th:style="${productDTO.getAllergenTypes().size() > 0} ? 'color: '+ ${productDTO.getAllergenTypes().get(0).getTitleColor()} :
                   'color:  black'" th:text="${productDTO.getProduct()}"></option>
-    </select>
+        </select>
 
-    <p></p>
-    <label for="resolution"><b>Выберите, разрешен или нет продукт: </b></label>
-    <select th:object="${mixDTO}" th:field="*{resolution}" name="section" class="reg-form__input form-select" ,
-            id="resolution">
-        <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
-        <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
-    </select>
+        <p></p>
+        <label for="resolution"><b>Выберите, разрешен или нет продукт: </b></label>
+        <select th:object="${mixDTO}" th:field="*{resolution}" name="section" class="reg-form__input form-select" ,
+                id="resolution">
+            <option value="РАЗРЕШЕНО">РАЗРЕШЕНО</option>
+            <option value="ЗАПРЕЩЕНО">ЗАПРЕЩЕНО</option>
+        </select>
 
-    <label class="label_style" for="resol">Вы выбрали: </label>
-    <label id="resol" style="color: red" th:text="${resolution}"></label>
+        <label class="label_style" for="resol">Вы выбрали: </label>
+        <label id="resol" style="color: red" th:text="${resolution}"></label>
 
-    <br/>
-    <hr/>
-    <input type="submit" value="Добавить">
-</form>
+        <br/>
+        <hr/>
+        <p>
+        <input class="input_add" type="submit" value="Добавить">
+    </form>
 
-<div th:if="${response}">
-    <div th:each="mix: ${response.getProducts()}">
+    <div th:if="${response}">
+        <div th:each="mix: ${response.getProducts()}">
 
-        <div th:each="entry : ${mix}">
-            <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
-            <div th:each="productEntry : ${entry.value}">
-                <form th:method="DELETE"
-                      th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry.getProduct()})}">
-                    <a th:object="${productDTO}"
-                       th:style="${productEntry.getAllergenTypes().size() > 0} ? 'margin-left: 15px; display: inline-block; width: 180px; color: '+ ${productEntry.getAllergenTypes().get(0).getTitleColor()} :
+            <div th:each="entry : ${mix}">
+                <a style="font-weight: bolder; color: black" th:text="${entry.key}"></a>:
+                <div th:each="productEntry : ${entry.value}">
+                    <form th:method="DELETE"
+                          th:action="@{/nutrition/allProtocols/{id}/deleteFromMix/{product}(id=${protocolDTO.getProtocolId()},product=*{productEntry.getProduct()})}">
+                        <a th:object="${productDTO}"
+                           th:style="${productEntry.getAllergenTypes().size() > 0} ? 'margin-left: 15px; display: inline-block; width: 180px; color: '+ ${productEntry.getAllergenTypes().get(0).getTitleColor()} :
                   'margin-left: 15px; display: inline-block; width: 180px; color:  black'"
-                       th:field="*{product}" th:value="productDTO.product"
-                       th:text="${productEntry.getProduct()}">Value</a>
-                    <input class="for_illness" type="submit" value="удалить">
-                </form>
+                           th:field="*{product}" th:value="productDTO.product"
+                           th:text="${productEntry.getProduct()}">Value</a>
+                        <input class="for_illness" type="submit" value="удалить">
+                    </form>
+                </div>
             </div>
+
         </div>
-
     </div>
-</div>
 
-<hr/>
-<form th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
-    <input type="submit" value="Вернуться назад">
-</form>
+    <hr/>
+    <form th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
+        <input type="submit" value="Вернуться назад">
+    </form>
 
 </div>
 </body>
