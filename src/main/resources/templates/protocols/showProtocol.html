@@ -20,7 +20,7 @@
     <!--новая кнопка-->
 
     <form class="inner" th:action="@{/nutrition/allProtocols/{id}/newMix(id=${protocolDTO.getProtocolId()})}">
-        <input class="" type="submit" value="Добавить микс">
+        <input class="input_add" type="submit" value="Добавить микс">
     </form>
 
     <form class="inner" th:method="DELETE" th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}"
