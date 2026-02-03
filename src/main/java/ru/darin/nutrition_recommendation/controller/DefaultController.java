@@ -120,7 +120,7 @@ public class DefaultController implements NutritionResource {
             @PathVariable("id") UUID id, Model model,
             Model allergensList
     ) {
-        allergensList.addAttribute("allergens",nutritionService.getAllergenTypes());
+        allergensList.addAttribute("allergens", nutritionService.getAllergenTypes());
         model.addAttribute("productTypeDTO", nutritionService.getProductTypeById(id));
         return "products/showProductType";
     }
@@ -336,7 +336,7 @@ public class DefaultController implements NutritionResource {
             @ModelAttribute("protocolTwo") ProtocolDTO protocolTwo,
             Model allergensList
     ) {
-        allergensList.addAttribute("allergens",nutritionService.getAllergenTypes());
+        allergensList.addAttribute("allergens", nutritionService.getAllergenTypes());
         UUID protocolTwoId = protocolTwo.getProtocolId();
         String protocolTwoTitle = (protocolTwoId != null) ? nutritionService.getProtocolById(protocolTwoId).getProtocolTitle() : null;
         protocolList.addAttribute("protocolList", nutritionService.getAllProtocols());
