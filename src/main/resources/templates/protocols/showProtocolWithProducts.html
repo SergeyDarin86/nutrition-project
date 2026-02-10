@@ -30,19 +30,29 @@
     </select>
 
     <input type="submit" value="Показать">
-    <label style="margin-left: 15px">Аллергены</label>
-    <table border="1" style="width:30px">
-        <tr th:each="allergenType : ${allergens}">
-            <td
-                    class="text_with_shadow"
-                    th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
-                    th:text="${allergenType.allergenTitle}">allergen
-            </td>
-        </tr>
-    </table>
+    <div>
+        <table align="left">
+            <tr>
+                <td>
+                    <label class="text_with_shadow" style="margin-left: 15px">Аллергены</label>
+                </td>
+                <td>
+                    <table border="1" style="width:30px">
+                        <tr>
+                            <td th:each="allergenType : ${allergens}"
+                                class="text_with_shadow"
+                                th:style=" 'background-color: '+ ${allergenType.getTitleColor()}"
+                                th:text="${allergenType.allergenTitle}">allergen
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 </form>
-
-</tr>
+<br>
+<hr>
 <div id="productListForMix" th:each="mix: ${response.getProducts()}">
 
     <div class="text_with_shadow" th:each="entry : ${mix}">
@@ -63,7 +73,6 @@
     </div>
 
 </div>
-<hr/>
 <div class="button-container">
     <form class="inner" th:action="@{/nutrition/allProtocols/{id}(id=${protocolDTO.getProtocolId()})}">
         <input class="" type="submit" value="Вернуться назад">
