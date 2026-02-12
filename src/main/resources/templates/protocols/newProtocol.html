@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta  charset="UTF-8">
-  <title>Новый протокол</title>
-  <link href="/assets/css/styles.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Новый протокол</title>
+    <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/nutrition/addProtocol}" th:object="${protocolDTO}">
-  <label for="protocolTitle">Введите название протокола: </label>
-  <input class="field" type="text" th:field="*{protocolTitle}" id="protocolTitle">
-  <p style="color: red" th:if="${#fields.hasErrors('protocolTitle')}" th:errors="*{protocolTitle}">Title error</p>
-  <br/>
-  <input type="submit" value="Добавить">
-</form>
-<hr/>
-<form th:action="@{/nutrition/allProtocols}">
-  <input type="submit" value="Вернуться назад">
-</form>
+<div class="button-container-add">
+    <form th:method="POST" th:action="@{/nutrition/addProtocol}" th:object="${protocolDTO}">
+        <label for="protocolTitle">Введите название протокола: </label>
+        <input class="field" type="text" th:field="*{protocolTitle}" id="protocolTitle">
+        <p style="color: red" th:if="${#fields.hasErrors('protocolTitle')}" th:errors="*{protocolTitle}">Title error</p>
+        <p>
+            <input class="input_add" type="submit" value="Добавить">
+    </form>
+
+    <form th:align="left" th:action="@{/nutrition/allProtocols}">
+        <input type="submit" value="Вернуться назад">
+    </form>
+</div>
 
 </body>
 </html>
