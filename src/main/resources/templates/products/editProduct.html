@@ -7,33 +7,36 @@
 </head>
 <body>
 
-<form th:method="PATCH"
-      th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
-      th:object="${productDTO}">
-    <!--  указываем поле, которое есть у нашего объекта person/ обратить внимание на синтаксис  -->
-    <label for="product">Введите название продукта: </label>
-    <input class="field" type="text" th:field="*{product}" id="product">
-    <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
-    <input type="text" th:type="hidden" th:field="*{productId}" id="productId">
-    <br/>
-    <hr/>
-    <label>Выберите тип аллергена (при необходимости): </label>
-    <div class="col-md-4" th:each="allergenTypeDTO : ${allergenList}">
-        <div class="checkbox checkbox-custom checkbox-circle">
-            <input name="allergen" type="checkbox" th:id="'allerg_' + ${allergenTypeDTO.getAllergenId()}"
-                   th:value="${allergenTypeDTO.getAllergenId()}"/>
-            <label
-                    th:style="'color: ' + ${allergenTypeDTO.getTitleColor()}"
-                    th:for="'allerg_' + ${allergenTypeDTO.getAllergenId()}"
-                    th:text="${allergenTypeDTO.allergenTitle}"></label>
+<div class="button-container-add">
+    <form th:method="PATCH"
+          th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}"
+          th:object="${productDTO}">
+        <label for="product">Введите название продукта: </label>
+        <input class="field" type="text" th:field="*{product}" id="product">
+        <p style="color: red" th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Product error</p>
+        <input type="text" th:type="hidden" th:field="*{productId}" id="productId">
+        <br/>
+        <hr/>
+        <label>Выберите тип аллергена (при необходимости): </label>
+        <div class="col-md-4" th:each="allergenTypeDTO : ${allergenList}">
+            <div class="checkbox checkbox-custom checkbox-circle">
+                <input name="allergen" type="checkbox" th:id="'allerg_' + ${allergenTypeDTO.getAllergenId()}"
+                       th:value="${allergenTypeDTO.getAllergenId()}"/>
+                <label
+                        th:style="'color: ' + ${allergenTypeDTO.getTitleColor()}"
+                        th:for="'allerg_' + ${allergenTypeDTO.getAllergenId()}"
+                        th:text="${allergenTypeDTO.allergenTitle}"></label>
+            </div>
         </div>
-    </div>
-    <input type="submit" value="Изменить">
-    <hr/>
-</form>
-<form th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
-    <input type="submit" value="Вернуться назад">
-</form>
+        <p>
+            <input type="submit" value="Изменить">
+    </form>
+
+    <form th:align="left"
+          th:action="@{/nutrition/productType/{typeId}/product/{id}(id=${productDTO.getProductId()}, typeId=${productTypeDTO.getProductTypeId()})}">
+        <input type="submit" value="Вернуться назад">
+    </form>
+</div>
 
 </body>
 </html>
