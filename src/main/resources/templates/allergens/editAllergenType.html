@@ -7,21 +7,22 @@
 </head>
 <body>
 
-<form th:method="PATCH" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
-      th:object="${allergenTypeDTO}">
-    <label for="allergenTitle" class="text_with_shadow">Введите тип аллергена: </label>
-    <input class="field" type="text" th:field="*{allergenTitle}" id="allergenTitle">
-    <p style="color: red" th:if="${#fields.hasErrors('allergenTitle')}" th:errors="*{allergenTitle}">AllergenTitle
-        error</p>
-    <input type="text" th:type="hidden" th:field="*{allergenId}" id="allergenId">
+<div class="button-container-add">
+    <form th:method="PATCH" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}"
+          th:object="${allergenTypeDTO}">
+        <label for="allergenTitle">Введите тип аллергена: </label>
+        <input class="field" type="text" th:field="*{allergenTitle}" id="allergenTitle">
+        <p style="color: red" th:if="${#fields.hasErrors('allergenTitle')}" th:errors="*{allergenTitle}">AllergenTitle
+            error</p>
+        <input type="text" th:type="hidden" th:field="*{allergenId}" id="allergenId">
+        <p>
+            <input type="submit" value="Изменить">
+    </form>
 
-    <br/>
-    <input type="submit" value="Изменить">
-    <hr/>
-</form>
-<form th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}">
-    <input type="submit" value="Вернуться назад">
-</form>
+    <form th:align="left" th:action="@{/nutrition/allAllergenTypes/{id}(id=${allergenTypeDTO.getAllergenId()})}">
+        <input type="submit" value="Вернуться назад">
+    </form>
+</div>
 
 </body>
 </html>
