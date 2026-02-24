@@ -15,6 +15,7 @@ import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
 import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -236,7 +237,7 @@ class NutritionRecommendationApplicationTests {
     }
 
     @Test
-    public void testEditProductType() throws Exception{
+    public void testEditProductType() throws Exception {
         when(nutritionService.getProductTypeById(productTypeId)).thenReturn(productTypeDTO);
 
         mockMvc.perform(get("/nutrition/productType/{id}/edit", productTypeId))
@@ -246,7 +247,7 @@ class NutritionRecommendationApplicationTests {
     }
 
     @Test
-    public void testUpdateProductType_WithRedirect() throws Exception{
+    public void testUpdateProductType_WithRedirect() throws Exception {
         mockMvc.perform(patch("/nutrition/productType/{id}", productTypeId)
                         .param("productType", "Бобовые"))
                 .andExpect(status().is3xxRedirection())
@@ -299,7 +300,7 @@ class NutritionRecommendationApplicationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/nutrition/productType/" + productTypeId));
 
-        verify(nutritionService, times(1)).addProduct(productDTO,productTypeId,null);
+        verify(nutritionService, times(1)).addProduct(productDTO, productTypeId, null);
     }
 
     @Test
@@ -311,7 +312,88 @@ class NutritionRecommendationApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(view().name("products/newProduct"));
 
-        verify(nutritionService, times(0)).addProduct(productDTO,productTypeId,null);
+        verify(nutritionService, times(0)).addProduct(productDTO, productTypeId, null);
+    }
+
+    @Test
+    public void testShowProduct() throws Exception {
+        when(nutritionService.getProductById(productId)).thenReturn(productDTO);
+        when(nutritionService.getProductTypeById(productTypeId)).thenReturn(productTypeDTO);
+        productDTO.setAllergenTypes(new ArrayList<>());
+
+        mockMvc.perform(get("/nutrition/productType/{typeId}/product/{id}", productTypeId, productId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("products/showProduct"))
+                .andExpect(model().attributeExists("productDTO"));
+    }
+
+    @Test
+    public void testEditProduct() throws Exception {
+        when(nutritionService.getProductById(productId)).thenReturn(productDTO);
+        when(nutritionService.getProductTypeById(productTypeId)).thenReturn(productTypeDTO);
+        when(nutritionService.getAllergenTypes()).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(get("/nutrition/productType/{typeId}/product/{id}/edit", productTypeId, productId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("products/editProduct"))
+                .andExpect(model().attributeExists("productDTO"));
+    }
+
+    @Test
+    public void testUpdateProduct_WithRedirect() throws Exception {
+        mockMvc.perform(patch("/nutrition/productType/{typeId}/product/{id}", productTypeId, productId)
+                        .param("product", "Горох"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/productType/" + productTypeId + "/product/" + productId));
+
+        verify(nutritionService, times(1)).updateProductById(productId, productDTO, null);
+    }
+
+    @Test
+    public void testUpdateProduct_WithReturnToForm() throws Exception {
+        when(nutritionService.getProductTypeById(productTypeId)).thenReturn(productTypeDTO);
+
+        mockMvc.perform(patch("/nutrition/productType/{typeId}/product/{id}", productTypeId, productId)
+                        .param("product", "горох"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("products/editProduct"));
+
+        verify(nutritionService, times(0)).updateProductById(productId, productDTO, null);
+    }
+
+    @Test
+    public void testDeleteProduct() throws Exception {
+        mockMvc.perform(delete("/nutrition/productType/{typeId}/product/{id}", productTypeId, productId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/productType/" + productTypeId));
+
+        verify(nutritionService, times(1)).deleteProductById(eq(productId));
+    }
+
+    @Test
+    public void testNewProtocol() throws Exception {
+        mockMvc.perform(get("/nutrition/newProtocol"))
+                .andExpect(view().name("protocols/newProtocol"));
+    }
+
+    @Test
+    public void testCreateProtocol_WithRedirect() throws Exception {
+        mockMvc.perform(post("/nutrition/addProtocol")
+                        .param("protocolTitle", "ЭРД"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allProtocols"));
+
+        verify(nutritionService, times(1)).addProtocol(any(ProtocolDTO.class));
+    }
+
+    @Test
+    public void testCreateProtocol_WithReturnToForm() throws Exception {
+        mockMvc.perform(post("/nutrition/addProtocol")
+                        .param("protocolTitle", "эрд"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("protocols/newProtocol"));
+
+        verify(nutritionService, times(0)).addProtocol(any(ProtocolDTO.class));
     }
 
 }
