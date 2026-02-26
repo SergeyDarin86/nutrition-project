@@ -45,6 +45,8 @@ class NutritionRecommendationApplicationTests {
 
     ProtocolDTO protocolDTO;
 
+    UUID protocolId;
+
     UUID productTypeId = UUID.randomUUID();
 
     ProductTypeDTO productTypeDTO;
@@ -58,6 +60,7 @@ class NutritionRecommendationApplicationTests {
         personDTO = new PersonDTO();
         personDTO.setFullName("Иванов Иван Иванович");
 
+        protocolId = UUID.randomUUID();
         protocolDTO = new ProtocolDTO();
         protocolDTO.setProtocolTitle("ЭРД");
 
@@ -394,6 +397,62 @@ class NutritionRecommendationApplicationTests {
                 .andExpect(view().name("protocols/newProtocol"));
 
         verify(nutritionService, times(0)).addProtocol(any(ProtocolDTO.class));
+    }
+
+    @Test
+    public void testShowProtocol() throws Exception {
+        when(nutritionService.getProtocolById(protocolId)).thenReturn(protocolDTO);
+
+        mockMvc.perform(get("/nutrition/allProtocols/{id}", protocolId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("protocols/showProtocol"))
+                .andExpect(model().attributeExists("protocolDTO"));
+    }
+
+    @Test
+    public void testEditProtocol() throws Exception {
+        when(nutritionService.getProtocolById(protocolId)).thenReturn(protocolDTO);
+
+        mockMvc.perform(get("/nutrition/allProtocols/{id}/edit", protocolId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("protocols/editProtocol"))
+                .andExpect(model().attributeExists("protocolDTO"));
+    }
+
+    @Test
+    public void testUpdateProtocol_WithRedirect() throws Exception {
+        mockMvc.perform(patch("/nutrition/allProtocols/{id}", protocolId)
+                        .param("protocolTitle", "ЭРД"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allProtocols/" + protocolId));
+
+        verify(nutritionService, times(1)).updateProtocolById(eq(protocolId), any(ProtocolDTO.class));
+    }
+
+    @Test
+    public void testUpdateProtocol_WithReturnToForm() throws Exception {
+        mockMvc.perform(patch("/nutrition/allProtocols/{id}", protocolId)
+                        .param("protocolTitle", "эРД"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("protocols/editProtocol"));
+
+        verify(nutritionService, times(0)).updateProtocolById(eq(protocolId), any(ProtocolDTO.class));
+    }
+
+    @Test
+    public void testDeleteProtocol() throws Exception {
+        mockMvc.perform(delete("/nutrition/allProtocols/{id}", protocolId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allProtocols"));
+
+        verify(nutritionService, times(1)).deleteProtocolById(eq(protocolId));
+    }
+
+    @Test
+    public void testShowProtocolList() throws Exception {
+        mockMvc.perform(get("/nutrition/allProtocols"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("protocols/protocolList"));
     }
 
 }
