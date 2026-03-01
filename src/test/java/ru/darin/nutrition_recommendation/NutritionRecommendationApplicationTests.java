@@ -1,19 +1,23 @@
 package ru.darin.nutrition_recommendation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.darin.nutrition_recommendation.controller.DefaultController;
-import ru.darin.nutrition_recommendation.dto.PersonDTO;
-import ru.darin.nutrition_recommendation.dto.ProductDTO;
-import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
-import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
+import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
+import ru.darin.nutrition_recommendation.util.RecommendationResponseWithDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +59,8 @@ class NutritionRecommendationApplicationTests {
 
     ProductDTO productDTO;
 
+    RecommendationResponseWithDTO response;
+
     @BeforeEach
     void setUp() {
         personDTO = new PersonDTO();
@@ -71,6 +77,10 @@ class NutritionRecommendationApplicationTests {
         productDTO.setProduct("Горох");
 
         productId = UUID.randomUUID();
+
+        response = new RecommendationResponseWithDTO();
+        response.setProtocol("ЭРД");
+        response.setResolution("РАЗРЕШЕНО");
     }
 
     @Test
@@ -453,6 +463,40 @@ class NutritionRecommendationApplicationTests {
         mockMvc.perform(get("/nutrition/allProtocols"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("protocols/protocolList"));
+    }
+
+    @Test
+    public void testNewMix() throws Exception {
+        when(nutritionService.getProtocolById(protocolId)).thenReturn(protocolDTO);
+
+        mockMvc.perform(get("/nutrition/allProtocols/{id}/newMix", protocolId))
+                .andExpect(view().name("mix/newMix"));
+    }
+
+    @Test
+    public void testCreateMix_WithRedirect() throws Exception {
+        when(nutritionService.getProtocolById(protocolId)).thenReturn(protocolDTO);
+
+        mockMvc.perform(post("/nutrition/allProtocols/{id}/addMix", protocolId)
+                        .param("protocolTitle", "ЭРД"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allProtocols/" + protocolId + "/newMix"));
+
+        verify(nutritionService, times(1)).addMixOfProductsAndProtocols(any(MixDTO.class), eq(protocolId), eq(productDTO.getProductId()));
+    }
+
+    @Test
+    public void testDeleteFromMix() throws Exception {
+
+        String product = "Горох";
+        when(nutritionService.getProductDTOByProductName(product)).thenReturn(productDTO);
+        productDTO.setProductId(productId);
+
+        mockMvc.perform(delete("/nutrition/allProtocols/{id}/deleteFromMix/{product}", protocolId, product))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allProtocols/" + protocolId + "/newMix"));
+
+        verify(nutritionService, times(1)).deleteMixOfProductAndIllnessByProductIdWithIllnessId(productId, protocolId);
     }
 
 }
