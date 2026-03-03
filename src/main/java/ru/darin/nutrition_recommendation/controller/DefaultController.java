@@ -244,7 +244,7 @@ public class DefaultController implements NutritionResource {
     }
 
     @GetMapping("/allProtocols/{id}")
-    public String showIllness(@PathVariable("id") UUID id, Model model) {
+    public String showProtocol(@PathVariable("id") UUID id, Model model) {
         model.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
         return "protocols/showProtocol";
     }
