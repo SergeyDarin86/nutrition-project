@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
@@ -19,14 +20,13 @@ import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
 import ru.darin.nutrition_recommendation.util.RecommendationResponseWithDTO;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -497,6 +497,12 @@ class NutritionRecommendationApplicationTests {
                 .andExpect(redirectedUrl("/nutrition/allProtocols/" + protocolId + "/newMix"));
 
         verify(nutritionService, times(1)).deleteMixOfProductAndIllnessByProductIdWithIllnessId(productId, protocolId);
+    }
+
+    @Test
+    public void testNewAllergenType() throws Exception{
+        mockMvc.perform(get("/nutrition/newAllergenType"))
+                .andExpect(view().name("allergens/newAllergenType"));
     }
 
 }
