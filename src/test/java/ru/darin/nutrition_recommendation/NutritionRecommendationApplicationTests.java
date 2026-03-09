@@ -1,32 +1,26 @@
 package ru.darin.nutrition_recommendation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import ru.darin.nutrition_recommendation.controller.DefaultController;
 import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.service.NutritionServiceForThymeleaf;
 import ru.darin.nutrition_recommendation.util.RecommendationResponseWithDTO;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -61,6 +55,12 @@ class NutritionRecommendationApplicationTests {
 
     RecommendationResponseWithDTO response;
 
+    AllergenTypeDTO allergenTypeDTO;
+
+    UUID allergenTypeId;
+
+    String titleColor;
+
     @BeforeEach
     void setUp() {
         personDTO = new PersonDTO();
@@ -81,6 +81,12 @@ class NutritionRecommendationApplicationTests {
         response = new RecommendationResponseWithDTO();
         response.setProtocol("ЭРД");
         response.setResolution("РАЗРЕШЕНО");
+
+        allergenTypeId = UUID.randomUUID();
+        allergenTypeDTO = new AllergenTypeDTO(allergenTypeId, "Цитрусовые");
+        titleColor = "красный";
+        allergenTypeDTO.setTitleColor(titleColor);
+
     }
 
     @Test
@@ -500,9 +506,87 @@ class NutritionRecommendationApplicationTests {
     }
 
     @Test
-    public void testNewAllergenType() throws Exception{
+    public void testNewAllergenType() throws Exception {
         mockMvc.perform(get("/nutrition/newAllergenType"))
                 .andExpect(view().name("allergens/newAllergenType"));
     }
 
+    @Test
+    public void testCreateAllergenType_WithRedirect() throws Exception {
+        mockMvc.perform(post("/nutrition/addAllergenType")
+                        .param("allergenTitle", "Цитрусовые"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allAllergenTypes"));
+
+        verify(nutritionService, times(1)).addAllergenType(any(AllergenTypeDTO.class));
+    }
+
+    @Test
+    public void testCreateAllergenType_WithReturnToForm() throws Exception {
+        mockMvc.perform(post("/nutrition/addAllergenType")
+                        .param("allergenTitle", "цитрусовые"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("allergens/newAllergenType"));
+
+        verify(nutritionService, times(0)).addAllergenType(any(AllergenTypeDTO.class));
+    }
+
+    @Test
+    public void testShowAllergenType() throws Exception {
+        when(nutritionService.getAllergenTypeById(allergenTypeId)).thenReturn(allergenTypeDTO);
+
+        mockMvc.perform(get("/nutrition/allAllergenTypes/{id}", allergenTypeId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("allergens/showAllergenType"))
+                .andExpect(model().attributeExists("allergenTypeDTO"))
+                .andExpect(model().attributeExists("titleColor"));
+    }
+
+    @Test
+    public void testEditAllergenType() throws Exception {
+        when(nutritionService.getAllergenTypeById(allergenTypeId)).thenReturn(allergenTypeDTO);
+
+        mockMvc.perform(get("/nutrition/allAllergenTypes/{id}/edit", allergenTypeId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("allergens/editAllergenType"))
+                .andExpect(model().attributeExists("allergenTypeDTO"));
+    }
+
+    @Test
+    public void testUpdateAllergenType_WithRedirect() throws Exception {
+        mockMvc.perform(patch("/nutrition/allAllergenTypes/{id}", allergenTypeId)
+                        .param("allergenTitle", "Цитрусовые"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allAllergenTypes/" + allergenTypeId));
+
+        verify(nutritionService, times(1)).updateAllergenTypeById(eq(allergenTypeId), any(AllergenTypeDTO.class));
+    }
+
+    @Test
+    public void testUpdateAllergenType_WithReturnToForm() throws Exception {
+        mockMvc.perform(patch("/nutrition/allAllergenTypes/{id}", allergenTypeId)
+                        .param("allergenTitle", "цитрусовые"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("allergens/editAllergenType"));
+
+        verify(nutritionService, times(0)).updateAllergenTypeById(eq(allergenTypeId), any(AllergenTypeDTO.class));
+    }
+
+    @Test
+    public void testDeleteAllergenType() throws Exception {
+        mockMvc.perform(delete("/nutrition/allAllergenTypes/{id}", allergenTypeId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/nutrition/allAllergenTypes"));
+
+        verify(nutritionService, times(1)).deleteAllergenTypeById(allergenTypeId);
+    }
+
+    @Test
+    public void testAllAllergenTypes() throws Exception {
+        mockMvc.perform(get("/nutrition/allAllergenTypes"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("allergens/allAllergenTypes"));
+
+        verify(nutritionService, times(1)).getAllergenTypes();
+    }
 }
