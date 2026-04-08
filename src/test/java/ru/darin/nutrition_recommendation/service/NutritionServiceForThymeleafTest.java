@@ -8,12 +8,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Sort;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
 import ru.darin.nutrition_recommendation.model.Person;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +41,8 @@ class NutritionServiceForThymeleafTest {
     private Person person;
     private PersonDTO personDTOActual;
 
+    private List<PersonDTO> personDTOListActual;
+
     @BeforeEach
     void setUp() {
         personUuid = UUID.randomUUID();
@@ -47,6 +52,9 @@ class NutritionServiceForThymeleafTest {
         personDTOActual = new PersonDTO();
         personDTOActual.setPersonId(personUuid);
         personDTOActual.setFullName("Иванов Иван Иванович");
+
+        personDTOListActual = new ArrayList<>();
+        personDTOListActual.add(personDTOActual);
     }
 
     @Test
@@ -71,9 +79,24 @@ class NutritionServiceForThymeleafTest {
         UUID illegalUuid = UUID.randomUUID();
 
         when(personRepository.findById(illegalUuid)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(NutritionExceptionNotFound.class,()->personService.getPersonById(illegalUuid));
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getPersonById(illegalUuid));
         assertEquals("Пользователь не найден", exception.getMessage());
 
         verify(personRepository, times(1)).findById(illegalUuid);
     }
+
+    @Test
+    void testGetAllPeople() {
+        List<PersonDTO> personDTOListExpected = new ArrayList<>();
+        PersonDTO personDTO = new PersonDTO();
+        personDTO.setPersonId(personUuid);
+        personDTO.setFullName("Иванов Иван Иванович");
+        personDTOListExpected.add(personDTO);
+
+        personService.getAllPeople();
+
+        assertEquals(personDTOListExpected, personDTOListActual);
+        verify(personRepository, times(1)).findAll(Sort.by("fullName"));
+    }
+
 }
