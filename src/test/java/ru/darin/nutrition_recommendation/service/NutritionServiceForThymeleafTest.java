@@ -125,4 +125,15 @@ class NutritionServiceForThymeleafTest {
         verify(personRepository, times(1)).save(Mockito.any(Person.class));
     }
 
+    @Test
+    void testUpdatePersonByIdWhenPersonNotFound() {
+        UUID illegalUuid = UUID.randomUUID();
+
+        when(personRepository.findById(illegalUuid)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getPersonById(illegalUuid));
+        assertEquals("Пользователь не найден", exception.getMessage());
+
+        verify(personRepository, times(0)).save(Mockito.any(Person.class));
+    }
+
 }
