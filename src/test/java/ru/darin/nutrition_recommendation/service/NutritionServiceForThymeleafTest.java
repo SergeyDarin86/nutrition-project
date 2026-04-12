@@ -107,4 +107,22 @@ class NutritionServiceForThymeleafTest {
         verify(personRepository, times(1)).save(Mockito.any(Person.class));
     }
 
+    @Test
+    void testUpdatePersonByIdSuccess() {
+        PersonDTO updatedPersonDTO = new PersonDTO();
+        updatedPersonDTO.setPersonId(personUuid);
+        updatedPersonDTO.setFullName("Сидоров Семен Семенович");
+
+        Person personToSave = new Person();
+        personToSave.setPersonId(personUuid);
+        personToSave.setFullName("Сидоров Семен Семенович");
+
+        when(personRepository.findById(personUuid)).thenReturn(Optional.ofNullable(person));
+        when(personMapper.toPerson(updatedPersonDTO)).thenReturn(personToSave);
+
+        personService.updatePersonById(personUuid, updatedPersonDTO);
+
+        verify(personRepository, times(1)).save(Mockito.any(Person.class));
+    }
+
 }
