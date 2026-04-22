@@ -48,6 +48,10 @@ class NutritionServiceForThymeleafTest {
     private Person person;
     private PersonDTO personDTOActual;
 
+    private Protocol protocol;
+
+    private UUID protocolUuid;
+
     private List<PersonDTO> personDTOListActual;
 
     @BeforeEach
@@ -62,6 +66,11 @@ class NutritionServiceForThymeleafTest {
 
         personDTOListActual = new ArrayList<>();
         personDTOListActual.add(personDTOActual);
+
+        protocolUuid = UUID.randomUUID();
+        protocol = new Protocol();
+        protocol.setProtocol_id(protocolUuid);
+        protocol.setProtocolTitle("ЭРД");
     }
 
     @Test
@@ -152,7 +161,7 @@ class NutritionServiceForThymeleafTest {
     }
 
     @Test
-    void testAddProtocolToPerson(){
+    void testAddProtocolToPerson() {
         UUID protocolId = UUID.randomUUID();
         Protocol protocol = new Protocol();
         protocol.setProtocol_id(protocolId);
@@ -161,14 +170,41 @@ class NutritionServiceForThymeleafTest {
         ProtocolDTO protocolDTO = new ProtocolDTO();
         protocolDTO.setProtocolId(protocolId);
 
-        List<Protocol>protocolList = new ArrayList<>();
+        List<Protocol> protocolList = new ArrayList<>();
         person.setProtocols(protocolList);
 
         when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
-
         when(protocolRepository.findById(protocolDTO.getProtocolId())).thenReturn(Optional.of(protocol));
 
         personService.addProtocolToPerson(personUuid, protocolDTO);
     }
 
+    @Test
+    void testCurePersonWhenProtocolExist() {
+        String protocolTitle = "ЭРД";
+
+        List<Protocol> protocolList = new ArrayList<>();
+        protocolList.add(protocol);
+        person.setProtocols(protocolList);
+
+        when(protocolRepository.findByProtocolTitle(protocolTitle)).thenReturn(Optional.of(protocol));
+        when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
+
+        personService.curePerson(personUuid, protocolTitle);
+    }
+
+    @Test
+    void testCurePersonWhenProtocolNotFound() {
+        String protocolTitle = "ИРД";
+
+        List<Protocol> protocolList = new ArrayList<>();
+        protocolList.add(protocol);
+        person.setProtocols(protocolList);
+
+        when(protocolRepository.findByProtocolTitle(protocolTitle)).thenReturn(Optional.of(protocol));
+        when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
+
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.curePerson(personUuid, protocolTitle));
+        assertEquals("У человека нет такого протокола", exception.getMessage());
+    }
 }
