@@ -11,9 +11,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
 import ru.darin.nutrition_recommendation.model.Person;
+import ru.darin.nutrition_recommendation.model.Protocol;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
+import ru.darin.nutrition_recommendation.repository.ProtocolRepository;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.ArrayList;
@@ -134,6 +137,38 @@ class NutritionServiceForThymeleafTest {
         assertEquals("Пользователь не найден", exception.getMessage());
 
         verify(personRepository, times(0)).save(Mockito.any(Person.class));
+    }
+
+    @Test
+    void testDeletePersonById() {
+        when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
+
+        personService.deletePersonById(personUuid);
+
+        verify(personRepository, times(1)).delete(person);
+    }
+
+    @Mock
+    ProtocolRepository protocolRepository;
+
+    @Test
+    void testAddProtocolToPerson(){
+        UUID protocolId = UUID.randomUUID();
+        Protocol protocol = new Protocol();
+        protocol.setProtocol_id(protocolId);
+        protocol.setProtocolTitle("ЭРД");
+
+        ProtocolDTO protocolDTO = new ProtocolDTO();
+        protocolDTO.setProtocolId(protocolId);
+
+        List<Protocol>protocolList = new ArrayList<>();
+        person.setProtocols(protocolList);
+
+        when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
+
+        when(protocolRepository.findById(protocolDTO.getProtocolId())).thenReturn(Optional.of(protocol));
+
+        personService.addProtocolToPerson(personUuid, protocolDTO);
     }
 
 }
