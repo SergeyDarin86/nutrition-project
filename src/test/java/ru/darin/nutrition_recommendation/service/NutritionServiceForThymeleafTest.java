@@ -38,6 +38,9 @@ class NutritionServiceForThymeleafTest {
     @Mock
     private PersonMapper personMapper;
 
+    @Mock
+    ProtocolRepository protocolRepository;
+
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
 
@@ -147,9 +150,6 @@ class NutritionServiceForThymeleafTest {
 
         verify(personRepository, times(1)).delete(person);
     }
-
-    @Mock
-    ProtocolRepository protocolRepository;
 
     @Test
     void testAddProtocolToPerson(){
