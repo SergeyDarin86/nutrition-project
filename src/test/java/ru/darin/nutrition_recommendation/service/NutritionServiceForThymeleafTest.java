@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
 import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
+import ru.darin.nutrition_recommendation.mapper.ProtocolMapper;
 import ru.darin.nutrition_recommendation.model.Person;
 import ru.darin.nutrition_recommendation.model.Protocol;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
@@ -41,14 +42,21 @@ class NutritionServiceForThymeleafTest {
     @Mock
     ProtocolRepository protocolRepository;
 
+    @Mock
+    ProtocolMapper protocolMapper;
+
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
 
     private UUID personUuid;
+
     private Person person;
+
     private PersonDTO personDTOActual;
 
     private Protocol protocol;
+
+    private ProtocolDTO protocolDTOActual;
 
     private UUID protocolUuid;
 
@@ -71,6 +79,10 @@ class NutritionServiceForThymeleafTest {
         protocol = new Protocol();
         protocol.setProtocol_id(protocolUuid);
         protocol.setProtocolTitle("ЭРД");
+
+        protocolDTOActual = new ProtocolDTO();
+        protocolDTOActual.setProtocolId(protocolUuid);
+        protocolDTOActual.setProtocolTitle("ЭРД");
     }
 
     @Test
@@ -207,4 +219,32 @@ class NutritionServiceForThymeleafTest {
         Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.curePerson(personUuid, protocolTitle));
         assertEquals("У человека нет такого протокола", exception.getMessage());
     }
+
+    @Test
+    void testGetProtocolByIdSuccess() {
+        when(protocolRepository.findById(protocolUuid)).thenReturn(Optional.of(protocol));
+        when(protocolMapper.toProtocolDTO(protocol)).thenReturn(protocolDTOActual);
+
+        personService.getProtocolById(protocolUuid);
+
+        ProtocolDTO protocolDTOExpected = new ProtocolDTO();
+        protocolDTOExpected.setProtocolId(protocolUuid);
+        protocolDTOExpected.setProtocolTitle("ЭРД");
+
+        assertEquals(protocolDTOExpected, protocolDTOActual);
+
+        verify(protocolRepository, times(1)).findById(protocolUuid);
+    }
+
+    @Test
+    void testGetProtocolByIdWhenProtocolNotFound(){
+        UUID illegalUuid = UUID.randomUUID();
+
+        when(protocolRepository.findById(illegalUuid)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getProtocolById(illegalUuid));
+        assertEquals("Протокола с таким идентификационным номером не найдено", exception.getMessage());
+
+        verify(protocolRepository, times(1)).findById(illegalUuid);
+    }
+
 }
