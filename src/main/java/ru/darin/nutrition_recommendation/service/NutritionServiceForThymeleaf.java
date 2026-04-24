@@ -103,11 +103,11 @@ public class NutritionServiceForThymeleaf {
         personRepository.delete(person);
     }
 
-    public Protocol getProtocolFromRepoByTitle(PersonDTO personDTO) {
-        return protocolRepository
-                .findByProtocolTitle(personDTO.getProtocols().stream().findFirst().get().getProtocolTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
-    }
+//    public Protocol getProtocolFromRepoByTitle(PersonDTO personDTO) {
+//        return protocolRepository
+//                .findByProtocolTitle(personDTO.getProtocols().stream().findFirst().get().getProtocolTitle())
+//                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
+//    }
 
     @Transactional
     public PersonDTO addProtocolToPerson(UUID personId, ProtocolDTO protocolDTO) {
@@ -138,7 +138,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     @Transactional
-    public PersonDTO curePerson(UUID personId, String illnessTitle) {
+    public PersonDTO curePerson(UUID personId, String protocolTitle) {
         Person person = findPersonByIdFromRepo(personId);
 
         Person updatedPerson = new Person();
@@ -146,23 +146,23 @@ public class NutritionServiceForThymeleaf {
         updatedPerson.setFullName(person.getFullName());
 
         Optional<Protocol> optional = person.getProtocols()
-                .stream().filter(s -> s.getProtocolTitle().equals(illnessTitle)).findFirst();
+                .stream().filter(s -> s.getProtocolTitle().equals(protocolTitle)).findFirst();
 
         if (optional.isEmpty()) {
             throw new NutritionExceptionNotFound(PERSON_DOES_NOT_HAVE_THIS_PROTOCOL_MSG);
         } else {
-            person.getProtocols().remove(getProtocolFromRepoByTitle(illnessTitle));
+            person.getProtocols().remove(getProtocolFromRepoByTitle(protocolTitle));
             updatedPerson.setProtocols(person.getProtocols());
             personRepository.saveAndFlush(updatedPerson);
         }
         return personMapper.toPersonDto(updatedPerson);
     }
 
-    public Protocol getIllnessFromRepoByTitleNew(Person person) {
-        return protocolRepository
-                .findByProtocolTitle(person.getProtocols().stream().findFirst().get().getProtocolTitle())
-                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
-    }
+//    public Protocol getIllnessFromRepoByTitleNew(Person person) {
+//        return protocolRepository
+//                .findByProtocolTitle(person.getProtocols().stream().findFirst().get().getProtocolTitle())
+//                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
+//    }
 
     public ProtocolDTO addProtocol(ProtocolDTO protocolDTO) {
         throwExceptionIfProtocolAlreadyExist(protocolDTO);
