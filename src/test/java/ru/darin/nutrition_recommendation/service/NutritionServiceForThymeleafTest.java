@@ -18,6 +18,7 @@ import ru.darin.nutrition_recommendation.model.Person;
 import ru.darin.nutrition_recommendation.model.Protocol;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
 import ru.darin.nutrition_recommendation.repository.ProtocolRepository;
+import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
 import java.util.ArrayList;
@@ -237,7 +238,7 @@ class NutritionServiceForThymeleafTest {
     }
 
     @Test
-    void testGetProtocolByIdWhenProtocolNotFound(){
+    void testGetProtocolByIdWhenProtocolNotFound() {
         UUID illegalUuid = UUID.randomUUID();
 
         when(protocolRepository.findById(illegalUuid)).thenReturn(Optional.empty());
@@ -247,4 +248,23 @@ class NutritionServiceForThymeleafTest {
         verify(protocolRepository, times(1)).findById(illegalUuid);
     }
 
+    @Test
+    void testAddProtocol() {
+        when(protocolMapper.toProtocol(protocolDTOActual)).thenReturn(protocol);
+        personService.addProtocol(protocolDTOActual);
+        verify(protocolRepository, times(1)).save(Mockito.any(Protocol.class));
+    }
+
+    @Test
+    void testThrowExceptionIfProtocolAlreadyExist() {
+        ProtocolDTO protocolDTO = new ProtocolDTO();
+        protocolDTO.setProtocolId(protocolUuid);
+        protocolDTO.setProtocolTitle("ЭРД");
+
+        when(protocolRepository.findByProtocolTitle(protocolDTO.getProtocolTitle())).thenReturn(Optional.of(protocol));
+        Exception exception = assertThrows(NutritionException.class, () -> personService.throwExceptionIfProtocolAlreadyExist(protocolDTO));
+        assertEquals("Такой протокол уже есть в БД", exception.getMessage());
+
+        verify(protocolRepository, times(1)).findByProtocolTitle(protocolDTO.getProtocolTitle());
+    }
 }
