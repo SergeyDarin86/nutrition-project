@@ -63,6 +63,8 @@ class NutritionServiceForThymeleafTest {
 
     private List<PersonDTO> personDTOListActual;
 
+    private List<ProtocolDTO> protocolDTOListActual;
+
     @BeforeEach
     void setUp() {
         personUuid = UUID.randomUUID();
@@ -84,6 +86,9 @@ class NutritionServiceForThymeleafTest {
         protocolDTOActual = new ProtocolDTO();
         protocolDTOActual.setProtocolId(protocolUuid);
         protocolDTOActual.setProtocolTitle("ЭРД");
+
+        protocolDTOListActual = new ArrayList<>();
+        protocolDTOListActual.add(protocolDTOActual);
     }
 
     @Test
@@ -293,5 +298,19 @@ class NutritionServiceForThymeleafTest {
         personService.updateProtocolById(protocolUuid, updatedProtocolDTO);
 
         verify(protocolRepository, times(1)).save(Mockito.any(Protocol.class));
+    }
+
+    @Test
+    void testGetAllProtocols() {
+        List<ProtocolDTO> protocolDTOListExpected = new ArrayList<>();
+        ProtocolDTO protocolDTO = new ProtocolDTO();
+        protocolDTO.setProtocolId(protocolUuid);
+        protocolDTO.setProtocolTitle("ЭРД");
+        protocolDTOListExpected.add(protocolDTO);
+
+        personService.getAllProtocols();
+
+        assertEquals(protocolDTOListExpected, protocolDTOListActual);
+        verify(protocolRepository, times(1)).findAll(Sort.by("protocolTitle"));
     }
 }
