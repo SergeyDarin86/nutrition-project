@@ -267,4 +267,31 @@ class NutritionServiceForThymeleafTest {
 
         verify(protocolRepository, times(1)).findByProtocolTitle(protocolDTO.getProtocolTitle());
     }
+
+    @Test
+    void testDeleteProtocolById() {
+        when(protocolRepository.findById(protocolUuid)).thenReturn(Optional.of(protocol));
+
+        personService.deleteProtocolById(protocolUuid);
+
+        verify(protocolRepository, times(1)).deleteFromPersonProtocolTableAndProtocolTableByProtocolId(protocolUuid);
+    }
+
+    @Test
+    void testUpdateProtocolById() {
+        ProtocolDTO updatedProtocolDTO = new ProtocolDTO();
+        updatedProtocolDTO.setProtocolId(protocolUuid);
+        updatedProtocolDTO.setProtocolTitle("Антикандида");
+
+        Protocol protocolToSave = new Protocol();
+        protocolToSave.setProtocol_id(protocolUuid);
+        protocolToSave.setProtocolTitle("Антикандида");
+
+        when(protocolRepository.findById(protocolUuid)).thenReturn(Optional.of(protocol));
+        when(protocolMapper.toProtocol(updatedProtocolDTO)).thenReturn(protocolToSave);
+
+        personService.updateProtocolById(protocolUuid, updatedProtocolDTO);
+
+        verify(protocolRepository, times(1)).save(Mockito.any(Protocol.class));
+    }
 }
