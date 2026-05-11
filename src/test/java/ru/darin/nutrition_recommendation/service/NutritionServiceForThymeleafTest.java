@@ -17,6 +17,7 @@ import ru.darin.nutrition_recommendation.mapper.PersonMapper;
 import ru.darin.nutrition_recommendation.mapper.ProductTypeMapper;
 import ru.darin.nutrition_recommendation.mapper.ProtocolMapper;
 import ru.darin.nutrition_recommendation.model.Person;
+import ru.darin.nutrition_recommendation.model.Product;
 import ru.darin.nutrition_recommendation.model.ProductType;
 import ru.darin.nutrition_recommendation.model.Protocol;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
@@ -81,6 +82,8 @@ class NutritionServiceForThymeleafTest {
 
     private ProductTypeDTO productTypeDTOActual;
 
+    private List<ProductTypeDTO> productTypeDTOListActual;
+
     @BeforeEach
     void setUp() {
         personUuid = UUID.randomUUID();
@@ -114,11 +117,13 @@ class NutritionServiceForThymeleafTest {
         productTypeDTOActual = new ProductTypeDTO();
         productTypeDTOActual.setProductTypeId(productTypeUuid);
         productTypeDTOActual.setProductType("Крупы");
+
+        productTypeDTOListActual = new ArrayList<>();
+        productTypeDTOListActual.add(productTypeDTOActual);
     }
 
     @Test
     void testGetPersonByIdSuccess() {
-
         when(personRepository.findById(personUuid)).thenReturn(Optional.of(person));
         when(personMapper.toPersonDto(person)).thenReturn(personDTOActual);
 
@@ -357,5 +362,71 @@ class NutritionServiceForThymeleafTest {
         assertEquals("Такой тип продукта уже есть в БД", exception.getMessage());
 
         verify(productTypeRepository, times(1)).findByProductType(productTypeDTO.getProductType());
+    }
+
+    @Test
+    void testGetProductTypeByIdSuccess() {
+        when(productTypeRepository.findById(productTypeUuid)).thenReturn(Optional.of(productType));
+        when(productTypeMapper.toProductTypeDTO(productType)).thenReturn(productTypeDTOActual);
+
+        personService.getProductTypeById(productTypeUuid);
+
+        ProductTypeDTO productTypeDTOExpected = new ProductTypeDTO();
+        productTypeDTOExpected.setProductTypeId(productTypeUuid);
+        productTypeDTOExpected.setProductType("Крупы");
+
+        assertEquals(productTypeDTOExpected, productTypeDTOActual);
+
+        verify(productTypeRepository, times(1)).findById(productTypeUuid);
+    }
+
+    @Test
+    void testProductTypeByIdWhenPersonNotFound() {
+        UUID illegalUuid = UUID.randomUUID();
+
+        when(productTypeRepository.findById(illegalUuid)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getProductTypeById(illegalUuid));
+        assertEquals("Тип продуктов питания с таким идентификационным номером не найден", exception.getMessage());
+
+        verify(productTypeRepository, times(1)).findById(illegalUuid);
+    }
+
+
+    @Test
+    void testDeleteProductTypeById() {
+        when(productTypeRepository.findById(productTypeUuid)).thenReturn(Optional.of(productType));
+        personService.deleteProductTypeById(productTypeUuid);
+        verify(productTypeRepository, times(1)).delete(productType);
+    }
+
+
+    @Test
+    void testUpdateProductTypeById() {
+        ProductTypeDTO updatedProductTypeDTO = new ProductTypeDTO();
+        updatedProductTypeDTO.setProductTypeId(productTypeUuid);
+        updatedProductTypeDTO.setProductType("Фрукты");
+
+        ProductType productTypeToSave = new ProductType();
+        productTypeToSave.setProductTypeId(productTypeUuid);
+        productTypeToSave.setProductType("Фрукты");
+
+        when(productTypeRepository.findById(productTypeUuid)).thenReturn(Optional.ofNullable(productType));
+        when(productTypeMapper.toProductType(updatedProductTypeDTO)).thenReturn(productTypeToSave);
+
+        personService.updateProductTypeById(productTypeUuid, updatedProductTypeDTO);
+    }
+
+    @Test
+    void testGetAllProductTypes() {
+        List<ProductTypeDTO> productTypeDTOListExpected = new ArrayList<>();
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO();
+        productTypeDTO.setProductTypeId(productTypeUuid);
+        productTypeDTO.setProductType("Крупы");
+        productTypeDTOListExpected.add(productTypeDTO);
+
+        personService.getAllProductTypes();
+
+        assertEquals(productTypeDTOListExpected, productTypeDTOListActual);
+        verify(productTypeRepository, times(1)).findAll(Sort.by("productType"));
     }
 }
