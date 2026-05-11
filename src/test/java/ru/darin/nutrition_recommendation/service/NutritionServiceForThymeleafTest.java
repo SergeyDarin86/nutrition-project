@@ -11,12 +11,16 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 import ru.darin.nutrition_recommendation.dto.PersonDTO;
+import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
 import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
 import ru.darin.nutrition_recommendation.mapper.PersonMapper;
+import ru.darin.nutrition_recommendation.mapper.ProductTypeMapper;
 import ru.darin.nutrition_recommendation.mapper.ProtocolMapper;
 import ru.darin.nutrition_recommendation.model.Person;
+import ru.darin.nutrition_recommendation.model.ProductType;
 import ru.darin.nutrition_recommendation.model.Protocol;
 import ru.darin.nutrition_recommendation.repository.PersonRepository;
+import ru.darin.nutrition_recommendation.repository.ProductTypeRepository;
 import ru.darin.nutrition_recommendation.repository.ProtocolRepository;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
@@ -46,6 +50,12 @@ class NutritionServiceForThymeleafTest {
     @Mock
     ProtocolMapper protocolMapper;
 
+    @Mock
+    ProductTypeMapper productTypeMapper;
+
+    @Mock
+    ProductTypeRepository productTypeRepository;
+
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
 
@@ -64,6 +74,12 @@ class NutritionServiceForThymeleafTest {
     private List<PersonDTO> personDTOListActual;
 
     private List<ProtocolDTO> protocolDTOListActual;
+
+    private ProductType productType;
+
+    private UUID productTypeUuid;
+
+    private ProductTypeDTO productTypeDTOActual;
 
     @BeforeEach
     void setUp() {
@@ -89,6 +105,15 @@ class NutritionServiceForThymeleafTest {
 
         protocolDTOListActual = new ArrayList<>();
         protocolDTOListActual.add(protocolDTOActual);
+
+        productTypeUuid = UUID.randomUUID();
+        productType = new ProductType();
+        productType.setProductTypeId(productTypeUuid);
+        productType.setProductType("Крупы");
+
+        productTypeDTOActual = new ProductTypeDTO();
+        productTypeDTOActual.setProductTypeId(productTypeUuid);
+        productTypeDTOActual.setProductType("Крупы");
     }
 
     @Test
@@ -312,5 +337,25 @@ class NutritionServiceForThymeleafTest {
 
         assertEquals(protocolDTOListExpected, protocolDTOListActual);
         verify(protocolRepository, times(1)).findAll(Sort.by("protocolTitle"));
+    }
+
+    @Test
+    void testAddProductType() {
+        when(productTypeMapper.toProductType(productTypeDTOActual)).thenReturn(productType);
+        personService.addProductType(productTypeDTOActual);
+        verify(productTypeRepository, times(1)).save(Mockito.any(ProductType.class));
+    }
+
+    @Test
+    void testThrowExceptionIfProductTypeAlreadyExist() {
+        ProductTypeDTO productTypeDTO = new ProductTypeDTO();
+        productTypeDTO.setProductTypeId(productTypeUuid);
+        productTypeDTO.setProductType("Крупы");
+
+        when(productTypeRepository.findByProductType(productTypeDTO.getProductType())).thenReturn(Optional.of(productType));
+        Exception exception = assertThrows(NutritionException.class, () -> personService.throwExceptionIfProductTypeAlreadyExist(productTypeDTO));
+        assertEquals("Такой тип продукта уже есть в БД", exception.getMessage());
+
+        verify(productTypeRepository, times(1)).findByProductType(productTypeDTO.getProductType());
     }
 }
