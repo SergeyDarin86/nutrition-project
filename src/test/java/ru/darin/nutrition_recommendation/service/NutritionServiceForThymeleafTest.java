@@ -10,22 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
-import ru.darin.nutrition_recommendation.dto.PersonDTO;
-import ru.darin.nutrition_recommendation.dto.ProductDTO;
-import ru.darin.nutrition_recommendation.dto.ProductTypeDTO;
-import ru.darin.nutrition_recommendation.dto.ProtocolDTO;
-import ru.darin.nutrition_recommendation.mapper.PersonMapper;
-import ru.darin.nutrition_recommendation.mapper.ProductMapper;
-import ru.darin.nutrition_recommendation.mapper.ProductTypeMapper;
-import ru.darin.nutrition_recommendation.mapper.ProtocolMapper;
-import ru.darin.nutrition_recommendation.model.Person;
-import ru.darin.nutrition_recommendation.model.Product;
-import ru.darin.nutrition_recommendation.model.ProductType;
-import ru.darin.nutrition_recommendation.model.Protocol;
-import ru.darin.nutrition_recommendation.repository.PersonRepository;
-import ru.darin.nutrition_recommendation.repository.ProductRepository;
-import ru.darin.nutrition_recommendation.repository.ProductTypeRepository;
-import ru.darin.nutrition_recommendation.repository.ProtocolRepository;
+import ru.darin.nutrition_recommendation.dto.*;
+import ru.darin.nutrition_recommendation.mapper.*;
+import ru.darin.nutrition_recommendation.model.*;
+import ru.darin.nutrition_recommendation.repository.*;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
@@ -66,6 +54,12 @@ class NutritionServiceForThymeleafTest {
     @Mock
     ProductMapper productMapper;
 
+    @Mock
+    AllergenTypeMapper allergenTypeMapper;
+
+    @Mock
+    AllergenTypeRepository allergenTypeRepository;
+
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
 
@@ -98,6 +92,12 @@ class NutritionServiceForThymeleafTest {
     private Product product;
 
     private ProductDTO productDTOActual;
+
+    private UUID allergenTypeUuid;
+
+    private AllergenType allergenType;
+
+    private AllergenTypeDTO allergenTypeDTOActual;
 
     @BeforeEach
     void setUp() {
@@ -145,6 +145,13 @@ class NutritionServiceForThymeleafTest {
         productDTOActual.setProductId(productUuid);
         productDTOActual.setProduct("Гречка");
         productDTOActual.setProductTypeDTO(productTypeDTOActual);
+
+        allergenTypeUuid = UUID.randomUUID();
+        allergenType = new AllergenType();
+        allergenType.setAllergenId(allergenTypeUuid);
+        allergenType.setAllergenTitle("Цитрусовые");
+//        allergenType.se
+        allergenTypeDTOActual = new AllergenTypeDTO(allergenTypeUuid, "Цитрусовые");
     }
 
     @Test
@@ -457,6 +464,20 @@ class NutritionServiceForThymeleafTest {
 
     @Test
     void testAddProduct() {
+        when(productMapper.toProduct(productDTOActual)).thenReturn(product);
+        when(productTypeRepository.findById(productTypeUuid)).thenReturn(Optional.of(productType));
+
+        Product savedProduct = product;
+        when(productRepository.save(product)).thenReturn(savedProduct);
+
+        when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
+        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOActual);
+
+        List<UUID> selectedAllergens = new ArrayList<>();
+        selectedAllergens.add(allergenTypeUuid);
+
+        personService.addProduct(productDTOActual, productTypeUuid, selectedAllergens);
+        verify(productRepository, times(1)).save(savedProduct);
     }
 
     @Test
@@ -471,5 +492,26 @@ class NutritionServiceForThymeleafTest {
         assertEquals("Такой продукт уже есть в БД", exception.getMessage());
 
         verify(productRepository, times(1)).findByProduct(productDTO.getProduct());
+    }
+
+    @Test
+    void testDeleteProductById() {
+        when(productRepository.findById(productUuid)).thenReturn(Optional.of(product));
+        personService.deleteProductById(productUuid);
+        verify(productRepository, times(1)).delete(product);
+    }
+
+    @Test
+    void testGetProductByIdSuccess() {
+        when(productRepository.findById(productUuid)).thenReturn(Optional.of(product));
+        personService.getProductById(productUuid);
+        verify(productRepository, times(1)).findById(productUuid);
+    }
+
+    @Test
+    void testGetProductByIdWhenIdNotFound() {
+        when(productRepository.findById(productUuid)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getProductById(productUuid));
+        assertEquals("Продукт питания с таким идентификационным номером не найден", exception.getMessage());
     }
 }
