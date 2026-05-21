@@ -93,6 +93,8 @@ class NutritionServiceForThymeleafTest {
 
     private ProductDTO productDTOActual;
 
+    private List<ProductDTO> productDTOListActual;
+
     private UUID allergenTypeUuid;
 
     private AllergenType allergenType;
@@ -146,11 +148,14 @@ class NutritionServiceForThymeleafTest {
         productDTOActual.setProduct("Гречка");
         productDTOActual.setProductTypeDTO(productTypeDTOActual);
 
+        productDTOListActual = new ArrayList<>();
+        productDTOListActual.add(productDTOActual);
+
         allergenTypeUuid = UUID.randomUUID();
         allergenType = new AllergenType();
         allergenType.setAllergenId(allergenTypeUuid);
         allergenType.setAllergenTitle("Цитрусовые");
-//        allergenType.se
+
         allergenTypeDTOActual = new AllergenTypeDTO(allergenTypeUuid, "Цитрусовые");
     }
 
@@ -513,5 +518,53 @@ class NutritionServiceForThymeleafTest {
         when(productRepository.findById(productUuid)).thenReturn(Optional.empty());
         Exception exception = assertThrows(NutritionExceptionNotFound.class, () -> personService.getProductById(productUuid));
         assertEquals("Продукт питания с таким идентификационным номером не найден", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateProductById() {
+        ProductDTO productDTOExpected = new ProductDTO();
+        productDTOExpected.setProductId(productUuid);
+        productDTOExpected.setProductTypeDTO(productTypeDTOActual);
+        productDTOExpected.setProduct("Гречка");
+
+        when(productRepository.findById(productUuid)).thenReturn(Optional.of(product));
+        List<UUID> selectedAllergens = new ArrayList<>();
+        selectedAllergens.add(allergenTypeUuid);
+
+        when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
+        when(productMapper.toProductDTO(product)).thenReturn(productDTOActual);
+
+        personService.updateProductById(productUuid, productDTOActual, selectedAllergens);
+        assertEquals(productDTOExpected, productDTOActual);
+
+    }
+
+    @Test
+    void testThrowExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate() {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(productUuid);
+        productDTO.setProductTypeDTO(productTypeDTOActual);
+        productDTO.setProduct("Гречка");
+
+        when(productRepository.findByProduct(productDTO.getProduct())).thenReturn(Optional.of(product));
+        Exception exception = assertThrows(NutritionException.class, () -> personService.throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(productDTO, null));
+        assertEquals("Такой продукт уже есть в БД", exception.getMessage());
+
+        verify(productRepository, times(1)).findByProduct(productDTO.getProduct());
+    }
+
+    @Test
+    void testGetAllProducts() {
+        List<ProductDTO> productDTOListExpected = new ArrayList<>();
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(productUuid);
+        productDTO.setProduct("Гречка");
+        productDTO.setProductTypeDTO(productTypeDTOActual);
+        productDTOListExpected.add(productDTO);
+
+        personService.getAllProducts();
+
+        assertEquals(productDTOListExpected, productDTOListActual);
+        verify(productRepository, times(1)).findAll(Sort.by("product"));
     }
 }
