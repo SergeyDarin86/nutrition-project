@@ -14,13 +14,11 @@ import ru.darin.nutrition_recommendation.dto.*;
 import ru.darin.nutrition_recommendation.mapper.*;
 import ru.darin.nutrition_recommendation.model.*;
 import ru.darin.nutrition_recommendation.repository.*;
+import ru.darin.nutrition_recommendation.util.RecommendationResponseWithDTO;
 import ru.darin.nutrition_recommendation.util.exception.NutritionException;
 import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFound;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,6 +57,9 @@ class NutritionServiceForThymeleafTest {
 
     @Mock
     AllergenTypeRepository allergenTypeRepository;
+
+    @Mock
+    MixRepository mixRepository;
 
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
@@ -566,5 +567,28 @@ class NutritionServiceForThymeleafTest {
 
         assertEquals(productDTOListExpected, productDTOListActual);
         verify(productRepository, times(1)).findAll(Sort.by("product"));
+    }
+
+    @Test
+    void testGetProtocolWithProductsGroupedByType() {
+        String protocolString = "ЭРД";
+        String resolution = "РАЗРЕШЕНО";
+
+        Mix mix = new Mix();
+        mix.setProtocol(protocol);
+        mix.setProduct(product);
+        mix.setResolution(Resolution.РАЗРЕШЕНО);
+
+        when(mixRepository.findAll()).thenReturn(List.of(mix));
+        when(productMapper.toProductDTO(product)).thenReturn(productDTOActual);
+
+        RecommendationResponseWithDTO responseActual = personService.getProtocolWithProductsGroupedByType(protocolString, resolution);
+
+        RecommendationResponseWithDTO responseExpected = new RecommendationResponseWithDTO();
+        responseExpected.setProtocol(protocolString);
+        responseExpected.setResolution(resolution);
+        responseExpected.setProducts(List.of(Map.of("Крупы", List.of(productDTOActual))));
+
+        assertEquals(responseExpected, responseActual);
     }
 }
