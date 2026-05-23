@@ -61,6 +61,9 @@ class NutritionServiceForThymeleafTest {
     @Mock
     MixRepository mixRepository;
 
+    @Mock
+    MIxMapper mIxMapper;
+
     @InjectMocks
     private NutritionServiceForThymeleaf personService;
 
@@ -71,6 +74,10 @@ class NutritionServiceForThymeleafTest {
     private PersonDTO personDTOActual;
 
     private Protocol protocol;
+
+    private Protocol protocolTwo;
+
+    private UUID protocolUuidTwo;
 
     private ProtocolDTO protocolDTOActual;
 
@@ -119,6 +126,11 @@ class NutritionServiceForThymeleafTest {
         protocol = new Protocol();
         protocol.setProtocol_id(protocolUuid);
         protocol.setProtocolTitle("ЭРД");
+
+        protocolUuidTwo = UUID.randomUUID();
+        protocolTwo = new Protocol();
+        protocolTwo.setProtocol_id(protocolUuidTwo);
+        protocolTwo.setProtocolTitle("Антикандида");
 
         protocolDTOActual = new ProtocolDTO();
         protocolDTOActual.setProtocolId(protocolUuid);
@@ -588,6 +600,26 @@ class NutritionServiceForThymeleafTest {
         responseExpected.setProtocol(protocolString);
         responseExpected.setResolution(resolution);
         responseExpected.setProducts(List.of(Map.of("Крупы", List.of(productDTOActual))));
+
+        assertEquals(responseExpected, responseActual);
+    }
+
+    @Test
+    void testGetMixOfProductsForOneOrTwoProtocols() {
+        String protocolOneString = "ЭРД";
+        String protocolTwoString = "Антикандида";
+        String resolution = "РАЗРЕШЕНО";
+
+        when(protocolRepository.findByProtocolTitle(protocolOneString)).thenReturn(Optional.of(protocol));
+        when(protocolRepository.findByProtocolTitle(protocolTwoString)).thenReturn(Optional.of(protocolTwo));
+        when(mIxMapper.toResolutionEnum(resolution)).thenReturn(Resolution.РАЗРЕШЕНО);
+
+        RecommendationResponseWithDTO responseActual = personService.getMixOfProductsForOneOrTwoProtocols(protocol.getProtocolTitle(), protocolTwo.getProtocolTitle(), resolution);
+
+        RecommendationResponseWithDTO responseExpected = new RecommendationResponseWithDTO();
+        responseExpected.setResolution(resolution);
+        responseExpected.setProtocol("ЭРД и Антикандида");
+        responseExpected.setProducts(List.of(Map.of()));
 
         assertEquals(responseExpected, responseActual);
     }
