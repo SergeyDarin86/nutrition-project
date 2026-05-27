@@ -58,7 +58,7 @@ public class NutritionServiceForThymeleaf {
 
     private final String PRODUCT_IS_ALREADY_EXIST_MSG = "Такой продукт уже есть в БД";
 
-    private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукт уже есть в БД";
+    private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукта уже есть в БД";
 
     private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
 
