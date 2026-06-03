@@ -20,8 +20,7 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFou
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -622,5 +621,25 @@ class NutritionServiceForThymeleafTest {
         responseExpected.setProducts(List.of(Map.of()));
 
         assertEquals(responseExpected, responseActual);
+    }
+
+    @Test
+    void testFillingMapOfProductsGroupedByTypeWithDTO() {
+        Map<String,List<ProductDTO>>productsGroupedByType = new HashMap<>();
+        productsGroupedByType.put("Крупы",List.of(productDTOActual));
+
+        Set<Mix>mixForProtocols = new HashSet<>();
+        Mix mix = new Mix();
+        mix.setProduct(product);
+        mix.setProtocol(protocol);
+        mixForProtocols.add(mix);
+
+        when(productMapper.toProductDTO(mix.getProduct())).thenReturn((productDTOActual));
+        personService.fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType,mixForProtocols);
+
+        assertEquals(1, productsGroupedByType.size());
+        assertTrue(productsGroupedByType.containsKey("Крупы"));
+        assertEquals(1, productsGroupedByType.get("Крупы").size());
+        assertEquals(productDTOActual, productsGroupedByType.get("Крупы").get(0));
     }
 }
