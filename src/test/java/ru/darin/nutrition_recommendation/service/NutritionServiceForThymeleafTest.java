@@ -625,21 +625,36 @@ class NutritionServiceForThymeleafTest {
 
     @Test
     void testFillingMapOfProductsGroupedByTypeWithDTO() {
-        Map<String,List<ProductDTO>>productsGroupedByType = new HashMap<>();
-        productsGroupedByType.put("Крупы",List.of(productDTOActual));
+        Map<String, List<ProductDTO>> productsGroupedByType = new HashMap<>();
+        productsGroupedByType.put("Крупы", List.of(productDTOActual));
 
-        Set<Mix>mixForProtocols = new HashSet<>();
+        Set<Mix> mixForProtocols = new HashSet<>();
         Mix mix = new Mix();
         mix.setProduct(product);
         mix.setProtocol(protocol);
         mixForProtocols.add(mix);
 
         when(productMapper.toProductDTO(mix.getProduct())).thenReturn((productDTOActual));
-        personService.fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType,mixForProtocols);
+        personService.fillingMapOfProductsGroupedByTypeWithDTO(productsGroupedByType, mixForProtocols);
 
         assertEquals(1, productsGroupedByType.size());
         assertTrue(productsGroupedByType.containsKey("Крупы"));
         assertEquals(1, productsGroupedByType.get("Крупы").size());
         assertEquals(productDTOActual, productsGroupedByType.get("Крупы").get(0));
+    }
+
+    @Test
+    void testAddMixOfProductsAndProtocols() {
+        MixDTO mixDTO = new MixDTO();
+        mixDTO.setProduct("Гречка");
+        mixDTO.setIllness("ЭРД");
+        mixDTO.setResolution("Разрешено");
+
+        when(protocolRepository.findById(protocolUuid)).thenReturn(Optional.of(protocol));
+        when(productRepository.findById(productUuid)).thenReturn(Optional.of(product));
+
+        personService.addMixOfProductsAndProtocols(mixDTO, protocolUuid, productUuid);
+
+        verify(mixRepository, times(1)).save(Mockito.any(Mix.class));
     }
 }
