@@ -3,6 +3,7 @@ package ru.darin.nutrition_recommendation.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -656,5 +657,17 @@ class NutritionServiceForThymeleafTest {
         personService.addMixOfProductsAndProtocols(mixDTO, protocolUuid, productUuid);
 
         verify(mixRepository, times(1)).save(Mockito.any(Mix.class));
+    }
+
+    @Test
+    void testDeleteMixOfProductAndProtocolByProductIdWithProtocolId() {
+        personService.deleteMixOfProductAndProtocolByProductIdWithProtocolId(productUuid, protocolUuid);
+
+        ArgumentCaptor<ProductProtocol> captor = ArgumentCaptor.forClass(ProductProtocol.class);
+        verify(mixRepository, times(1)).deleteById(captor.capture());
+
+        ProductProtocol capturedProductProtocol = captor.getValue();
+        assertEquals(productUuid, capturedProductProtocol.getProductId());
+        assertEquals(protocolUuid, capturedProductProtocol.getProtocolId());
     }
 }
