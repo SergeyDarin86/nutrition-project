@@ -322,7 +322,7 @@ public class DefaultController implements NutritionResource {
         model.addAttribute("protocolDTO", nutritionService.getProtocolById(id));
         ProductDTO productDTO = nutritionService.getProductDTOByProductName(product);
         productModel.addAttribute("productDTO", productDTO);
-        nutritionService.deleteMixOfProductAndIllnessByProductIdWithIllnessId(productDTO.getProductId(), id);
+        nutritionService.deleteMixOfProductAndProtocolByProductIdWithProtocolId(productDTO.getProductId(), id);
         return "redirect:/nutrition/allProtocols/{id}/newMix";
     }
 

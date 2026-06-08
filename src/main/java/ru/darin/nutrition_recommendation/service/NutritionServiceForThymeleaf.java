@@ -399,8 +399,8 @@ public class NutritionServiceForThymeleaf {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
     }
 
-    public void deleteMixOfProductAndIllnessByProductIdWithIllnessId(UUID productId, UUID illnessId) {
-        mixRepository.deleteById(new ProductProtocol(productId, illnessId));
+    public void deleteMixOfProductAndProtocolByProductIdWithProtocolId(UUID productId, UUID protocolId) {
+        mixRepository.deleteById(new ProductProtocol(productId, protocolId));
     }
 
     public ProductDTO getProductDTOByProductName(String product) {
