@@ -661,6 +661,12 @@ class NutritionServiceForThymeleafTest {
 
     @Test
     void testDeleteMixOfProductAndProtocolByProductIdWithProtocolId() {
+        // Здесь мы используем ArgumentCaptor для захвата аргумента, который был передан в метод deleteById.
+        // Это позволяет нам проверить свойства объекта, а не сам объект
+        // После захвата аргумента мы проверяем, что productId и protocolId у захваченного объекта совпадают
+        // с ожидаемыми значениями
+        // Таким образом можно протестировать метод, не сталкиваясь с проблемами сравнения объектов.
+
         personService.deleteMixOfProductAndProtocolByProductIdWithProtocolId(productUuid, protocolUuid);
 
         ArgumentCaptor<ProductProtocol> captor = ArgumentCaptor.forClass(ProductProtocol.class);
@@ -669,5 +675,17 @@ class NutritionServiceForThymeleafTest {
         ProductProtocol capturedProductProtocol = captor.getValue();
         assertEquals(productUuid, capturedProductProtocol.getProductId());
         assertEquals(protocolUuid, capturedProductProtocol.getProtocolId());
+    }
+
+    @Test
+    void testGetProductDTOByProductName() {
+        String productName = "Гречка";
+
+        when(productRepository.findByProduct(productName)).thenReturn(Optional.of(product));
+        when(productMapper.toProductDTO(product)).thenReturn(productDTOActual);
+
+        personService.getProductDTOByProductName(productName);
+
+        verify(productRepository, times(1)).findByProduct(productName);
     }
 }
