@@ -107,7 +107,7 @@ class NutritionServiceForThymeleafTest {
 
     private AllergenType allergenType;
 
-    private AllergenTypeDTO allergenTypeDTOActual;
+    private AllergenTypeDTO allergenTypeDTOExpected;
 
     @BeforeEach
     void setUp() {
@@ -169,7 +169,7 @@ class NutritionServiceForThymeleafTest {
         allergenType.setAllergenId(allergenTypeUuid);
         allergenType.setAllergenTitle("Цитрусовые");
 
-        allergenTypeDTOActual = new AllergenTypeDTO(allergenTypeUuid, "Цитрусовые");
+        allergenTypeDTOExpected = new AllergenTypeDTO(allergenTypeUuid, "Цитрусовые");
     }
 
     @Test
@@ -489,7 +489,7 @@ class NutritionServiceForThymeleafTest {
         when(productRepository.save(product)).thenReturn(savedProduct);
 
         when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
-        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOActual);
+        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
 
         List<UUID> selectedAllergens = new ArrayList<>();
         selectedAllergens.add(allergenTypeUuid);
@@ -688,4 +688,15 @@ class NutritionServiceForThymeleafTest {
 
         verify(productRepository, times(1)).findByProduct(productName);
     }
+
+    @Test
+    void testAddAllergenType() {
+        when(allergenTypeMapper.toAllergenType(allergenTypeDTOExpected)).thenReturn(allergenType);
+        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
+
+        AllergenTypeDTO allergenTypeDTOActual = personService.addAllergenType(allergenTypeDTOExpected);
+
+        assertEquals(allergenTypeDTOExpected, allergenTypeDTOActual);
+    }
+
 }
