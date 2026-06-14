@@ -699,4 +699,20 @@ class NutritionServiceForThymeleafTest {
         assertEquals(allergenTypeDTOExpected, allergenTypeDTOActual);
     }
 
+    @Test
+    void testGetAllergenTypes() {
+        List<AllergenTypeDTO>allergenTypeDTOListExpected = new ArrayList<>();
+        allergenTypeDTOListExpected.add(allergenTypeDTOExpected);
+
+        List<AllergenType>allergenTypeListActual = new ArrayList<>();
+        allergenTypeListActual.add(allergenType);
+
+        when(allergenTypeRepository.findAll()).thenReturn(allergenTypeListActual);
+        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
+
+        List<AllergenTypeDTO>allergenTypeDTOListActual = personService.getAllergenTypes();
+
+        assertEquals(allergenTypeDTOListExpected,allergenTypeDTOListActual);
+    }
+
 }
