@@ -715,4 +715,16 @@ class NutritionServiceForThymeleafTest {
         assertEquals(allergenTypeDTOListExpected,allergenTypeDTOListActual);
     }
 
+    @Test
+    void testUpdateAllergenTypeById() {
+        AllergenTypeDTO allergenTypeDTOExpected = new AllergenTypeDTO(allergenTypeUuid,"Гистамин");
+
+        when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
+        allergenType.setAllergenTitle(allergenTypeDTOExpected.getAllergenTitle());
+        when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
+
+        AllergenTypeDTO allergenTypeDTOActual = personService.updateAllergenTypeById(allergenTypeUuid,allergenTypeDTOExpected);
+
+        assertEquals(allergenTypeDTOExpected,allergenTypeDTOActual);
+    }
 }
