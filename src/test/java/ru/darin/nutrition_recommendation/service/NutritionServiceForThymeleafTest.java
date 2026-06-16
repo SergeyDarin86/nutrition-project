@@ -701,30 +701,49 @@ class NutritionServiceForThymeleafTest {
 
     @Test
     void testGetAllergenTypes() {
-        List<AllergenTypeDTO>allergenTypeDTOListExpected = new ArrayList<>();
+        List<AllergenTypeDTO> allergenTypeDTOListExpected = new ArrayList<>();
         allergenTypeDTOListExpected.add(allergenTypeDTOExpected);
 
-        List<AllergenType>allergenTypeListActual = new ArrayList<>();
+        List<AllergenType> allergenTypeListActual = new ArrayList<>();
         allergenTypeListActual.add(allergenType);
 
         when(allergenTypeRepository.findAll()).thenReturn(allergenTypeListActual);
         when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
 
-        List<AllergenTypeDTO>allergenTypeDTOListActual = personService.getAllergenTypes();
+        List<AllergenTypeDTO> allergenTypeDTOListActual = personService.getAllergenTypes();
 
-        assertEquals(allergenTypeDTOListExpected,allergenTypeDTOListActual);
+        assertEquals(allergenTypeDTOListExpected, allergenTypeDTOListActual);
     }
 
     @Test
     void testUpdateAllergenTypeById() {
-        AllergenTypeDTO allergenTypeDTOExpected = new AllergenTypeDTO(allergenTypeUuid,"Гистамин");
+        AllergenTypeDTO allergenTypeDTOExpected = new AllergenTypeDTO(allergenTypeUuid, "Гистамин");
 
         when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
         allergenType.setAllergenTitle(allergenTypeDTOExpected.getAllergenTitle());
         when(allergenTypeMapper.toAllergenTypeDTO(allergenType)).thenReturn(allergenTypeDTOExpected);
 
-        AllergenTypeDTO allergenTypeDTOActual = personService.updateAllergenTypeById(allergenTypeUuid,allergenTypeDTOExpected);
+        AllergenTypeDTO allergenTypeDTOActual = personService.updateAllergenTypeById(allergenTypeUuid, allergenTypeDTOExpected);
 
-        assertEquals(allergenTypeDTOExpected,allergenTypeDTOActual);
+        assertEquals(allergenTypeDTOExpected, allergenTypeDTOActual);
+    }
+
+    @Test
+    void testDeleteAllergenTypeById() {
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        allergenType.setProducts(productList);
+
+        List<AllergenType> allergenTypeList = new ArrayList<>();
+        allergenTypeList.add(allergenType);
+        product.setAllergenTypes(allergenTypeList);
+
+        when(allergenTypeRepository.findById(allergenTypeUuid)).thenReturn(Optional.of(allergenType));
+
+        personService.deleteAllergenTypeById(allergenTypeUuid);
+
+        verify(allergenTypeRepository, times(1)).delete(allergenType);
+
+        assertEquals(0, allergenType.getProducts().get(0).getAllergenTypes().size());
     }
 }
