@@ -746,4 +746,28 @@ class NutritionServiceForThymeleafTest {
 
         assertEquals(0, allergenType.getProducts().get(0).getAllergenTypes().size());
     }
+
+    @Test
+    void testThrowExceptionIfAllergenTypeAlreadyExist() {
+        String allergenTitle = "Цитрусовые";
+        AllergenTypeDTO allergenTypeDTO = new AllergenTypeDTO(allergenTypeUuid, allergenTitle);
+
+        when(allergenTypeRepository.findByAllergenTitle(allergenTitle)).thenReturn(Optional.of(allergenType));
+        Exception exception = assertThrows(NutritionException.class, () -> personService.throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO));
+        assertEquals("Такой тип аллергена уже есть в БД", exception.getMessage());
+
+        verify(allergenTypeRepository, times(1)).findByAllergenTitle(allergenTitle);
+    }
+
+    @Test
+    void testThrowExceptionIfAllergenTypeColorAlreadyExist() {
+        String titleColor = "Красный";
+        allergenTypeDTOExpected.setTitleColor(titleColor);
+
+        when(allergenTypeRepository.findByTitleColor(titleColor)).thenReturn(Optional.of(allergenType));
+        Exception exception = assertThrows(NutritionException.class, () -> personService.throwExceptionIfAllergenTypeColorAlreadyExist(allergenTypeDTOExpected));
+        assertEquals("Такой цвет для аллергена уже используется", exception.getMessage());
+
+        verify(allergenTypeRepository, times(1)).findByTitleColor(titleColor);
+    }
 }
