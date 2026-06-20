@@ -111,17 +111,6 @@ class NutritionServiceForThymeleafTest {
 
     @BeforeEach
     void setUp() {
-        personUuid = UUID.randomUUID();
-        person = new Person();
-        person.setPersonId(personUuid);
-
-        personDTOActual = new PersonDTO();
-        personDTOActual.setPersonId(personUuid);
-        personDTOActual.setFullName("Иванов Иван Иванович");
-
-        personDTOListActual = new ArrayList<>();
-        personDTOListActual.add(personDTOActual);
-
         protocolUuid = UUID.randomUUID();
         protocol = new Protocol();
         protocol.setProtocol_id(protocolUuid);
@@ -170,6 +159,20 @@ class NutritionServiceForThymeleafTest {
         allergenType.setAllergenTitle("Цитрусовые");
 
         allergenTypeDTOExpected = new AllergenTypeDTO(allergenTypeUuid, "Цитрусовые");
+    }
+
+    @BeforeEach
+    void setUpPerson(){
+        personUuid = UUID.randomUUID();
+        person = new Person();
+        person.setPersonId(personUuid);
+
+        personDTOActual = new PersonDTO();
+        personDTOActual.setPersonId(personUuid);
+        personDTOActual.setFullName("Иванов Иван Иванович");
+
+        personDTOListActual = new ArrayList<>();
+        personDTOListActual.add(personDTOActual);
     }
 
     @Test
