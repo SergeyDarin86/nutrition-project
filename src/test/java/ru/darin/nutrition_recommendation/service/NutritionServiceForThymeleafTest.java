@@ -111,23 +111,6 @@ class NutritionServiceForThymeleafTest {
 
     @BeforeEach
     void setUp() {
-        protocolUuid = UUID.randomUUID();
-        protocol = new Protocol();
-        protocol.setProtocol_id(protocolUuid);
-        protocol.setProtocolTitle("ЭРД");
-
-        protocolUuidTwo = UUID.randomUUID();
-        protocolTwo = new Protocol();
-        protocolTwo.setProtocol_id(protocolUuidTwo);
-        protocolTwo.setProtocolTitle("Антикандида");
-
-        protocolDTOActual = new ProtocolDTO();
-        protocolDTOActual.setProtocolId(protocolUuid);
-        protocolDTOActual.setProtocolTitle("ЭРД");
-
-        protocolDTOListActual = new ArrayList<>();
-        protocolDTOListActual.add(protocolDTOActual);
-
         productTypeUuid = UUID.randomUUID();
         productType = new ProductType();
         productType.setProductTypeId(productTypeUuid);
@@ -173,6 +156,26 @@ class NutritionServiceForThymeleafTest {
 
         personDTOListActual = new ArrayList<>();
         personDTOListActual.add(personDTOActual);
+    }
+
+    @BeforeEach
+    void setUpProtocol(){
+        protocolUuid = UUID.randomUUID();
+        protocol = new Protocol();
+        protocol.setProtocol_id(protocolUuid);
+        protocol.setProtocolTitle("ЭРД");
+
+        protocolUuidTwo = UUID.randomUUID();
+        protocolTwo = new Protocol();
+        protocolTwo.setProtocol_id(protocolUuidTwo);
+        protocolTwo.setProtocolTitle("Антикандида");
+
+        protocolDTOActual = new ProtocolDTO();
+        protocolDTOActual.setProtocolId(protocolUuid);
+        protocolDTOActual.setProtocolTitle("ЭРД");
+
+        protocolDTOListActual = new ArrayList<>();
+        protocolDTOListActual.add(protocolDTOActual);
     }
 
     @Test
