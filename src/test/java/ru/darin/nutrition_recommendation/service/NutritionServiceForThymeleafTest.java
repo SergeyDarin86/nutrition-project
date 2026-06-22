@@ -110,19 +110,7 @@ class NutritionServiceForThymeleafTest {
     private AllergenTypeDTO allergenTypeDTOExpected;
 
     @BeforeEach
-    void setUp() {
-        productTypeUuid = UUID.randomUUID();
-        productType = new ProductType();
-        productType.setProductTypeId(productTypeUuid);
-        productType.setProductType("Крупы");
-
-        productTypeDTOActual = new ProductTypeDTO();
-        productTypeDTOActual.setProductTypeId(productTypeUuid);
-        productTypeDTOActual.setProductType("Крупы");
-
-        productTypeDTOListActual = new ArrayList<>();
-        productTypeDTOListActual.add(productTypeDTOActual);
-
+    void setUpProductAndAllergenType() {
         productUuid = UUID.randomUUID();
         product = new Product();
         product.setProduct_id(productUuid);
@@ -176,6 +164,21 @@ class NutritionServiceForThymeleafTest {
 
         protocolDTOListActual = new ArrayList<>();
         protocolDTOListActual.add(protocolDTOActual);
+    }
+
+    @BeforeEach
+    void setUpProductType(){
+        productTypeUuid = UUID.randomUUID();
+        productType = new ProductType();
+        productType.setProductTypeId(productTypeUuid);
+        productType.setProductType("Крупы");
+
+        productTypeDTOActual = new ProductTypeDTO();
+        productTypeDTOActual.setProductTypeId(productTypeUuid);
+        productTypeDTOActual.setProductType("Крупы");
+
+        productTypeDTOListActual = new ArrayList<>();
+        productTypeDTOListActual.add(productTypeDTOActual);
     }
 
     @Test
