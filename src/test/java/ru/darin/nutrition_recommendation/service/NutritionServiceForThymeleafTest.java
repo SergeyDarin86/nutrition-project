@@ -133,7 +133,7 @@ class NutritionServiceForThymeleafTest {
     }
 
     @BeforeEach
-    void setUpPerson(){
+    void setUpPerson() {
         personUuid = UUID.randomUUID();
         person = new Person();
         person.setPersonId(personUuid);
@@ -147,7 +147,7 @@ class NutritionServiceForThymeleafTest {
     }
 
     @BeforeEach
-    void setUpProtocol(){
+    void setUpProtocol() {
         protocolUuid = UUID.randomUUID();
         protocol = new Protocol();
         protocol.setProtocol_id(protocolUuid);
@@ -167,7 +167,7 @@ class NutritionServiceForThymeleafTest {
     }
 
     @BeforeEach
-    void setUpProductType(){
+    void setUpProductType() {
         productTypeUuid = UUID.randomUUID();
         productType = new ProductType();
         productType.setProductTypeId(productTypeUuid);
@@ -657,7 +657,7 @@ class NutritionServiceForThymeleafTest {
     void testAddMixOfProductsAndProtocols() {
         MixDTO mixDTO = new MixDTO();
         mixDTO.setProduct("Гречка");
-        mixDTO.setIllness("ЭРД");
+        mixDTO.setProtocol("ЭРД");
         mixDTO.setResolution("Разрешено");
 
         when(protocolRepository.findById(protocolUuid)).thenReturn(Optional.of(protocol));
@@ -670,12 +670,6 @@ class NutritionServiceForThymeleafTest {
 
     @Test
     void testDeleteMixOfProductAndProtocolByProductIdWithProtocolId() {
-        // Здесь мы используем ArgumentCaptor для захвата аргумента, который был передан в метод deleteById.
-        // Это позволяет нам проверить свойства объекта, а не сам объект
-        // После захвата аргумента мы проверяем, что productId и protocolId у захваченного объекта совпадают
-        // с ожидаемыми значениями
-        // Таким образом можно протестировать метод, не сталкиваясь с проблемами сравнения объектов.
-
         personService.deleteMixOfProductAndProtocolByProductIdWithProtocolId(productUuid, protocolUuid);
 
         ArgumentCaptor<ProductProtocol> captor = ArgumentCaptor.forClass(ProductProtocol.class);
