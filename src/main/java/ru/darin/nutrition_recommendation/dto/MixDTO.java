@@ -7,7 +7,7 @@ public class MixDTO {
 
     private String product;
 
-    private String illness;
+    private String protocol;
 
     private String resolution;
 
