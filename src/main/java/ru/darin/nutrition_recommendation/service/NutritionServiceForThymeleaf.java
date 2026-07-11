@@ -60,8 +60,6 @@ public class NutritionServiceForThymeleaf {
 
     private final String PRODUCT_TYPE_IS_ALREADY_EXIST_MSG = "Такой тип продукта уже есть в БД";
 
-    private final String PRODUCT_TYPE_NOT_FOUND_MSG = "Такой тип продуктов питания не найден";
-
     private final String PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип продуктов питания с таким идентификационным номером не найден";
 
     private final String ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG = "Тип аллергена с таким идентификационным номером не найден";
@@ -102,12 +100,6 @@ public class NutritionServiceForThymeleaf {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
         personRepository.delete(person);
     }
-
-//    public Protocol getProtocolFromRepoByTitle(PersonDTO personDTO) {
-//        return protocolRepository
-//                .findByProtocolTitle(personDTO.getProtocols().stream().findFirst().get().getProtocolTitle())
-//                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
-//    }
 
     @Transactional
     public PersonDTO addProtocolToPerson(UUID personId, ProtocolDTO protocolDTO) {
@@ -157,12 +149,6 @@ public class NutritionServiceForThymeleaf {
         }
         return personMapper.toPersonDto(updatedPerson);
     }
-
-//    public Protocol getIllnessFromRepoByTitleNew(Person person) {
-//        return protocolRepository
-//                .findByProtocolTitle(person.getProtocols().stream().findFirst().get().getProtocolTitle())
-//                .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
-//    }
 
     public ProtocolDTO addProtocol(ProtocolDTO protocolDTO) {
         throwExceptionIfProtocolAlreadyExist(protocolDTO);
@@ -264,8 +250,6 @@ public class NutritionServiceForThymeleaf {
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
 
-    //TODO: описать как решил проблему: org.hibernate.persistentobjectexception: detached entity passed to persist: jpa repository
-    // убрал CascadeType.Persist - оставил Merge
     @Transactional
     public ProductDTO updateProductById(UUID id, ProductDTO productDTO, List<UUID> selectedAllergens) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
@@ -299,7 +283,6 @@ public class NutritionServiceForThymeleaf {
         }
     }
 
-    // метод нахождения микса продуктов для одного заболевания (РАЗРЕШЕНО/ЗАПРЕЩЕНО)
     public RecommendationResponseWithDTO getProtocolWithProductsGroupedByType(String protocol, String resolution) {
 
         RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
@@ -328,10 +311,6 @@ public class NutritionServiceForThymeleaf {
         return response;
     }
 
-    // метод нахождения микса РАЗРЕШЕННЫХ продуктов для 2-х заболеваний (а также для одного заболевания)
-    // если использовать этот метод, то при удалении продуктов питания, данные остаются в кэше
-    // и используется старая информация
-//    @Cacheable("myCash")
     public RecommendationResponseWithDTO getMixOfProductsForOneOrTwoProtocols(String protocolOne, String protocolTwo, String resolution) {
         RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
         Map<String, List<ProductDTO>> productsGroupedByType = new HashMap<>();
@@ -432,13 +411,6 @@ public class NutritionServiceForThymeleaf {
         allergenType.setAllergenTitle(allergenTypeDTO.getAllergenTitle());
         return allergenTypeMapper.toAllergenTypeDTO(allergenType);
     }
-
-    //TODO:
-    //  - в редактировании типа аллергена добавить изменение цвета!?
-    // не должно быть повторяющихся значений для цвета
-    // добавить сообщение на экран: "Создайте аллерген", если список пустой
-    // добавить ограничение на тип поля title_color - не может быть NULL
-    // добавить ограничение на количество аллергенов для продукта (не более 2-х)
 
     public void deleteAllergenTypeById(UUID id) {
         AllergenType allergenType = allergenTypeRepository.findById(id)
