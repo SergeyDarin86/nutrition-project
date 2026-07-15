@@ -1,6 +1,5 @@
 package ru.darin.nutrition_recommendation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,6 @@ class NutritionRecommendationApplicationTests {
 
     @MockitoBean
     private NutritionServiceForThymeleaf nutritionService;
-
-    @Autowired
-    private ObjectMapper mapper;
 
     PersonDTO personDTO;
 
@@ -79,14 +75,13 @@ class NutritionRecommendationApplicationTests {
         productId = UUID.randomUUID();
 
         response = new RecommendationResponseWithDTO();
-        response.setProtocol("ЭРД");
+        response.setProtocol("ЭРД и Ант");
         response.setResolution("РАЗРЕШЕНО");
 
         allergenTypeId = UUID.randomUUID();
         allergenTypeDTO = new AllergenTypeDTO(allergenTypeId, "Цитрусовые");
         titleColor = "красный";
         allergenTypeDTO.setTitleColor(titleColor);
-
     }
 
     @Test
@@ -502,7 +497,7 @@ class NutritionRecommendationApplicationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/nutrition/allProtocols/" + protocolId + "/newMix"));
 
-        verify(nutritionService, times(1)).deleteMixOfProductAndIllnessByProductIdWithIllnessId(productId, protocolId);
+        verify(nutritionService, times(1)).deleteMixOfProductAndProtocolByProductIdWithProtocolId(productId, protocolId);
     }
 
     @Test
