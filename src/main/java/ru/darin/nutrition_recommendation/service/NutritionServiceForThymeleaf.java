@@ -1,6 +1,7 @@
 package ru.darin.nutrition_recommendation.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import ru.darin.nutrition_recommendation.util.exception.NutritionExceptionNotFou
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NutritionServiceForThymeleaf {
@@ -73,6 +75,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public PersonDTO addPerson(PersonDTO personDTO) {
+        log.info("Start method addPerson(PersonDTO personDTO) for NutritionServiceForThymeleaf, personDTO is: {} ", personDTO);
         Person person = personMapper.toPerson(personDTO);
         personRepository.save(person);
         return personMapper.toPersonDto(person);

@@ -23,3 +23,12 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+
+logging:
+   level:
+     ru.darin.nutrition_recommendation: info
+     org:
+       springframework: ${LOG:info}
+   file:
+     name:
+       logs/log
