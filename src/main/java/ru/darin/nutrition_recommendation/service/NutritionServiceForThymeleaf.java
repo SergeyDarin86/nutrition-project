@@ -71,6 +71,7 @@ public class NutritionServiceForThymeleaf {
     private final String PRODUCT_WITH_TITLE_NOT_FOUND_MSG = "Продукт питания с таким названием не найден";
 
     public List<PersonDTO> getAllPeople() {
+        log.info("Start method getAllPeople for NutritionServiceForThymeleaf");
         return personRepository.findAll(Sort.by("fullName")).stream().map(personMapper::toPersonDto).toList();
     }
 
@@ -82,12 +83,14 @@ public class NutritionServiceForThymeleaf {
     }
 
     public PersonDTO getPersonById(UUID uuid) {
+        log.info("Start method getPersonById(UUID uuid) for NutritionServiceForThymeleaf, uuid is: {} ", uuid);
         return personMapper.toPersonDto(personRepository.findById(uuid)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG)));
     }
 
     @Transactional
     public PersonDTO updatePersonById(UUID id, PersonDTO personDTO) {
+        log.info("Start method updatePersonById(UUID uuid, PersonDTO personDTO) for NutritionServiceForThymeleaf, uuid is: :{} , personDTO is: {} ", id, personDTO);
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
 
@@ -99,6 +102,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void deletePersonById(UUID id) {
+        log.info("Start method addPerson(UUID uuid) for NutritionServiceForThymeleaf, uuid is: {} ", id);
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
         personRepository.delete(person);
@@ -106,6 +110,7 @@ public class NutritionServiceForThymeleaf {
 
     @Transactional
     public PersonDTO addProtocolToPerson(UUID personId, ProtocolDTO protocolDTO) {
+        log.info("Start method addProtocolToPerson(UUID personId, ProtocolDTO protocolDTO) for NutritionServiceForThymeleaf, personId is: :{} , protocolDTO is: {} ", personId, protocolDTO);
         Person person = findPersonByIdFromRepo(personId);
 
         Person updatedPerson = new Person();
@@ -128,12 +133,14 @@ public class NutritionServiceForThymeleaf {
     }
 
     public Person findPersonByIdFromRepo(UUID id) {
+        log.info("Start method findPersonByIdFromRepo(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         return personRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PERSON_NOT_FOUND_MSG));
     }
 
     @Transactional
     public PersonDTO curePerson(UUID personId, String protocolTitle) {
+        log.info("Start method curePerson(UUID personId, String protocolTitle) for NutritionServiceForThymeleaf, peronId is: :{} , protocolTitle is: {} ", personId, protocolTitle);
         Person person = findPersonByIdFromRepo(personId);
 
         Person updatedPerson = new Person();
@@ -154,6 +161,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public ProtocolDTO addProtocol(ProtocolDTO protocolDTO) {
+        log.info("Start method addProtocol(ProtocolDTO protocolDTO) for NutritionServiceForThymeleaf, protocolDTO is: {} ", protocolDTO);
         throwExceptionIfProtocolAlreadyExist(protocolDTO);
         Protocol protocol = protocolMapper.toProtocol(protocolDTO);
         protocolRepository.save(protocol);
@@ -162,6 +170,7 @@ public class NutritionServiceForThymeleaf {
 
     @Transactional
     public ProtocolDTO updateProtocolById(UUID id, ProtocolDTO protocolDTO) {
+        log.info("Start method updateProtocolById(UUID id, ProtocolDTO protocolDTO) for NutritionServiceForThymeleaf, id is: :{} , protocolDTO is: {} ", id, protocolDTO);
         protocolRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
         throwExceptionIfProtocolAlreadyExist(protocolDTO);
 
@@ -173,12 +182,14 @@ public class NutritionServiceForThymeleaf {
     }
 
     public ProtocolDTO getProtocolById(UUID id) {
+        log.info("Start method getProtocolById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         return protocolMapper.toProtocolDTO(protocolRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG)));
     }
 
     @Transactional
     public void deleteProtocolById(UUID id) {
+        log.info("Start method deleteProtocolById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         protocolRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
 
@@ -186,16 +197,19 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void throwExceptionIfProtocolAlreadyExist(ProtocolDTO protocolDTO) {
+        log.info("Start method throwExceptionIfProtocolAlreadyExist(ProtocolDTO protocolDTO) for NutritionServiceForThymeleaf, protocolDTO is: {} ", protocolDTO);
         if (protocolRepository.findByProtocolTitle(protocolDTO.getProtocolTitle()).isPresent()) {
             throw new NutritionException(PROTOCOL_IS_ALREADY_EXIST_MSG);
         }
     }
 
     public List<ProtocolDTO> getAllProtocols() {
+        log.info("Start method getAllProtocols for NutritionServiceForThymeleaf");
         return protocolRepository.findAll(Sort.by("protocolTitle")).stream().map(protocolMapper::toProtocolDTO).toList();
     }
 
     public ProductTypeDTO addProductType(ProductTypeDTO productTypeDTO) {
+        log.info("Start method addProductType(ProductTypeDTO productTypeDTO) for NutritionServiceForThymeleaf, productTypeDTO is: {} ", productTypeDTO);
         throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
         ProductType productType = productTypeMapper.toProductType(productTypeDTO);
         productTypeRepository.save(productType);
@@ -203,17 +217,20 @@ public class NutritionServiceForThymeleaf {
     }
 
     public ProductTypeDTO getProductTypeById(UUID uuid) {
+        log.info("Start method getProductTypeById(UUID uuid) for NutritionServiceForThymeleaf, uuid is: {} ", uuid);
         return productTypeMapper.toProductTypeDTO(productTypeRepository.findById(uuid)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG)));
     }
 
     public void deleteProductTypeById(UUID id) {
+        log.info("Start method deleteProductTypeById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         productTypeRepository.delete(productTypeRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG)));
     }
 
     @Transactional
     public ProductTypeDTO updateProductTypeById(UUID id, ProductTypeDTO productTypeDTO) {
+        log.info("Start method updateProductTypeById(UUID id, ProductTypeDTO productTypeDTO) for NutritionServiceForThymeleaf, id is: :{} , productTypeDTO is: {} ", id, productTypeDTO);
         ProductType productType = productTypeRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_TYPE_WITH_ID_NOT_FOUND_MSG));
         throwExceptionIfProductTypeAlreadyExist(productTypeDTO);
         productType.setProductType(productTypeDTO.getProductType());
@@ -221,16 +238,19 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<ProductTypeDTO> getAllProductTypes() {
+        log.info("Start method getAllProductTypes() for NutritionServiceForThymeleaf");
         return productTypeRepository.findAll(Sort.by("productType")).stream().map(productTypeMapper::toProductTypeDTO).toList();
     }
 
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
+        log.info("Start method hrowExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) for NutritionServiceForThymeleaf, productTypeDTO is: {} ", productTypeDTO);
         if (productTypeRepository.findByProductType(productTypeDTO.getProductType()).isPresent()) {
             throw new NutritionException(PRODUCT_TYPE_IS_ALREADY_EXIST_MSG);
         }
     }
 
     public ProductDTO addProduct(ProductDTO productDTO, UUID productTypeId, List<UUID> selectedAllergens) {
+        log.info("Start method addProduct(ProductDTO productDTO, UUID productTypeId, List<UUID> selectedAllergens) for NutritionServiceForThymeleaf, productDTO is: {} , productTypeId is: {} , selectedAllergens is: {} ", productDTO, productTypeId, selectedAllergens);
         throwExceptionIfProductAlreadyExist(productDTO);
 
         Product product = productMapper.toProduct(productDTO);
@@ -244,17 +264,20 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void deleteProductById(UUID id) {
+        log.info("Start method deleteProductById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         productRepository.delete(productRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
 
     public ProductDTO getProductById(UUID id) {
+        log.info("Start method getProductById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         return productMapper.toProductDTO(productRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG)));
     }
 
     @Transactional
     public ProductDTO updateProductById(UUID id, ProductDTO productDTO, List<UUID> selectedAllergens) {
+        log.info("Start method updateProductById(UUID id, ProductDTO productDTO, List<UUID> selectedAllergens) for NutritionServiceForThymeleaf, id is: {} , productDTO is: {} , selectedAllergens is: {} ", id, productDTO, selectedAllergens);
         Product product = productRepository.findById(id).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_ID_NOT_FOUND_MSG));
         throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(productDTO, selectedAllergens);
         product.setProduct(productDTO.getProduct());
@@ -264,6 +287,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<AllergenTypeDTO> getAllergenTypeDTOList(List<UUID> selectedAllergens) {
+        log.info("Start method getAllergenTypeDTOList(List<UUID> selectedAllergens) for NutritionServiceForThymeleaf, selectedAllergens is: {} ", selectedAllergens);
         List<AllergenTypeDTO> allergenTypes = new ArrayList<>();
         if (selectedAllergens != null)
             selectedAllergens.forEach(uuid -> allergenTypes.add(getAllergenTypeById(uuid)));
