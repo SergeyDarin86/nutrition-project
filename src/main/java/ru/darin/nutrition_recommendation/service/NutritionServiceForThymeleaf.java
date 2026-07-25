@@ -71,7 +71,7 @@ public class NutritionServiceForThymeleaf {
     private final String PRODUCT_WITH_TITLE_NOT_FOUND_MSG = "Продукт питания с таким названием не найден";
 
     public List<PersonDTO> getAllPeople() {
-        log.info("Start method getAllPeople for NutritionServiceForThymeleaf");
+        log.info("Start method getAllPeople() for NutritionServiceForThymeleaf");
         return personRepository.findAll(Sort.by("fullName")).stream().map(personMapper::toPersonDto).toList();
     }
 
@@ -204,7 +204,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<ProtocolDTO> getAllProtocols() {
-        log.info("Start method getAllProtocols for NutritionServiceForThymeleaf");
+        log.info("Start method getAllProtocols() for NutritionServiceForThymeleaf");
         return protocolRepository.findAll(Sort.by("protocolTitle")).stream().map(protocolMapper::toProtocolDTO).toList();
     }
 
@@ -243,7 +243,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) {
-        log.info("Start method hrowExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) for NutritionServiceForThymeleaf, productTypeDTO is: {} ", productTypeDTO);
+        log.info("Start method throwExceptionIfProductTypeAlreadyExist(ProductTypeDTO productTypeDTO) for NutritionServiceForThymeleaf, productTypeDTO is: {} ", productTypeDTO);
         if (productTypeRepository.findByProductType(productTypeDTO.getProductType()).isPresent()) {
             throw new NutritionException(PRODUCT_TYPE_IS_ALREADY_EXIST_MSG);
         }
@@ -295,23 +295,26 @@ public class NutritionServiceForThymeleaf {
     }
 
     public List<ProductDTO> getAllProducts() {
+        log.info("Start method getAllProducts() for NutritionServiceForThymeleaf");
         return productRepository.findAll(Sort.by("product")).stream().map(productMapper::toProductDTO).toList();
     }
 
     public void throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(ProductDTO productDTO, List<UUID> selectedAllergens) {
+        log.info("Start method throwExceptionIfProductAlreadyExistWithUUIDListOfAllergensForUpdate(ProductDTO productDTO, List<UUID> selectedAllergens) for NutritionServiceForThymeleaf, productDTO is: {} , selectedAllergens is: {} ", productDTO, selectedAllergens);
         if (productRepository.findByProduct(productDTO.getProduct()).isPresent() && selectedAllergens == null) {
             throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);
         }
     }
 
     public void throwExceptionIfProductAlreadyExist(ProductDTO productDTO) {
+        log.info("Start method throwExceptionIfProductAlreadyExist(ProductDTO productDTO) for NutritionServiceForThymeleaf, productDTO is: {} ", productDTO);
         if (productRepository.findByProduct(productDTO.getProduct()).isPresent()) {
             throw new NutritionException(PRODUCT_IS_ALREADY_EXIST_MSG);
         }
     }
 
     public RecommendationResponseWithDTO getProtocolWithProductsGroupedByType(String protocol, String resolution) {
-
+        log.info("Start method getProtocolWithProductsGroupedByType(String protocol, String resolution) for NutritionServiceForThymeleaf, protocol is: {} , resolution is: {} ", protocol, resolution);
         RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
         Map<String, List<ProductDTO>> productsGroupedByType = new TreeMap<>();
 
@@ -339,6 +342,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public RecommendationResponseWithDTO getMixOfProductsForOneOrTwoProtocols(String protocolOne, String protocolTwo, String resolution) {
+        log.info("Start method getMixOfProductsForOneOrTwoProtocols(String protocolOne, String protocolTwo, String resolution) for NutritionServiceForThymeleaf, protocolOne is: {} , protocolTwo is: {} , resolution is: {} ", protocolOne, protocolTwo, resolution);
         RecommendationResponseWithDTO response = new RecommendationResponseWithDTO();
         Map<String, List<ProductDTO>> productsGroupedByType = new HashMap<>();
         List<Map<String, List<ProductDTO>>> productsForProtocol = new ArrayList<>();
@@ -369,6 +373,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void fillingMapOfProductsGroupedByTypeWithDTO(Map<String, List<ProductDTO>> productsGroupedByType, Set<Mix> mixForProtocols) {
+        log.info("Start method fillingMapOfProductsGroupedByTypeWithDTO(Map<String, List<ProductDTO>> productsGroupedByType, Set<Mix> mixForProtocols) for NutritionServiceForThymeleaf, productsGroupedByType is: {} , mixForProtocols is: {} ", productsGroupedByType, mixForProtocols);
         mixForProtocols.stream()
                 .forEach(mix -> productsGroupedByType.put(mix.getProduct().getProductType().getProductType(), new ArrayList<>()));
 
@@ -381,6 +386,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public Set<Mix> getMixOfProductsForSingleProtocol(String protocol, String resolution) {
+        log.info("Start method getMixOfProductsForSingleProtocol(String protocol, String resolution) for NutritionServiceForThymeleaf, protocol is: {} , resolution is: {} ", protocol, resolution);
         protocolRepository.findByProtocolTitle(protocol).orElseThrow(() -> new NutritionExceptionNotFound(protocol + " - " + PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
         return mixRepository.findAll()
                 .stream().filter(mix -> mix.getProtocol().getProtocolTitle().equals(protocol)
@@ -388,6 +394,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void addMixOfProductsAndProtocols(MixDTO mixDTO, UUID protocolId, UUID productId) {
+        log.info("Start method addMixOfProductsAndProtocols(MixDTO mixDTO, UUID protocolId, UUID productId) for NutritionServiceForThymeleaf, mixDTO is: {} , protocolId is: {} , productId is: {} ", mixDTO, protocolId, productId);
         Protocol protocol = protocolRepository.findById(protocolId).orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_ID_NOT_FOUND_MSG));
         Product product = productRepository.findById(productId).orElseThrow(() -> new NutritionExceptionNotFound(PRODUCT_WITH_TITLE_NOT_FOUND_MSG));
 
@@ -400,24 +407,29 @@ public class NutritionServiceForThymeleaf {
     }
 
     public Protocol getProtocolFromRepoByTitle(String protocolTitle) {
+        log.info("Start method getProtocolFromRepoByTitle(String protocolTitle) for NutritionServiceForThymeleaf, protocolTitle is: {} ", protocolTitle);
         return protocolRepository
                 .findByProtocolTitle(protocolTitle)
                 .orElseThrow(() -> new NutritionExceptionNotFound(PROTOCOL_WITH_TITLE_NOT_FOUND_MSG));
     }
 
     public void deleteMixOfProductAndProtocolByProductIdWithProtocolId(UUID productId, UUID protocolId) {
+        log.info("Start method deleteMixOfProductAndProtocolByProductIdWithProtocolId(UUID productId, UUID protocolId) for NutritionServiceForThymeleaf, productId is: {} , protocolId is: {} ", productId, protocolId);
         mixRepository.deleteById(new ProductProtocol(productId, protocolId));
     }
 
     public ProductDTO getProductDTOByProductName(String product) {
+        log.info("Start method getProductDTOByProductName(String product) for NutritionServiceForThymeleaf, product is: {} ", product);
         return productMapper.toProductDTO(productRepository.findByProduct(product).get());
     }
 
     public List<AllergenTypeDTO> getAllergenTypes() {
+        log.info("Start method getAllergenTypes() for NutritionServiceForThymeleaf");
         return allergenTypeRepository.findAll().stream().map(allergenTypeMapper::toAllergenTypeDTO).toList();
     }
 
     public AllergenTypeDTO addAllergenType(AllergenTypeDTO allergenTypeDTO) {
+        log.info("Start method addAllergenType(AllergenTypeDTO allergenTypeDTO) for NutritionServiceForThymeleaf, allergenTypeDTO is: {} ", allergenTypeDTO);
         throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO);
         throwExceptionIfAllergenTypeColorAlreadyExist(allergenTypeDTO);
         AllergenType allergenType = allergenTypeMapper.toAllergenType(allergenTypeDTO);
@@ -426,12 +438,14 @@ public class NutritionServiceForThymeleaf {
     }
 
     public AllergenTypeDTO getAllergenTypeById(UUID uuid) {
+        log.info("Start method getAllergenTypeById(UUID uuid) for NutritionServiceForThymeleaf, uuid is: {} ", uuid);
         return allergenTypeMapper.toAllergenTypeDTO(allergenTypeRepository.findById(uuid)
                 .orElseThrow(() -> new NutritionExceptionNotFound("Нет такого аллергена")));
     }
 
     @Transactional
     public AllergenTypeDTO updateAllergenTypeById(UUID id, AllergenTypeDTO allergenTypeDTO) {
+        log.info("Start method updateAllergenTypeById(UUID id, AllergenTypeDTO allergenTypeDTO) for NutritionServiceForThymeleaf, id is: {} , allergenTypeDTO is: {} ", id, allergenTypeDTO);
         AllergenType allergenType = allergenTypeRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG));
         throwExceptionIfAllergenTypeAlreadyExist(allergenTypeDTO);
@@ -440,6 +454,7 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void deleteAllergenTypeById(UUID id) {
+        log.info("Start method deleteAllergenTypeById(UUID id) for NutritionServiceForThymeleaf, id is: {} ", id);
         AllergenType allergenType = allergenTypeRepository.findById(id)
                 .orElseThrow(() -> new NutritionExceptionNotFound(ALLERGEN_TYPE_WITH_ID_NOT_FOUND_MSG));
 
@@ -448,12 +463,14 @@ public class NutritionServiceForThymeleaf {
     }
 
     public void throwExceptionIfAllergenTypeAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
+        log.info("Start method throwExceptionIfAllergenTypeAlreadyExist(AllergenTypeDTO allergenTypeDTO) for NutritionServiceForThymeleaf, allergenTypeDTO is: {} ", allergenTypeDTO);
         if (allergenTypeRepository.findByAllergenTitle(allergenTypeDTO.getAllergenTitle()).isPresent()) {
             throw new NutritionException(ALLERGEN_TYPE_IS_ALREADY_EXIST_MSG);
         }
     }
 
     public void throwExceptionIfAllergenTypeColorAlreadyExist(AllergenTypeDTO allergenTypeDTO) {
+        log.info("Start method throwExceptionIfAllergenTypeColorAlreadyExist(AllergenTypeDTO allergenTypeDTO) for NutritionServiceForThymeleaf, allergenTypeDTO is: {} ", allergenTypeDTO);
         if (allergenTypeRepository.findByTitleColor(allergenTypeDTO.getTitleColor()).isPresent()) {
             throw new NutritionException(ALLERGEN_TYPE_COLOR_IS_ALREADY_EXIST_MSG);
         }
