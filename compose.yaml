@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  sqldb:
+    image: postgres:13.3
+    container_name: nutrition-db
+    restart: unless-stopped
+    networks:
+      - nutrition-recommendation
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=16s11w86d
+      - POSTGRES_DB=nutrition_db
+    ports:
+      - 5432:5432
+
+  app:
+    container_name: nutrition-app
+    depends_on:
+      - sqldb
+    build:
+      context: .
+    networks:
+      - nutrition-recommendation
+    ports:
+      - 8080:8080
+    environment:
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.datasource.url=jdbc:postgresql://sqldb:5432/nutrition_db
+      - spring.datasource.username=postgres
+      - spring.datasource.password=16s11w86d
+      - spring.jpa.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+      - spring.jpa.show-sql=true
+      - spring_jpa_properties_hibernate_boot_allow_jdbc_metadata_access=false
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  nutrition-recommendation:
+    driver: bridge
