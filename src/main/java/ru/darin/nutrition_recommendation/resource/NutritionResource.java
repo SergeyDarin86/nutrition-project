@@ -62,6 +62,18 @@ public interface NutritionResource {
     })
     String createPerson(@ModelAttribute("personDTO") @Valid PersonDTO personDTO, BindingResult bindingResult);
 
+    @Operation(summary = "Информация о пользователе.",
+            description = "Отображение информации о пользователе на основе его ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "500",
+                    description = "Ошибка сервера")
+    })
     String showPerson(
             @PathVariable("id") UUID id, Model model, @ModelAttribute("protocolDTO") ProtocolDTO protocolDTO,
             Model protocolListModel
