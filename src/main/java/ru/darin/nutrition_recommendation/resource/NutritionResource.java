@@ -79,13 +79,49 @@ public interface NutritionResource {
             Model protocolListModel
     );
 
+    @Operation(summary = "Форма редактирования данных о пользователе.",
+            description = "Переход на форму для редактирования данных пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "500",
+                    description = "Ошибка сервера")
+    })
     String editPerson(Model model, @PathVariable("id") UUID id);
 
+    @Operation(summary = "Форма редактирования данных о пользователе.",
+            description = "Сохранение новых данных о пользователе.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "500",
+                    description = "Ошибка сервера")
+    })
     String updatePerson(
             @ModelAttribute("personDTO") @Valid PersonDTO personDTO, BindingResult bindingResult,
             @PathVariable("id") UUID id
     );
 
+    @Operation(summary = "Форма редактирования данных о пользователе.",
+            description = "Добавление нового протокола для пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "500",
+                    description = "Ошибка сервера")
+    })
     String addProtocolToPerson(
             Model protocolListModel,
             @ModelAttribute("protocolDTO") ProtocolDTO protocolDTO,
