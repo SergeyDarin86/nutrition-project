@@ -128,6 +128,18 @@ public interface NutritionResource {
             @PathVariable("id") UUID personId
     );
 
+    @Operation(summary = "Форма редактирования данных о пользователе.",
+            description = "Удаление протокола у пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404",
+                    description = "Пользователь не найден",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "500",
+                    description = "Ошибка сервера")
+    })
     String curePerson(
             @ModelAttribute("protocolDTO") ProtocolDTO protocolDTO,
             @PathVariable("id") UUID personId,
